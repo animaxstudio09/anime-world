@@ -16,46 +16,48 @@
         :root { --bg: #060606; --primary: #e50914; --gold: #ffd700; --card: #181818; --text: #ffffff; }
         body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
 
-        /* 1. Login Screen with Anime Wallpaper */
+        /* 1. Login Background Setup */
         #login-screen { 
             height: 100vh; display: none; flex-direction: column; justify-content: center; align-items: center;
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.9)), url('https://images.alphacoders.com/132/1327173.png');
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.9)), 
+                        url('https://images.alphacoders.com/132/1327173.png');
             background-size: cover; background-position: center; text-align: center;
         }
-        .login-card { background: rgba(0, 0, 0, 0.6); padding: 40px; border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .login-card { background: rgba(0,0,0,0.65); padding: 45px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 15px 40px rgba(0,0,0,0.8); }
 
         /* 2. Navigation */
-        nav { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.95); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #222; }
-        .logo { color: var(--primary); font-size: 26px; font-weight: 800; }
-        .profile-trigger img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--gold); padding: 2px; cursor: pointer; }
+        nav { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.98); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #222; }
+        .logo { color: var(--primary); font-size: 26px; font-weight: 800; letter-spacing: 1px; }
+        .profile-trigger img { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--gold); padding: 2px; cursor: pointer; transition: 0.3s; }
+        .profile-trigger:hover img { transform: scale(1.1); }
 
         /* 3. Queen Dashboard (Side Menu) */
-        .sidebar { position: fixed; top: 0; right: -320px; width: 300px; height: 100%; background: #111; z-index: 2000; transition: 0.4s; padding: 40px 20px; border-left: 2px solid var(--gold); box-sizing: border-box; text-align: center; }
+        .sidebar { position: fixed; top: 0; right: -320px; width: 300px; height: 100%; background: #111; z-index: 2000; transition: 0.4s; padding: 40px 20px; border-left: 2.5px solid var(--gold); box-sizing: border-box; text-align: center; }
         .sidebar.active { right: 0; }
-        .sidebar img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--gold); margin-bottom: 15px; }
-        .status-badge { background: var(--gold); color: #000; padding: 4px 15px; border-radius: 20px; font-size: 11px; font-weight: 800; margin: 10px 0; display: inline-block; }
+        .sidebar img { width: 85px; height: 85px; border-radius: 50%; border: 3px solid var(--gold); margin-bottom: 15px; }
+        .u-badge { background: var(--gold); color: #000; padding: 4px 18px; border-radius: 20px; font-size: 11px; font-weight: 800; margin-bottom: 20px; display: inline-block; }
 
         /* 4. Redeem Section */
-        .redeem-box { background: #1a1a1a; padding: 15px; border-radius: 12px; margin-top: 20px; border: 1px dashed var(--gold); }
-        .redeem-box input { width: 100%; padding: 12px; border-radius: 8px; border: none; background: #000; color: #fff; text-align: center; margin-bottom: 10px; box-sizing: border-box; }
+        .redeem-box { background: #1a1a1a; padding: 15px; border-radius: 15px; margin-top: 25px; border: 1.5px dashed var(--gold); }
+        .redeem-box input { width: 100%; padding: 12px; border-radius: 8px; border: none; background: #000; color: #fff; text-align: center; margin-bottom: 12px; box-sizing: border-box; font-weight: 600; }
 
-        /* 5. Content Grid & Playlist */
-        .section-title { padding: 20px 5% 5px; font-size: 18px; color: var(--gold); font-weight: 700; letter-spacing: 1px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; padding: 15px 5%; }
-        .card { background: var(--card); border-radius: 10px; overflow: hidden; border: 1px solid #222; cursor: pointer; transition: 0.3s; position: relative; }
-        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
-        .card img { width: 100%; height: 220px; object-fit: cover; }
-        .card h3 { padding: 10px; font-size: 12px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .prem-tag { position: absolute; top: 10px; left: 10px; background: var(--gold); color: #000; padding: 3px 8px; font-size: 10px; font-weight: 800; border-radius: 4px; }
+        /* 5. Grid System (Playlist & All Anime) */
+        .section-header { padding: 25px 5% 5px; font-size: 19px; color: var(--gold); font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 18px; padding: 15px 5%; }
+        .card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid #222; cursor: pointer; transition: 0.3s; position: relative; }
+        .card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 10px 20px rgba(229, 9, 20, 0.2); }
+        .card img { width: 100%; height: 230px; object-fit: cover; }
+        .card h3 { padding: 12px; font-size: 12.5px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .p-tag { position: absolute; top: 12px; left: 12px; background: var(--gold); color: #000; padding: 3px 10px; font-size: 10px; font-weight: 800; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
 
         /* Buttons */
-        .btn { width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-primary { background: var(--primary); color: #fff; }
+        .btn { width: 100%; padding: 14px; border-radius: 10px; border: none; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 14px; }
+        .btn-red { background: var(--primary); color: #fff; }
         .btn-gold { background: var(--gold); color: #000; }
 
-        /* Video Player */
-        #player-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 4000; }
-        .close-vid { position: absolute; top: 20px; right: 30px; font-size: 40px; color: #fff; cursor: pointer; z-index: 4001; }
+        /* Video Modal */
+        #vid-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; }
+        .close-vid { position: absolute; top: 25px; right: 35px; font-size: 45px; color: #fff; cursor: pointer; z-index: 5001; text-shadow: 0 0 10px #000; }
         iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
@@ -63,9 +65,9 @@
 
     <div id="login-screen">
         <div class="login-card">
-            <h1 style="color:var(--primary); font-size: 45px; margin: 0;">ANIMAX PRO</h1>
-            <p style="color:#ccc; margin-bottom: 30px;">Welcome to RJ ROCKY's Premium World</p>
-            <button class="btn btn-primary" onclick="signIn()" style="width:auto; padding: 15px 40px; border-radius: 50px;">LOGIN WITH GOOGLE</button>
+            <h1 style="color:var(--primary); font-size: 50px; margin: 0; font-weight: 800;">ANIMAX</h1>
+            <p style="color:#eee; margin-bottom: 35px; font-size: 14px; opacity: 0.8;">Premium Anime Streaming by RJ ROCKY</p>
+            <button class="btn btn-red" onclick="signIn()" style="width:auto; padding: 16px 50px; border-radius: 50px; text-transform: uppercase;">LOGIN WITH GOOGLE</button>
         </div>
     </div>
 
@@ -75,47 +77,47 @@
             <div class="profile-trigger" onclick="toggleSidebar()"><img id="u-img" src=""></div>
         </nav>
 
-        <div id="playlist-sec" style="display:none;">
-            <div class="section-title">CONTINUE WATCHING</div>
-            <div class="grid" id="playlist-grid"></div>
+        <div id="history-sec" style="display:none;">
+            <div class="section-header"><span>🕒</span> RECENTLY WATCHED</div>
+            <div class="grid" id="history-grid"></div>
         </div>
 
-        <div class="section-title">EXPLORE ALL ANIME</div>
+        <div class="section-header"><span>🔥</span> DISCOVER ANIME</div>
         <div class="grid" id="anime-list"></div>
 
         <div class="sidebar" id="side-menu">
             <img id="d-img" src="">
-            <h3 id="u-name" style="margin:0;">User</h3>
-            <p id="u-email" style="font-size: 11px; color: #666; margin-bottom: 5px;">user@gmail.com</p>
-            <div class="status-badge" id="u-status">FREE USER</div>
+            <h3 id="u-name" style="margin:0; font-size: 20px;">User</h3>
+            <p id="u-email" style="font-size: 11px; color: #777; margin-bottom: 5px;">user@gmail.com</p>
+            <div class="u-badge" id="u-status">FREE MEMBER</div>
             
             <div class="redeem-box">
-                <p style="font-size: 11px; margin-bottom: 10px; color: var(--gold);">REDEEM 30-DAY ACCESS</p>
-                <input type="text" id="redeem-input" placeholder="Enter Premium Key">
+                <p style="font-size: 12px; margin-bottom: 12px; color: var(--gold); font-weight: 700;">REDEEM PREMIUM KEY</p>
+                <input type="text" id="key-input" placeholder="Enter 30-Day Code">
                 <button class="btn btn-gold" onclick="redeemKey()">ACTIVATE NOW</button>
             </div>
 
-            <button class="btn btn-primary" style="margin-top: 30px;" onclick="window.open('https://t.me/aminezone09')">BUY KEY (TELEGRAM)</button>
-            <p onclick="auth.signOut()" style="margin-top: 20px; cursor: pointer; font-size: 13px; color: #444;">Logout Account</p>
-            <p onclick="toggleSidebar()" style="margin-top: 20px; cursor: pointer; color: #888;">Close Menu</p>
+            <button class="btn btn-red" style="margin-top: 30px;" onclick="contactAdmin()">BUY PREMIUM (TELEGRAM)</button>
+            <p onclick="auth.signOut()" style="margin-top: 25px; cursor: pointer; font-size: 13px; color: #555; font-weight: 600;">Sign Out Account</p>
+            <p onclick="toggleSidebar()" style="margin-top: 20px; cursor: pointer; color: #888; font-size: 12px;">Close Panel</p>
         </div>
     </div>
 
-    <div id="player-modal">
+    <div id="vid-modal">
         <span class="close-vid" onclick="closeVideo()">&times;</span>
-        <iframe id="vid-frame" src="" allowfullscreen></iframe>
+        <iframe id="vid-frame" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
     </div>
 
     <script>
-        // আপনার Firebase Config
+        // আপনার Firebase কনফিগ
         const firebaseConfig = {
-          apiKey: "AIzaSyBcWE5TCxamMSnJxqSm5X4mgSwSccIXcBI",
-          authDomain: "myanimeapp-8d079.firebaseapp.com",
-          databaseURL: "https://myanimeapp-8d079-default-rtdb.firebaseio.com",
-          projectId: "myanimeapp-8d079",
-          storageBucket: "myanimeapp-8d079.firebasestorage.app",
-          messagingSenderId: "37482342893",
-          appId: "1:37482342893:web:bebc7352e4bc102b725fe4"
+            apiKey: "AIzaSyBcWE5TCxamMSnJxqSm5X4mgSwSccIXcBI",
+            authDomain: "myanimeapp-8d079.firebaseapp.com",
+            databaseURL: "https://myanimeapp-8d079-default-rtdb.firebaseio.com",
+            projectId: "myanimeapp-8d079",
+            storageBucket: "myanimeapp-8d079.firebasestorage.app",
+            messagingSenderId: "37482342893",
+            appId: "1:37482342893:web:bebc7352e4bc102b725fe4"
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
@@ -136,68 +138,56 @@
                 document.getElementById('u-name').innerText = user.displayName;
                 document.getElementById('u-email').innerText = user.email;
 
-                checkPremium();
-                loadPlaylist();
-                loadAllAnime();
+                checkPremiumStatus();
+                loadHistory();
+                loadAllContent();
             } else {
                 document.getElementById('login-screen').style.display = 'flex';
                 document.getElementById('main-app').style.display = 'none';
             }
         });
 
-        // ১. প্রিমিয়াম এক্সেস চেক
-        function checkPremium() {
+        // প্রিমিয়াম স্ট্যাটাস লজিক
+        function checkPremiumStatus() {
             db.ref('users/' + currentUser.uid).on('value', snap => {
                 const data = snap.val();
                 if (data && data.premiumUntil > Date.now()) {
                     isPremium = true;
                     document.getElementById('u-status').innerText = "QUEEN PREMIUM ACTIVE";
-                    document.getElementById('u-status').style.background = "gold";
+                    document.getElementById('u-status').style.background = "#ffd700";
                 } else {
                     isPremium = false;
-                    document.getElementById('u-status').innerText = "FREE USER";
+                    document.getElementById('u-status').innerText = "FREE MEMBER";
                 }
             });
         }
 
-        // ২. কি রিডিম করা
+        // রিডিম কী ফাংশন
         function redeemKey() {
-            const key = document.getElementById('redeem-input').value.trim();
-            if(!key) return alert("Enter a key!");
+            const key = document.getElementById('key-input').value.trim();
+            if(!key) return alert("Please enter a key!");
 
             db.ref('premium_codes/' + key).once('value', snap => {
                 if (snap.exists() && snap.val().status === 'active') {
                     const expiry = Date.now() + (30 * 24 * 60 * 60 * 1000);
                     db.ref('users/' + currentUser.uid).update({ premiumUntil: expiry });
                     db.ref('premium_codes/' + key).update({ status: 'used', usedBy: currentUser.email });
-                    alert("Success! 30 Days Premium Unlocked.");
+                    alert("Awesome! 30 Days Premium Unlocked.");
                     toggleSidebar();
                 } else {
-                    alert("Invalid or Expired Key!");
+                    alert("Invalid or Expired Key! Contact RJ ROCKY.");
                 }
             });
         }
 
-        // ৩. প্লেলিস্টে সেভ করা
-        function saveToPlaylist(v) {
-            db.ref('playlists/' + currentUser.uid + '/' + btoa(v.url)).set(v);
+        // টেলিগ্রাম অটো-মেসেজ লজিক [cite: 2026-01-31]
+        function contactAdmin() {
+            const message = encodeURIComponent(`Hello RJ ROCKY,\nI want to purchase a 30-Day Premium Key.\n\nUser Detail:\nName: ${currentUser.displayName}\nEmail: ${currentUser.email}`);
+            window.open(`https://t.me/aminezone09?text=${message}`, '_blank');
         }
 
-        function loadPlaylist() {
-            db.ref('playlists/' + currentUser.uid).on('value', snap => {
-                const grid = document.getElementById('playlist-grid');
-                grid.innerHTML = "";
-                if (snap.exists()) {
-                    document.getElementById('playlist-sec').style.display = 'block';
-                    snap.forEach(child => {
-                        const v = child.val();
-                        grid.innerHTML += `<div class="card" onclick="play('${v.url}')"><img src="${v.thumbnail}"><h3>${v.title}</h3></div>`;
-                    });
-                }
-            });
-        }
-
-        function loadAllAnime() {
+        // ভিডিও থাম্বনেইল ও ডেটা লোড
+        function loadAllContent() {
             db.ref('anime').on('value', snap => {
                 const list = document.getElementById('anime-list');
                 list.innerHTML = "";
@@ -205,32 +195,61 @@
                     const v = child.val();
                     const isP = v.title.toLowerCase().includes("premium");
                     list.innerHTML += `
-                        <div class="card" onclick="watch('${v.url}', '${v.title}', '${v.thumbnail}', ${isP})">
-                            ${isP ? '<div class="prem-tag">PREMIUM</div>' : ''}
-                            <img src="${v.thumbnail}">
+                        <div class="card" onclick="watchVideo('${v.url}', '${v.title}', '${v.thumbnail}', ${isP})">
+                            ${isP ? '<div class="p-tag">PREMIUM</div>' : ''}
+                            <img src="${v.thumbnail}" onerror="this.src='https://via.placeholder.com/200x300?text=Poster+Missing'">
                             <h3>${v.title}</h3>
                         </div>`;
                 });
             });
         }
 
-        function watch(url, title, thumb, isP) {
+        // প্লে-লিস্ট/ওয়াচ হিস্ট্রি লোড
+        function loadHistory() {
+            db.ref('playlists/' + currentUser.uid).limitToLast(10).on('value', snap => {
+                const grid = document.getElementById('history-grid');
+                grid.innerHTML = "";
+                if (snap.exists()) {
+                    document.getElementById('history-sec').style.display = 'block';
+                    snap.forEach(child => {
+                        const v = child.val();
+                        grid.innerHTML += `
+                            <div class="card" onclick="playVideo('${v.url}')">
+                                <img src="${v.thumbnail}" onerror="this.src='https://via.placeholder.com/200x300?text=Poster+Missing'">
+                                <h3>${v.title}</h3>
+                            </div>`;
+                    });
+                } else {
+                    document.getElementById('history-sec').style.display = 'none';
+                }
+            });
+        }
+
+        // ভিডিও প্লে এবং প্লে-লিস্টে সেভ লজিক
+        function watchVideo(url, title, thumb, isP) {
             if (isP && !isPremium) {
-                alert("এটি প্রিমিয়াম ভিডিও। প্রোফাইল থেকে কি রিডিম করুন!");
+                alert("This is a Premium Video. Please redeem a key from your profile!");
                 toggleSidebar();
                 return;
             }
-            saveToPlaylist({url, title, thumbnail: thumb});
-            play(url);
+            // এরর ফিক্স করতে আইডি ক্লিন করা হচ্ছে
+            const cleanId = btoa(url).substring(0, 25).replace(/[^a-zA-Z0-9]/g, "");
+            db.ref('playlists/' + currentUser.uid + '/' + cleanId).set({url, title, thumbnail: thumb});
+            playVideo(url);
         }
 
-        function play(url) {
-            document.getElementById('player-modal').style.display = 'block';
-            document.getElementById('vid-frame').src = url;
+        function playVideo(url) {
+            let finalUrl = url;
+            if (url.includes("youtube.com/watch?v=")) finalUrl = url.replace("watch?v=", "embed/");
+            if (url.includes("drive.google.com")) finalUrl = url.replace("/view", "/preview");
+            
+            document.getElementById('vid-modal').style.display = 'block';
+            document.getElementById('vid-frame').src = finalUrl;
         }
 
         function toggleSidebar() { document.getElementById('side-menu').classList.toggle('active'); }
-        function closeVideo() { document.getElementById('player-modal').style.display = 'none'; document.getElementById('vid-frame').src = ""; }
+        function closeVideo() { document.getElementById('vid-modal').style.display = 'none'; document.getElementById('vid-frame').src = ""; }
     </script>
 </body>
-</html>
+                                                                                   </html>
+    
