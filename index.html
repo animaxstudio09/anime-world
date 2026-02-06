@@ -4,93 +4,79 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANIMAX PREMIUM </title>
+    <title>ANIMAX QUEEN | RJ ROCKY</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <style>
-        :root { --bg: #060606; --primary: #e50914; --card: #181818; --text: #ffffff; --gold: #ffd700; }
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
-        
-        /* Loader */
-        #loading-screen { position: fixed; width: 100%; height: 100%; background: #000; display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        :root { --bg: #060606; --primary: #e50914; --gold: #ffd700; --card: #141414; }
+        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); color: #fff; }
 
-        /* Navbar */
-        nav { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.9); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #333; }
-        .logo { color: var(--primary); font-size: 24px; font-weight: bold; }
-        .user-profile { display: flex; align-items: center; gap: 10px; }
-        .user-profile img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--primary); }
+        /* Navigation */
+        nav { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: #000; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #222; }
+        .logo { color: var(--primary); font-size: 24px; font-weight: 800; letter-spacing: 1px; }
+        
+        /* Queen Profile Icon */
+        .profile-trigger { position: relative; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .profile-trigger img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--gold); padding: 2px; }
+
+        /* Hidden Profile Dashboard */
+        .profile-dashboard { 
+            position: absolute; top: 60px; right: 0; background: #1a1a1a; width: 250px; 
+            border-radius: 15px; border: 1px solid var(--gold); padding: 20px; 
+            display: none; flex-direction: column; align-items: center; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 2000;
+        }
+        .profile-dashboard.active { display: flex; animation: fadeIn 0.3s ease; }
+        .profile-dashboard img { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--gold); margin-bottom: 10px; }
+        .profile-dashboard h3 { margin: 5px 0; font-size: 16px; color: #fff; }
+        .profile-dashboard p { margin: 0; font-size: 12px; color: #aaa; margin-bottom: 15px; }
+        .badge { background: var(--gold); color: #000; padding: 3px 12px; border-radius: 20px; font-size: 10px; font-weight: bold; margin-bottom: 20px; }
+
+        .dash-btn { width: 100%; padding: 10px; margin-top: 5px; border-radius: 8px; border: none; background: #333; color: #fff; cursor: pointer; font-size: 13px; font-weight: 600; }
+        .logout-btn { background: var(--primary); margin-top: 15px; }
 
         /* Content Grid */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding: 20px 5%; }
-        .card { background: var(--card); border-radius: 10px; overflow: hidden; border: 1px solid #222; cursor: pointer; transition: 0.3s; position: relative; }
-        .card:hover { transform: scale(1.05); border-color: var(--primary); }
+        .card { background: var(--card); border-radius: 10px; overflow: hidden; cursor: pointer; position: relative; border: 1px solid #222; transition: 0.3s; }
+        .card:hover { transform: scale(1.05); border-color: var(--gold); }
         .card img { width: 100%; height: 230px; object-fit: cover; }
-        .card h3 { padding: 10px; font-size: 13px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .premium-tag { position: absolute; top: 10px; left: 10px; background: var(--gold); color: #000; padding: 3px 8px; font-size: 10px; font-weight: bold; border-radius: 4px; }
+        .card h3 { padding: 10px; font-size: 13px; margin: 0; }
 
-        /* Login Screen */
-        #login-screen { height: 100vh; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(rgba(0,0,0,0.8), #060606), url('https://wallpaperaccess.com/full/19968.jpg'); background-size: cover; }
-        .btn { background: var(--primary); color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
-        .btn:hover { background: #b20710; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Modals */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: #1a1a1a; padding: 30px; border-radius: 15px; text-align: center; width: 85%; max-width: 400px; border: 1px solid var(--gold); }
-        .modal-content input { width: 90%; padding: 12px; margin: 20px 0; border-radius: 5px; border: none; font-size: 16px; text-align: center; background: #333; color: #fff; }
-
-        #player-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; }
-        .close-btn { position: absolute; top: 20px; right: 30px; font-size: 40px; color: #fff; cursor: pointer; }
-        iframe { width: 100%; height: 100%; border: none; }
-
-        footer { text-align: center; padding: 40px; }
-        .tg-buy-btn { background: #0088cc; color: white; padding: 12px 25px; border-radius: 30px; text-decoration: none; font-weight: bold; display: inline-block; }
+        #login-screen { height: 100vh; display: none; flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle, #222, #000); }
     </style>
 </head>
 <body>
 
-    <div id="loading-screen"><h2>Loading ANIMAX...</h2></div>
-
     <div id="login-screen">
-        <h1 style="color:var(--primary); font-size: 45px; margin-bottom:10px;">ANIMAX PRO</h1>
-        <p style="color:#ccc; margin-bottom:30px;">Login with your Google account to continue</p>
-        <button class="btn" onclick="signIn()">LOGIN WITH GOOGLE</button>
+        <h1 style="color:var(--primary); font-size: 50px;">ANIMAX</h1>
+        <button onclick="signIn()" style="padding:15px 40px; background:var(--primary); color:#fff; border:none; border-radius:30px; font-weight:bold; cursor:pointer;">LOGIN WITH GOOGLE</button>
     </div>
 
     <div id="main-app" style="display:none;">
         <nav>
             <div class="logo">ANIMAX</div>
-            <div class="user-profile" id="user-ui"></div>
+            <div class="profile-trigger" onclick="toggleDashboard()">
+                <img id="nav-user-img" src="" alt="User">
+                <div class="profile-dashboard" id="dash">
+                    <img id="dash-user-img" src="" alt="User">
+                    <h3 id="user-name">User Name</h3>
+                    <p id="user-email">user@gmail.com</p>
+                    <div class="badge">QUEEN MEMBER</div>
+                    <button class="dash-btn" onclick="window.open('https://t.me/aminezone09')">Contact Admin</button>
+                    <button class="dash-btn logout-btn" onclick="signOut()">Logout Account</button>
+                </div>
+            </div>
         </nav>
 
         <div class="grid" id="anime-list"></div>
-
-        <footer>
-            <a href="#" id="tg-link" class="tg-buy-btn">BUY PREMIUM (1 MONTH)</a>
-            <p style="margin-top:20px; color:#555; cursor:pointer;" onclick="signOut()">Logout</p>
-        </footer>
-    </div>
-
-    <div id="premium-modal" class="modal">
-        <div class="modal-content">
-            <h2 style="color:var(--gold);">Premium Content</h2>
-            <p style="font-size:14px; color:#ccc;">Enter your 30-day premium code:</p>
-            <input type="text" id="code-input" placeholder="XXXX-XXXX">
-            <br>
-            <button class="btn" style="background:var(--gold); color:#000;" onclick="verifyCode()">UNLOCK</button>
-            <p style="margin-top:15px; color:#666; cursor:pointer;" onclick="closeModal()">Close</p>
-        </div>
-    </div>
-
-    <div id="player-modal">
-        <span class="close-btn" onclick="closeVideo()">&times;</span>
-        <iframe id="video-frame" src="" allowfullscreen></iframe>
     </div>
 
     <script>
-        // Firebase Config [cite: 2026-02-06]
         const firebaseConfig = {
             apiKey: "AIzaSyBcWE5TCxamMSnJxqSm5X4mgSwSccIXcBI",
             authDomain: "myanimeapp-8d079.firebaseapp.com",
@@ -104,31 +90,21 @@
         const auth = firebase.auth();
         const db = firebase.database();
 
-        let currentUser = null;
-        let selectedUrl = "";
-
-        // ১. লগইন মেথড ফিক্স (Popup ব্যবহার করা হয়েছে যা সবথেকে বেশি কাজ করে)
         function signIn() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider).catch(error => {
-                alert("Login Failed: " + error.message);
-            });
+            auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
         }
 
-        // ২. রিয়েল-টাইম অথেনটিকেশন চেক
         auth.onAuthStateChanged(user => {
-            document.getElementById('loading-screen').style.display = 'none';
             if (user) {
-                currentUser = user;
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('main-app').style.display = 'block';
-                document.getElementById('user-ui').innerHTML = `
-                    <span style="font-size:12px;">${user.displayName}</span>
-                    <img src="${user.photoURL}">`;
                 
-                const msg = encodeURIComponent(`Hello RJ ROCKY,\nI want to buy a 1 Month Premium Pack.\nMy Email: ${user.email}`);
-                document.getElementById('tg-link').href = `https://t.me/aminezone09?text=${msg}`;
-                
+                // প্রোফাইল ডাটা সেট
+                document.getElementById('nav-user-img').src = user.photoURL;
+                document.getElementById('dash-user-img').src = user.photoURL;
+                document.getElementById('user-name').innerText = user.displayName;
+                document.getElementById('user-email').innerText = user.email;
+
                 loadVideos();
             } else {
                 document.getElementById('login-screen').style.display = 'flex';
@@ -142,57 +118,23 @@
                 list.innerHTML = "";
                 snap.forEach(child => {
                     const val = child.val();
-                    const isPremium = val.title.toLowerCase().includes("premium");
-                    list.innerHTML += `
-                        <div class="card" onclick="checkAccess('${val.url}', ${isPremium})">
-                            ${isPremium ? '<div class="premium-tag">PREMIUM</div>' : ''}
-                            <img src="${val.thumbnail}">
-                            <h3>${val.title}</h3>
-                        </div>`;
+                    list.innerHTML += `<div class="card"><img src="${val.thumbnail}"><h3>${val.title}</h3></div>`;
                 });
             });
         }
 
-        function checkAccess(url, isPremium) {
-            selectedUrl = url;
-            if (isPremium) {
-                document.getElementById('premium-modal').style.display = 'flex';
-            } else {
-                playVideo(url);
+        function toggleDashboard() {
+            document.getElementById('dash').classList.toggle('active');
+        }
+
+        // ড্যাশবোর্ডের বাইরে ক্লিক করলে বন্ধ হবে
+        window.onclick = function(event) {
+            if (!event.target.closest('.profile-trigger')) {
+                document.getElementById('dash').classList.remove('active');
             }
         }
 
-        function verifyCode() {
-            const code = document.getElementById('code-input').value.trim();
-            if (!code) return alert("Enter code!");
-
-            db.ref('premium_codes/' + code).once('value', snap => {
-                if (snap.exists()) {
-                    const data = snap.val();
-                    const now = Date.now();
-
-                    if (now > data.expiryDate) return alert("কোডটির মেয়াদ শেষ!");
-                    if (data.status === 'used' && data.usedBy !== currentUser.email) return alert("এই কোডটি অন্য একজন ব্যবহার করছেন!");
-
-                    db.ref('premium_codes/' + code).update({ status: 'used', usedBy: currentUser.email });
-                    alert("Success! Access Granted.");
-                    closeModal();
-                    playVideo(selectedUrl);
-                } else {
-                    alert("ভুল কোড!");
-                }
-            });
-        }
-
-        function playVideo(url) {
-            document.getElementById('player-modal').style.display = 'block';
-            document.getElementById('video-frame').src = url;
-        }
-
         function signOut() { auth.signOut(); }
-        function closeModal() { document.getElementById('premium-modal').style.display = 'none'; }
-        function closeVideo() { document.getElementById('player-modal').style.display = 'none'; document.getElementById('video-frame').src = ""; }
     </script>
 </body>
-    </html>
-                
+</html>
