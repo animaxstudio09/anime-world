@@ -1,261 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="referrer" content="no-referrer-when-downgrade">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANIMAX PREMIUM | RJ ROCKY</title>
+    <title>ANIMAX | Premium Streaming</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --bg: #060606; --primary: #e50914; --gold: #ffd700; --card: #181818; }
-        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); color: #fff; overflow-x: hidden; }
+        :root { --primary: #00d2ff; --bg: #0f0f0f; --card-bg: #1a1a1a; --gold: #ffd700; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: #fff; margin: 0; padding-bottom: 50px; overflow-x: hidden; }
 
-        /* Login Screen with Anime Background */
-        #login-screen { 
-            height: 100vh; display: none; flex-direction: column; justify-content: center; align-items: center;
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.9)), url('https://images.alphacoders.com/132/1327173.png');
-            background-size: cover; background-position: center; text-align: center;
-        }
-        .login-card { background: rgba(0,0,0,0.7); padding: 40px; border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        /* Navbar */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 12px 5%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; border-bottom: 1px solid #222; }
+        .logo-img { height: 40px; cursor: pointer; }
+        .buy-btn { background: transparent; border: 2px solid var(--gold); color: var(--gold); padding: 6px 15px; border-radius: 20px; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.3s; }
+        .buy-btn:hover { background: var(--gold); color: #000; }
 
-        /* Navigation */
-        nav { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.95); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #222; }
-        .logo { color: var(--primary); font-size: 26px; font-weight: 800; letter-spacing: 1px; }
-        .profile-trigger img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--gold); padding: 2px; cursor: pointer; }
-
-        /* Hero Banner */
-        .hero-banner {
-            width: 90%; margin: 20px auto; height: 200px; border-radius: 15px;
-            background: linear-gradient(to right, rgba(0,0,0,0.9), transparent), url('https://images7.alphacoders.com/613/613926.jpg');
-            background-size: cover; background-position: center;
-            display: flex; flex-direction: column; justify-content: center; padding: 25px; box-sizing: border-box;
-            border: 1px solid #333;
-        }
+        /* Hero Slider */
+        .hero-container { margin-top: 70px; position: relative; width: 90%; margin-left: 5%; height: 300px; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .hero-banner { width: 100%; height: 100%; background-size: cover; background-position: center; display: flex; flex-direction: column; justify-content: center; padding: 0 40px; transition: 1s ease-in-out; position: absolute; box-sizing: border-box; }
+        .hero-banner::after { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
+        .hero-content { position: relative; z-index: 2; max-width: 500px; }
+        .hero-title { font-size: 28px; font-weight: 800; text-transform: uppercase; margin: 0; line-height: 1.2; }
 
         /* Search Bar */
-        .search-container { padding: 10px 5%; }
-        #search-input {
-            width: 100%; padding: 12px 25px; border-radius: 30px; border: 1px solid #333;
-            background: #111; color: #fff; outline: none; font-size: 14px; transition: 0.3s;
-        }
-        #search-input:focus { border-color: var(--primary); }
+        .search-section { padding: 25px 5% 10px; }
+        #searchBar { width: 100%; padding: 14px; border-radius: 12px; background: #222; border: 1px solid #333; color: #fff; font-size: 15px; outline: none; }
 
-        /* Grid System */
-        .section-title { padding: 20px 5% 5px; font-size: 18px; color: var(--gold); font-weight: 700; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; padding: 15px 5%; }
-        .card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid #222; cursor: pointer; position: relative; transition: 0.3s; }
+        /* Anime Grid */
+        .section-label { padding: 10px 5%; font-size: 16px; font-weight: 600; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding: 0 5%; }
+        .card { background: var(--card-bg); border-radius: 15px; overflow: hidden; transition: 0.3s; position: relative; cursor: pointer; border: 1px solid #222; }
         .card:hover { transform: translateY(-5px); border-color: var(--primary); }
-        .card img { width: 100%; height: 210px; object-fit: cover; }
-        .card h3 { padding: 10px; font-size: 12px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .p-tag { position: absolute; top: 10px; left: 10px; background: var(--gold); color: #000; padding: 3px 8px; font-size: 10px; font-weight: 800; border-radius: 4px; }
+        .card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
+        .card-info { padding: 12px; }
+        .card-info h3 { font-size: 13px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .view-count { font-size: 11px; color: #888; margin-top: 5px; display: flex; align-items: center; gap: 5px; }
 
-        /* Sidebar - Queen Dashboard */
-        .sidebar { position: fixed; top: 0; right: -320px; width: 300px; height: 100%; background: #111; z-index: 2000; transition: 0.4s; padding: 40px 20px; border-left: 2.5px solid var(--gold); box-sizing: border-box; text-align: center; }
-        .sidebar.active { right: 0; }
-        .sidebar img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--gold); margin-bottom: 15px; }
+        /* Badges */
+        .p-badge { position: absolute; top: 10px; right: 10px; background: var(--gold); color: #000; font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 5px; z-index: 2; }
 
-        /* Buttons */
-        .btn { width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; }
-        .btn-red { background: var(--primary); color: #fff; }
-        .btn-gold { background: var(--gold); color: #000; }
+        /* Player Overlay */
+        #video-overlay { position: fixed; inset: 0; background: #000; z-index: 2000; display: none; flex-direction: column; }
+        iframe { width: 100%; height: 60vh; border: none; }
+        .close-vid { padding: 15px; background: #e50914; text-align: center; font-weight: bold; cursor: pointer; }
 
-        /* Video Modal */
-        #player-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 4000; }
-        .close-vid { position: absolute; top: 20px; right: 30px; font-size: 40px; color: #fff; cursor: pointer; }
-        iframe { width: 100%; height: 100%; border: none; }
+        /* Premium Modal */
+        #p-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-box { background: #161616; padding: 30px; border-radius: 20px; text-align: center; border: 1px solid var(--gold); max-width: 350px; }
+        .modal-box input { width: 100%; padding: 12px; margin: 15px 0; border-radius: 10px; border: 1px solid #333; background: #000; color: #fff; text-align: center; box-sizing: border-box; }
+        .tg-btn { width: 100%; padding: 12px; background: #0088cc; color: #fff; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="login-screen">
-        <div class="login-card">
-            <h1 style="color:var(--primary); font-size: 40px; margin:0;">ANIMAX</h1>
-            <p style="margin-bottom:30px; font-size:14px; color:#ccc;">Exclusive Anime by RJ ROCKY</p>
-            <button class="btn btn-red" onclick="signIn()" style="width:auto; padding:12px 40px; border-radius:50px;">LOGIN WITH GOOGLE</button>
-        </div>
-    </div>
+    <nav>
+        <img src="https://i.ibb.co/v4m0f5h/animax-logo-2.png" class="logo-img" onclick="location.reload()">
+        <button class="buy-btn" onclick="showModal()">BUY PREMIUM</button>
+    </nav>
 
-    <div id="main-app" style="display:none;">
-        <nav>
-            <div class="logo">ANIMAX</div>
-            <div class="profile-trigger" onclick="toggleSidebar()"><img id="u-img" src=""></div>
-        </nav>
-
-        <div class="hero-banner">
-            <h2 style="margin:0; color:var(--gold);">Solo Leveling</h2>
-            <p style="font-size:12px; margin:5px 0 15px;">Weakest hunter to strongest King.</p>
-            <button class="btn btn-red" style="width:auto; padding:8px 25px; font-size:12px;">WATCH NOW</button>
-        </div>
-
-        <div class="search-container">
-            <input type="text" id="search-input" placeholder="Search anime..." onkeyup="searchAnime()">
-        </div>
-
-        <div id="history-sec" style="display:none;">
-            <div class="section-title">CONTINUE WATCHING</div>
-            <div class="grid" id="history-grid"></div>
-        </div>
-
-        <div class="section-title">ALL ANIME</div>
-        <div class="grid" id="anime-list"></div>
-
-        <div class="sidebar" id="side-menu">
-            <img id="d-img" src="">
-            <h3 id="u-name" style="margin:0;">User</h3>
-            <div id="u-status" style="color:var(--gold); font-size:12px; margin-bottom:20px;">FREE MEMBER</div>
-            
-            <div style="background:#1a1a1a; padding:15px; border-radius:12px; border:1.5px dashed var(--gold);">
-                <p style="font-size:11px; color:var(--gold); margin-bottom:10px;">REDEEM 30-DAY KEY</p>
-                <input type="text" id="key-input" placeholder="Enter Key" style="width:100%; padding:10px; background:#000; border:1px solid #333; color:#fff; text-align:center; margin-bottom:10px; border-radius:5px;">
-                <button class="btn btn-gold" onclick="redeemKey()">ACTIVATE NOW</button>
+    <div class="hero-container">
+        <div class="hero-banner" id="banner">
+            <div class="hero-content">
+                <h2 class="hero-title" id="banner-title">Exclusive Adventure</h2>
             </div>
-
-            <button class="btn btn-red" style="margin-top:30px;" onclick="contactAdmin()">BUY PREMIUM (TELEGRAM)</button>
-            <p onclick="auth.signOut()" style="margin-top:30px; cursor:pointer; color:#444; font-size:13px;">Logout Account</p>
         </div>
     </div>
 
-    <div id="player-modal">
-        <span class="close-vid" onclick="closeVideo()">&times;</span>
-        <iframe id="vid-frame" src="" allowfullscreen></iframe>
+    <div class="search-section">
+        <input type="text" id="searchBar" placeholder="Search Anime..." onkeyup="searchAnime()">
     </div>
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyBcWE5TCxamMSnJxqSm5X4mgSwSccIXcBI",
-            authDomain: "myanimeapp-8d079.firebaseapp.com",
-            databaseURL: "https://myanimeapp-8d079-default-rtdb.firebaseio.com",
-            projectId: "myanimeapp-8d079",
-            storageBucket: "myanimeapp-8d079.firebasestorage.app",
-            messagingSenderId: "37482342893",
-            appId: "1:37482342893:web:bebc7352e4bc102b725fe4"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.database();
+    <div class="section-label">Explore Anime</div>
+    <div class="grid" id="anime-list">
+        </div>
 
-        let currentUser = null;
-        let isPremium = false;
-        let allAnime = [];
+    <div id="video-overlay">
+        <div class="close-vid" onclick="closePlayer()">CLOSE PLAYER</div>
+        <iframe id="player" src="" allowfullscreen></iframe>
+        <div style="padding: 20px;"><h2 id="play-title">Title</h2></div>
+    </div>
 
-        function signIn() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+    <div id="p-modal">
+        <div class="modal-box">
+            <h2 style="color:var(--gold)">PREMIUM ACCESS</h2>
+            <p style="font-size:13px; color:#aaa;">Enter your key to unlock or purchase via Telegram.</p>
+            <input type="text" id="key-input" placeholder="ANIMAX-XXXXXX">
+            <button class="buy-btn" style="width:100%; padding:12px;" onclick="activateKey()">ACTIVATE KEY</button>
+            <button class="tg-btn" onclick="buyKey()">PURCHASE VIA TELEGRAM</button>
+            <p style="font-size:11px; margin-top:15px; cursor:pointer;" onclick="hideModal()">Close</p>
+        </div>
+    </div>
 
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                currentUser = user;
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('main-app').style.display = 'block';
-                document.getElementById('u-img').src = user.photoURL;
-                document.getElementById('d-img').src = user.photoURL;
-                document.getElementById('u-name').innerText = user.displayName;
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBcWE5TCxamMSnJxqSm5X4mgSwSccIXcBI",
+        authDomain: "myanimeapp-8d079.firebaseapp.com",
+        databaseURL: "https://myanimeapp-8d079-default-rtdb.firebaseio.com",
+        projectId: "myanimeapp-8d079",
+        storageBucket: "myanimeapp-8d079.firebasestorage.app",
+        messagingSenderId: "37482342893",
+        appId: "1:37482342893:web:bebc7352e4bc102b725fe4"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-                // Online tracking
-                const onlineRef = db.ref('online_users/' + user.uid);
-                onlineRef.set({ name: user.displayName });
-                onlineRef.onDisconnect().remove();
+    let isP = localStorage.getItem('isPremium') === 'true';
 
-                checkPremium();
-                loadHistory();
-                loadAnime();
-            } else {
-                document.getElementById('login-screen').style.display = 'flex';
-                document.getElementById('main-app').style.display = 'none';
-            }
-        });
+    // --- Slider ---
+    let slides = [], cur = 0;
+    db.ref('settings/slider').on('value', snap => {
+        slides = snap.val() || [];
+        if(slides.length) startSlider();
+    });
 
-        function checkPremium() {
-            db.ref('users/' + currentUser.uid).on('value', snap => {
-                const data = snap.val();
-                if (data && data.premiumUntil > Date.now()) {
-                    isPremium = true;
-                    document.getElementById('u-status').innerText = "QUEEN PREMIUM ACTIVE";
-                }
-            });
-        }
+    function startSlider() {
+        const b = slides[cur];
+        const banner = document.getElementById('banner');
+        banner.style.backgroundImage = `linear-gradient(to right, rgba(0,0,0,0.8), transparent), url('${b.img}')`;
+        document.getElementById('banner-title').innerText = b.title;
+        cur = (cur + 1) % slides.length;
+        setTimeout(startSlider, 5000);
+    }
 
-        function loadAnime() {
-            db.ref('anime').on('value', snap => {
-                allAnime = [];
-                snap.forEach(child => { allAnime.push(child.val()); });
-                displayAnime(allAnime);
-            });
-        }
-
-        function displayAnime(data) {
-            const list = document.getElementById('anime-list');
-            list.innerHTML = "";
-            data.forEach(v => {
-                const isP = v.title.toLowerCase().includes("premium");
-                list.innerHTML += `
-                    <div class="card" onclick="watch('${v.url}', '${v.title}', '${v.thumbnail}', ${isP})">
-                        ${isP ? '<div class="p-tag">PREMIUM</div>' : ''}
-                        <img src="${v.thumbnail}" onerror="this.src='https://via.placeholder.com/200x300'">
+    // --- Load Anime & Search ---
+    db.ref('anime').on('value', snap => {
+        const list = document.getElementById('anime-list');
+        list.innerHTML = "";
+        snap.forEach(child => {
+            const v = child.val();
+            const vKey = child.key;
+            list.innerHTML += `
+                <div class="card anime-item" data-title="${v.title.toLowerCase()}" onclick="playVideo('${v.url}', '${v.title}', '${v.type}', '${vKey}')">
+                    ${v.type === 'premium' ? '<div class="p-badge">PREMIUM</div>' : ''}
+                    <img src="${v.thumbnail}">
+                    <div class="card-info">
                         <h3>${v.title}</h3>
-                    </div>`;
-            });
-        }
+                        <div class="view-count">👁️ ${(v.views || 0)} Views</div>
+                    </div>
+                </div>`;
+        });
+    });
 
-        function searchAnime() {
-            const q = document.getElementById('search-input').value.toLowerCase();
-            const filtered = allAnime.filter(v => v.title.toLowerCase().includes(q));
-            displayAnime(filtered);
+    function searchAnime() {
+        let input = document.getElementById('searchBar').value.toLowerCase();
+        let items = document.getElementsByClassName('anime-item');
+        for (let i = 0; i < items.length; i++) {
+            items[i].style.display = items[i].getAttribute('data-title').includes(input) ? "block" : "none";
         }
+    }
 
-        function watch(url, title, thumb, isP) {
-            if (isP && !isPremium) return alert("Unlock Premium to watch this!");
-            const safeId = btoa(url).substring(0,20).replace(/[^a-zA-Z0-9]/g, "");
-            db.ref('playlists/' + currentUser.uid + '/' + safeId).set({url, title, thumbnail: thumb});
-            play(url);
+    // --- Unique View & Player ---
+    function playVideo(url, title, type, vKey) {
+        if(type === 'premium' && !isP) {
+            showModal();
+        } else {
+            document.getElementById('video-overlay').style.display = 'flex';
+            document.getElementById('player').src = url;
+            document.getElementById('play-title').innerText = title;
+
+            // ইউনিক ভিউ লজিক
+            let viewed = JSON.parse(localStorage.getItem('viewed_vids') || "[]");
+            if(!viewed.includes(vKey)) {
+                db.ref('anime/' + vKey + '/views').transaction(c => (c || 0) + 1);
+                viewed.push(vKey);
+                localStorage.setItem('viewed_vids', JSON.stringify(viewed));
+            }
         }
+    }
 
-        function loadHistory() {
-            db.ref('playlists/' + currentUser.uid).limitToLast(6).on('value', snap => {
-                const grid = document.getElementById('history-grid');
-                grid.innerHTML = "";
-                if (snap.exists()) {
-                    document.getElementById('history-sec').style.display = 'block';
-                    snap.forEach(child => {
-                        const v = child.val();
-                        grid.innerHTML += `<div class="card" onclick="play('${v.url}')"><img src="${v.thumbnail}"><h3>${v.title}</h3></div>`;
-                    });
-                }
-            });
-        }
+    function closePlayer() {
+        document.getElementById('video-overlay').style.display = 'none';
+        document.getElementById('player').src = "";
+    }
 
-        function play(url) {
-            let fUrl = url;
-            if (url.includes("youtube.com/watch?v=")) fUrl = url.replace("watch?v=", "embed/");
-            if (url.includes("drive.google.com")) fUrl = url.replace("/view", "/preview");
-            document.getElementById('player-modal').style.display = 'block';
-            document.getElementById('vid-frame').src = fUrl;
-        }
+    // --- Premium & Telegram ---
+    function showModal() { document.getElementById('p-modal').style.display = 'flex'; }
+    function hideModal() { document.getElementById('p-modal').style.display = 'none'; }
 
-        function redeemKey() {
-            const key = document.getElementById('key-input').value.trim();
-            db.ref('premium_codes/' + key).once('value', snap => {
-                if (snap.exists() && snap.val().status === 'active') {
-                    db.ref('users/' + currentUser.uid).update({ premiumUntil: Date.now() + 2592000000 });
-                    db.ref('premium_codes/' + key).update({ status: 'used', usedBy: currentUser.email });
-                    alert("30 Days Premium Unlocked!");
-                    toggleSidebar();
-                } else { alert("Invalid Key!"); }
-            });
-        }
+    function activateKey() {
+        const k = document.getElementById('key-input').value.trim();
+        db.ref('premium_codes/'+k).once('value', snap => {
+            if(snap.val() && snap.val().status === 'active') {
+                db.ref('premium_codes/'+k).update({status:'used'});
+                localStorage.setItem('isPremium', 'true');
+                alert("Premium Activated!"); location.reload();
+            } else alert("Invalid Key!");
+        });
+    }
 
-        function contactAdmin() {
-            const msg = encodeURIComponent(`I want to buy Premium.\nName: ${currentUser.displayName}\nEmail: ${currentUser.email}`);
-            window.open(`https://t.me/aminezone09?text=${msg}`, '_blank');
-        }
+    function buyKey() {
+        const userName = "GAMING Rocky"; 
+        const userEmail = "freefire368401@gmail.com";
+        const msg = `Hello RJ ROCKY,
+I want to purchase a 30-Day Premium Key.
 
-        function toggleSidebar() { document.getElementById('side-menu').classList.toggle('active'); }
-        function closeVideo() { document.getElementById('player-modal').style.display = 'none'; document.getElementById('vid-frame').src = ""; }
-    </script>
+User Detail:
+Name: ${userName}
+Email: ${userEmail}`;
+        window.open(`https://t.me/aminezone09?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+</script>
 </body>
-                </html>
-                
+        </html>
+            
