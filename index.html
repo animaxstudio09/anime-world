@@ -4,64 +4,85 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RJ ROCKY - Official App</title>
+    <title>ANIMAX PREMIUM </title>
     
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
 
     <style>
-        :root { --bg: #0b0c10; --primary: #f47521; --card: #1f2833; --text: #ffffff; }
-        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); }
+        :root { --bg: #060606; --primary: #e50914; --card: #181818; --text: #ffffff; --gold: #ffd700; }
+        body { margin: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
         
-        /* Loading Screen */
-        #loader { height: 100vh; display: flex; justify-content: center; align-items: center; background: #000; position: fixed; width: 100%; z-index: 9999; }
+        /* Navbar */
+        nav { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.9); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #333; }
+        .logo { color: var(--primary); font-size: 24px; font-weight: bold; letter-spacing: 1px; }
+        .user-profile { display: flex; align-items: center; gap: 10px; }
+        .user-profile img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--primary); }
 
-        /* Login Screen */
-        #login-screen { height: 100vh; display: none; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(rgba(0,0,0,0.8), #0b0c10), url('https://wallpaperaccess.com/full/19968.jpg'); background-size: cover; text-align: center; }
-        .login-btn { padding: 15px 40px; background: var(--primary); color: #000; border: none; border-radius: 50px; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 20px rgba(244, 117, 33, 0.4); }
+        /* Search Bar */
+        .search-container { padding: 20px 5%; text-align: center; }
+        #search-input { width: 80%; max-width: 500px; padding: 12px 20px; border-radius: 25px; border: 1px solid #444; background: #111; color: #fff; outline: none; }
 
-        /* Main Dashboard */
-        #main-app { display: none; }
-        nav { padding: 15px 5%; background: #111; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 100; }
-        .user-profile { display: flex; align-items: center; gap: 10px; background: #222; padding: 5px 12px; border-radius: 25px; }
-        .user-profile img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--primary); }
-        
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 20px 5%; }
-        .card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid #333; cursor: pointer; transition: 0.3s; }
-        .card:hover { transform: scale(1.03); border-color: var(--primary); }
-        .card img { width: 100%; height: 220px; object-fit: cover; }
-        .card h3 { padding: 10px; margin: 0; font-size: 13px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* Content Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding: 20px 5%; }
+        .card { background: var(--card); border-radius: 10px; overflow: hidden; border: 1px solid #222; cursor: pointer; transition: 0.3s; position: relative; }
+        .card:hover { transform: scale(1.05); border-color: var(--primary); }
+        .card img { width: 100%; height: 230px; object-fit: cover; }
+        .card h3 { padding: 10px; font-size: 13px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .premium-tag { position: absolute; top: 10px; left: 10px; background: var(--gold); color: #000; padding: 3px 8px; font-size: 10px; font-weight: bold; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
 
-        /* Floating Contact Button */
-        .tg-float { position: fixed; bottom: 20px; right: 20px; background: #0088cc; color: white; padding: 12px 20px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 99; }
+        /* Modals */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-content { background: #1a1a1a; padding: 30px; border-radius: 15px; text-align: center; width: 85%; max-width: 400px; border: 1px solid var(--gold); }
+        .modal-content input { width: 90%; padding: 12px; margin: 20px 0; border-radius: 5px; border: none; font-size: 16px; text-align: center; }
+        .btn { background: var(--primary); color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 16px; }
 
         /* Video Player */
-        #player-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; }
-        .close-btn { position: absolute; top: 10px; right: 20px; font-size: 35px; color: #fff; z-index: 1001; cursor: pointer; }
+        #player-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; }
+        .close-btn { position: absolute; top: 20px; right: 30px; font-size: 40px; color: #fff; cursor: pointer; z-index: 3001; }
         iframe { width: 100%; height: 100%; border: none; }
+
+        /* Footer Telegram */
+        footer { text-align: center; padding: 40px; margin-top: 20px; }
+        .tg-buy-btn { background: #0088cc; color: white; padding: 15px 25px; border-radius: 30px; text-decoration: none; font-weight: bold; display: inline-block; box-shadow: 0 5px 15px rgba(0,136,204,0.3); }
     </style>
 </head>
 <body>
 
-    <div id="loader"><h2>Loading...</h2></div>
-
-    <div id="login-screen">
-        <h1 style="font-size: 40px; color: var(--primary); margin-bottom: 10px;">RJ ROCKY</h1>
-        <p style="margin-bottom: 30px;">Premium Anime & Movies Experience</p>
-        <button class="login-btn" onclick="signIn()">LOGIN WITH GOOGLE</button>
+    <div id="login-screen" style="height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+        <h1 style="color:var(--primary); font-size: 45px; margin-bottom:10px;">ANIMAX PRO</h1>
+        <p style="color:#aaa; margin-bottom:30px;">Login to enjoy premium anime world</p>
+        <button class="btn" onclick="signIn()">LOGIN WITH GOOGLE</button>
     </div>
 
-    <div id="main-app">
+    <div id="main-app" style="display:none;">
         <nav>
-            <h2 style="margin: 0; font-size: 20px; color: var(--primary);">ANIMAX</h2>
-            <div class="user-profile" id="user-display"></div>
+            <div class="logo">ANIMAX</div>
+            <div class="user-profile" id="user-ui"></div>
         </nav>
 
-        <div class="grid" id="video-list"></div>
-        
-        <a href="https://T.me/aminezone09" class="tg-float" target="_blank">Contact Admin</a>
-        <p style="text-align: center; padding: 20px; color: #555;" onclick="signOut()">Logout Account</p>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search movies or anime..." onkeyup="search()">
+        </div>
+
+        <div class="grid" id="anime-list"></div>
+
+        <footer>
+            <a href="#" id="tg-link" class="tg-buy-btn">BUY PREMIUM PACK (1 MONTH)</a>
+            <p style="margin-top:20px; color:#555; cursor:pointer;" onclick="auth.signOut()">Logout Account</p>
+        </footer>
+    </div>
+
+    <div id="premium-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="color:var(--gold);">Premium Content</h2>
+            <p style="font-size:14px; color:#ccc;">এই ভিডিওটি দেখতে ১ মাসের প্রিমিয়াম কোডটি এখানে দিন।</p>
+            <input type="text" id="code-input" placeholder="Enter 30-Day Key">
+            <br>
+            <button class="btn" style="background:var(--gold); color:#000;" onclick="verifyCode()">UNLOCK ACCESS</button>
+            <p style="margin-top:15px; color:#666; cursor:pointer;" onclick="closeModal()">Close</p>
+        </div>
     </div>
 
     <div id="player-modal">
@@ -70,6 +91,7 @@
     </div>
 
     <script>
+        // Firebase Config [cite: 2026-02-06]
         const firebaseConfig = {
             apiKey: "AIzaSyBcWE5TCxamMSnJxqSm5X4mgSwSccIXcBI",
             authDomain: "myanimeapp-8d079.firebaseapp.com",
@@ -79,49 +101,97 @@
             messagingSenderId: "37482342893",
             appId: "1:37482342893:web:bebc7352e4bc102b725fe4"
         };
-
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.database();
 
-        // অ্যাপের ভেতরে কাজ করানোর জন্য Redirect মেথড ব্যবহার করা হয়েছে [cite: 2026-02-06]
+        let currentUser = null;
+        let selectedUrl = "";
+        let allData = [];
+
         function signIn() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithRedirect(provider);
+            auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
         }
 
-        // লগইন চেক
-        auth.getRedirectResult().catch(e => console.log(e.message));
-
         auth.onAuthStateChanged(user => {
-            document.getElementById('loader').style.display = 'none';
             if (user) {
+                currentUser = user;
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('main-app').style.display = 'block';
-                document.getElementById('user-display').innerHTML = `
-                    <span style="font-size: 12px;">${user.displayName}</span>
-                    <img src="${user.photoURL}">
-                `;
-                loadContent();
+                document.getElementById('user-ui').innerHTML = `
+                    <span style="font-size:12px;">${user.displayName}</span>
+                    <img src="${user.photoURL}">`;
+                
+                // টেলিগ্রাম অটো মেসেজ সেটআপ [cite: 2026-01-31]
+                const msg = encodeURIComponent(`Hello RJ ROCKY,\nI want to buy a 1 Month Premium Pack.\nMy Email: ${user.email}`);
+                document.getElementById('tg-link').href = `https://t.me/aminezone09?text=${msg}`;
+                
+                loadVideos();
             } else {
                 document.getElementById('login-screen').style.display = 'flex';
                 document.getElementById('main-app').style.display = 'none';
             }
         });
 
-        function loadContent() {
-            const list = document.getElementById('video-list');
+        function loadVideos() {
             db.ref('anime').on('value', snap => {
+                allData = [];
+                const list = document.getElementById('anime-list');
                 list.innerHTML = "";
                 snap.forEach(child => {
                     const val = child.val();
+                    allData.push(val);
+                    const isPremium = val.title.toLowerCase().includes("premium");
                     list.innerHTML += `
-                        <div class="card" onclick="playVideo('${val.url}')">
+                        <div class="card" onclick="checkAccess('${val.url}', ${isPremium})">
+                            ${isPremium ? '<div class="premium-tag">PREMIUM</div>' : ''}
                             <img src="${val.thumbnail}">
                             <h3>${val.title}</h3>
-                        </div>
-                    `;
+                        </div>`;
                 });
+            });
+        }
+
+        function checkAccess(url, isPremium) {
+            selectedUrl = url;
+            if (isPremium) {
+                document.getElementById('premium-modal').style.display = 'flex';
+            } else {
+                playVideo(url);
+            }
+        }
+
+        function verifyCode() {
+            const code = document.getElementById('code-input').value.trim();
+            if (!code) return alert("Please enter a code!");
+
+            db.ref('premium_codes/' + code).once('value', snap => {
+                if (snap.exists()) {
+                    const data = snap.val();
+                    const now = Date.now();
+
+                    // ১. মেয়াদ চেক (১ মাস)
+                    if (now > data.expiryDate) {
+                        return alert("এই কোডটির ১ মাসের মেয়াদ শেষ হয়ে গেছে!");
+                    }
+
+                    // ২. এক আইডি লক চেক (One Code per ID)
+                    if (data.status === 'used' && data.usedBy !== currentUser.email) {
+                        return alert("এই কোডটি ইতিমধ্যে অন্য একজন ব্যবহার করেছেন!");
+                    }
+
+                    // ৩. সাকসেস হলে ডাটা আপডেট
+                    db.ref('premium_codes/' + code).update({
+                        status: 'used',
+                        usedBy: currentUser.email
+                    });
+
+                    alert("Premium Unlocked! Enjoy for 1 month.");
+                    closeModal();
+                    playVideo(selectedUrl);
+                } else {
+                    alert("ভুল কোড! সঠিক কোডটি দিন।");
+                }
             });
         }
 
@@ -130,13 +200,24 @@
             document.getElementById('video-frame').src = url;
         }
 
-        function closeVideo() {
-            document.getElementById('player-modal').style.display = 'none';
-            document.getElementById('video-frame').src = "";
+        function search() {
+            const term = document.getElementById('search-input').value.toLowerCase();
+            const filtered = allData.filter(v => v.title.toLowerCase().includes(term));
+            const list = document.getElementById('anime-list');
+            list.innerHTML = "";
+            filtered.forEach(val => {
+                const isPremium = val.title.toLowerCase().includes("premium");
+                list.innerHTML += `
+                    <div class="card" onclick="checkAccess('${val.url}', ${isPremium})">
+                        ${isPremium ? '<div class="premium-tag">PREMIUM</div>' : ''}
+                        <img src="${val.thumbnail}">
+                        <h3>${val.title}</h3>
+                    </div>`;
+            });
         }
 
-        function signOut() { auth.signOut(); }
+        function closeModal() { document.getElementById('premium-modal').style.display = 'none'; }
+        function closeVideo() { document.getElementById('player-modal').style.display = 'none'; document.getElementById('video-frame').src = ""; }
     </script>
 </body>
-    </html>
-            
+</html>
