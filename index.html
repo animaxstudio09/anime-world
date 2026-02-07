@@ -18,60 +18,80 @@
         :root { --bg: #0d0e10; --header: #161719; --card: #1c1d21; --main: #ffc107; --text: #ffffff; --gray: #a0a0a0; }
         body.light-mode { --bg: #f4f6f8; --header: #ffffff; --card: #ffffff; --text: #1a1a1a; --gray: #666666; --main: #ff9800; }
 
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; transition: 0.3s; overflow-x: hidden; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; transition: 0.4s ease; overflow-x: hidden; }
 
-        /* --- Header Section --- */
-        header { background: var(--header); padding: 12px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
-        .menu-icon { font-size: 24px; color: var(--main); cursor: pointer; }
-        .search-container { background: var(--bg); padding: 8px 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); width: 45%; display: flex; align-items: center; }
+        /* --- Header --- */
+        header { background: var(--header); padding: 12px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        .menu-icon { font-size: 24px; color: var(--main); cursor: pointer; transition: 0.3s; }
+        .menu-icon:hover { transform: scale(1.1); }
+        .search-container { background: var(--bg); padding: 8px 18px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); width: 45%; display: flex; align-items: center; }
         .search-container input { background: none; border: none; color: var(--text); outline: none; width: 100%; margin-left: 10px; font-size: 14px; }
 
-        /* --- Auto Slider Banner --- */
-        .slider-wrapper { width: 90%; max-width: 1500px; margin: 20px auto; height: 350px; position: relative; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,193,7,0.2); }
-        .slide { position: absolute; inset: 0; background-size: cover; background-position: center; display: none; padding: 0 50px; flex-direction: column; justify-content: center; transition: 0.5s; }
-        .slide.active { display: flex; }
-        .slide::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to right, rgba(0,0,0,0.8), transparent); z-index: 1; }
-        .slide-content { position: relative; z-index: 2; }
-        .slide h1 { font-size: 35px; color: var(--main); margin: 0; }
-        .slide p { color: #ccc; max-width: 500px; font-size: 14px; margin: 15px 0; }
+        /* --- Full Width Auto Slider --- */
+        .slider-wrapper { width: 94%; max-width: 1500px; margin: 20px auto; height: 380px; position: relative; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .slide { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transition: opacity 1s ease-in-out; display: flex; align-items: center; padding: 0 6%; }
+        .slide.active { opacity: 1; z-index: 5; }
+        .slide::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to right, rgba(0,0,0,0.85), transparent); z-index: 1; }
+        .slide-content { position: relative; z-index: 2; transform: translateY(20px); transition: 0.8s; opacity: 0; }
+        .slide.active .slide-content { transform: translateY(0); opacity: 1; }
+        .slide h1 { font-size: clamp(24px, 5vw, 42px); color: var(--main); margin: 0; font-weight: 700; }
+        .slide p { color: #ddd; max-width: 550px; font-size: clamp(12px, 2vw, 15px); margin: 15px 0 25px; line-height: 1.6; }
 
         /* --- Sidebar --- */
-        .sidebar { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: var(--card); z-index: 2000; transition: 0.4s; padding: 40px 20px; overflow-y: auto; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
+        .sidebar { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: var(--card); z-index: 2000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 40px 20px; overflow-y: auto; }
         .sidebar.active { left: 0; }
-        .profile-box { text-align: center; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
-        .profile-box i { font-size: 50px; color: var(--main); }
-        .premium-btn-box { background: rgba(255,193,7,0.1); padding: 15px; border-radius: 12px; border: 1px dashed var(--main); margin-bottom: 20px; text-align: center; }
-        .premium-btn-box input { width: 100%; padding: 10px; margin-top: 10px; background: #000; border: 1px solid #333; color: #fff; border-radius: 6px; text-align: center; box-sizing: border-box; }
+        .profile-box { text-align: center; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 25px; }
+        .profile-box i { font-size: 60px; color: var(--main); text-shadow: 0 0 15px rgba(255,193,7,0.3); }
+        .premium-btn-box { background: rgba(255,193,7,0.05); padding: 18px; border-radius: 15px; border: 1px dashed var(--main); margin-bottom: 25px; }
+        .premium-btn-box input { width: 100%; padding: 12px; margin-top: 12px; background: #000; border: 1px solid #222; color: #fff; border-radius: 8px; text-align: center; box-sizing: border-box; }
         
-        .nav-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; font-size: 14px; }
-        .nav-item:hover { color: var(--main); }
+        .nav-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 5px; border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; font-size: 14px; transition: 0.3s; }
+        .nav-item:hover { color: var(--main); padding-left: 8px; }
 
-        /* --- Main Grid --- */
-        .main-container { display: grid; grid-template-columns: 1fr 320px; gap: 30px; padding: 10px 5% 40px; max-width: 1600px; margin: 0 auto; }
-        .anime-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; }
-        .card { background: var(--card); border-radius: 12px; overflow: hidden; position: relative; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.05); }
-        .card:hover { transform: translateY(-5px); border-color: var(--main); }
-        .card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
-        .p-badge { position: absolute; top: 10px; left: 10px; background: #ff3e3e; color: #fff; font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
-        .info { padding: 10px; text-align: center; }
-        .info h4 { font-size: 12px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .views { font-size: 10px; color: var(--gray); display: block; margin-top: 5px; }
+        /* --- Main Responsive Layout --- */
+        .main-container { display: grid; grid-template-columns: 1fr 320px; gap: 30px; padding: 10px 4% 50px; max-width: 1650px; margin: 0 auto; }
+        
+        /* PC Mode: 5 Columns */
+        .anime-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+        
+        .card { background: var(--card); border-radius: 15px; overflow: hidden; position: relative; cursor: pointer; transition: 0.4s; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .card:hover { transform: translateY(-8px); border-color: var(--main); box-shadow: 0 10px 25px rgba(255,193,7,0.15); }
+        .card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; transition: 0.5s; }
+        .card:hover img { scale: 1.05; }
+        .p-badge { position: absolute; top: 12px; left: 12px; background: #ff3e3e; color: #fff; font-size: 10px; padding: 4px 10px; border-radius: 6px; font-weight: bold; z-index: 10; }
+        .info { padding: 12px; text-align: center; }
+        .info h4 { font-size: 13px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+        .views { font-size: 11px; color: var(--gray); display: block; margin-top: 6px; }
 
-        /* --- Trending --- */
-        .trending-panel { background: var(--header); padding: 25px; border-radius: 15px; height: fit-content; border: 1px solid rgba(255,255,255,0.05); }
-        .trend-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; font-size: 13px; }
-        .rank { font-weight: bold; color: var(--main); min-width: 20px; }
+        /* Trending Sidebar */
+        .trending-panel { background: var(--header); padding: 25px; border-radius: 20px; height: fit-content; position: sticky; top: 90px; border: 1px solid rgba(255,255,255,0.05); }
+        .trend-item { display: flex; align-items: center; gap: 15px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; font-size: 13.5px; transition: 0.3s; }
+        .trend-item:hover { color: var(--main); }
+        .rank { font-weight: 800; color: var(--main); min-width: 25px; font-size: 16px; }
 
-        /* --- Player --- */
-        #player-box { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 3000; display: none; flex-direction: column; justify-content: center; align-items: center; }
-        iframe { width: 90%; max-width: 950px; aspect-ratio: 16/9; border: 2px solid var(--main); border-radius: 12px; }
-        .close-vid { margin-top: 25px; background: var(--main); color: #000; padding: 12px 40px; border-radius: 30px; font-weight: bold; cursor: pointer; }
+        /* --- Player UI --- */
+        #player-box { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 3000; display: none; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+        iframe { width: 92%; max-width: 1000px; aspect-ratio: 16/9; border: 3px solid var(--main); border-radius: 15px; box-shadow: 0 0 50px rgba(255,193,7,0.2); }
+        .close-vid { margin-top: 30px; background: var(--main); color: #000; padding: 14px 50px; border-radius: 40px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .close-vid:hover { transform: scale(1.1); box-shadow: 0 0 20px var(--main); }
 
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        @media (max-width: 1200px) { .main-container { grid-template-columns: 1fr; } }
-        @media (max-width: 768px) { .anime-grid { grid-template-columns: repeat(2, 1fr); } .slider-wrapper { height: 220px; } .slide h1 { font-size: 20px; } .slide p { display: none; } }
+        /* --- Responsive Queries --- */
+        @media (max-width: 1250px) { .main-container { grid-template-columns: 1fr; } .trending-panel { position: static; margin-top: 20px; } }
+        
+        /* Tablet Mode */
+        @media (max-width: 1024px) { .anime-grid { grid-template-columns: repeat(3, 1fr); } }
+
+        /* Phone Mode: 2 Columns */
+        @media (max-width: 768px) { 
+            .anime-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } 
+            .slider-wrapper { height: 250px; width: 100%; border-radius: 0; margin-top: 0; } 
+            header { padding: 10px 4%; }
+            .search-container { width: 55%; }
+            .slide { padding: 0 20px; }
+        }
     </style>
 </head>
 <body class="dark-mode">
@@ -81,58 +101,62 @@
     <div class="sidebar" id="sidebar">
         <div class="profile-box">
             <i class="fas fa-user-circle"></i>
-            <h3>GAMING Rocky</h3>
-            <p>freefire368401@gmail.com</p>
-            <span id="stat" style="color: #ff3e3e; font-size: 11px; font-weight: bold;">[ Free User ]</span>
+            <h3 style="margin-top:15px; font-size:18px;">GAMING Rocky</h3>
+            <p style="font-size:12px; opacity:0.6;">freefire368401@gmail.com</p>
+            <span id="stat" style="color: #ff3e3e; font-size: 11px; font-weight: bold; display:block; margin-top:8px;">[ Free User ]</span>
         </div>
+        
         <div class="premium-btn-box">
-            <p style="margin:0; font-size:12px; font-weight:bold; color:var(--main);">ACTIVATE PREMIUM</p>
-            <input type="text" id="k-in" placeholder="Enter Key">
-            <button style="width:100%; padding:10px; background:var(--main); border:none; margin-top:10px; font-weight:bold; cursor:pointer;" onclick="activate()">ACTIVATE</button>
+            <p style="margin:0; font-size:12px; font-weight:bold; color:var(--main); letter-spacing:1px;">ACTIVATE PREMIUM</p>
+            <input type="text" id="k-in" placeholder="Enter License Key">
+            <button style="width:100%; padding:12px; background:var(--main); border:none; margin-top:10px; font-weight:bold; cursor:pointer; border-radius:8px;" onclick="activate()">ACTIVATE NOW</button>
         </div>
-        <div class="nav-item" onclick="toggleNight()"><span><i class="fas fa-moon"></i> Night Mode</span></div>
-        <div class="nav-item" onclick="buy()"><span><i class="fab fa-telegram"></i> Buy Premium Key</span></div>
-        <div class="nav-item" onclick="logout()" style="color:#ff3e3e; margin-top:15px;"><span><i class="fas fa-sign-out-alt"></i> Logout / Reset</span></div>
+
+        <div class="nav-item" onclick="toggleNight()"><span><i class="fas fa-moon"></i> Night Mode</span> <i class="fas fa-adjust"></i></div>
+        <div class="nav-item" onclick="buy()"><span><i class="fab fa-telegram"></i> Purchase Key</span> <i class="fas fa-external-link-alt"></i></div>
+        <div class="nav-item" onclick="location.reload()"><span><i class="fas fa-sync-alt"></i> Refresh App</span></div>
+        <div class="nav-item" onclick="logout()" style="color:#ff3e3e; margin-top:20px; font-weight:bold; border-top:1px solid rgba(255,255,255,0.05);"><span><i class="fas fa-sign-out-alt"></i> Logout System</span></div>
     </div>
 
     <header>
         <div class="menu-icon" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
         <div class="search-container">
             <i class="fas fa-search" style="color: #555;"></i>
-            <input type="text" id="srch" placeholder="Search..." onkeyup="search()">
+            <input type="text" id="srch" placeholder="Search your favorite anime..." onkeyup="search()">
         </div>
-        <div class="menu-icon" onclick="toggleMenu()"><i class="fas fa-cog"></i></div>
+        <div class="menu-icon" onclick="toggleMenu()"><i class="fas fa-user-shield"></i></div>
     </header>
 
     <div class="slider-wrapper">
         <div class="slide active" style="background-image: url('https://images8.alphacoders.com/632/632051.png');">
-            <div class="slide-content"><h1>Welcome to ANIMAX</h1><p>The best place to watch anime in HD.</p></div>
+            <div class="slide-content"><h1>Welcome to ANIMAX</h1><p>Watch High-Definition anime series and movies with zero ads. Your ultimate destination for Japanese animation.</p></div>
         </div>
         <div class="slide" style="background-image: url('https://images3.alphacoders.com/132/1322502.png');">
-            <div class="slide-content"><h1>Premium Series</h1><p>Unlock exclusive movies and series.</p></div>
+            <div class="slide-content"><h1>Unlock Premium</h1><p>Get exclusive access to premium-only content and the latest releases before anyone else.</p></div>
         </div>
         <div class="slide" style="background-image: url('https://images5.alphacoders.com/133/1337446.png');">
-            <div class="slide-content"><h1>Trending Now</h1><p>Join the community and start watching.</p></div>
+            <div class="slide-content"><h1>Join the Community</h1><p>Join thousands of users and track your favorite shows easily on our platform.</p></div>
         </div>
     </div>
 
     <div class="main-container">
         <div class="left">
-            <h2 style="font-size: 18px; margin-bottom: 25px; border-left: 4px solid var(--main); padding-left: 15px;">EXPLORE</h2>
+            <h2 style="font-size: 19px; margin-bottom: 25px; border-left: 5px solid var(--main); padding-left: 15px; letter-spacing: 1px;">LATEST DISCOVERIES</h2>
             <div class="anime-grid" id="grid"></div>
         </div>
+        
         <div class="right">
             <div class="trending-panel">
-                <p style="color:var(--main); font-weight:bold; margin-bottom:15px; font-size:14px;">TOP TRENDING</p>
+                <p style="color:var(--main); font-weight:bold; margin-bottom:20px; font-size:14px; text-transform:uppercase; letter-spacing:1px;">Trending Top 10</p>
                 <div id="t-list"></div>
             </div>
         </div>
     </div>
 
     <div id="player-box">
-        <h2 id="v-name" style="color:var(--main); margin-bottom:15px; font-size: 18px;">Video</h2>
+        <h2 id="v-name" style="color:var(--main); margin-bottom:20px; font-size: 19px; text-align:center;">Video Title</h2>
         <iframe id="v-src" src="" frameborder="0" allowfullscreen></iframe>
-        <div class="close-vid" onclick="closeV()">CLOSE</div>
+        <div class="close-vid" onclick="closeV()">CLOSE PLAYER</div>
     </div>
 
     <script>
@@ -149,33 +173,38 @@
         const db = firebase.database();
 
         let isP = localStorage.getItem('isP') === 'true';
-        if(isP) { document.getElementById('stat').innerText = "[ Premium Member ]"; document.getElementById('stat').style.color = "gold"; }
+        if(isP) { 
+            const s = document.getElementById('stat');
+            s.innerText = "[ Premium Member ]"; s.style.color = "gold"; 
+        }
 
-        // Slider Logic
+        // --- Banner Logic ---
         let sIdx = 0;
         const slides = document.querySelectorAll('.slide');
         setInterval(() => {
             slides[sIdx].classList.remove('active');
             sIdx = (sIdx + 1) % slides.length;
             slides[sIdx].classList.add('active');
-        }, 5000);
+        }, 6000);
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         function toggleNight() { document.body.classList.toggle('light-mode'); }
-        function buy() { window.open("https://t.me/aminezone09?text=I want to buy Premium Key", "_blank"); }
-        function logout() { localStorage.clear(); location.reload(); }
+        function buy() { window.open("https://t.me/aminezone09?text=Hello Rocky, I want a Premium Key for Animax.", "_blank"); }
+        function logout() { if(confirm("Are you sure you want to Logout?")) { localStorage.clear(); location.reload(); } }
 
         function activate() {
             const k = document.getElementById('k-in').value.trim();
+            if(!k) return alert("Please enter key!");
             db.ref('premium_codes/' + k).once('value', s => {
                 if(s.exists() && s.val().status === 'active') {
                     db.ref('premium_codes/' + k).update({ status: 'used' });
                     localStorage.setItem('isP', 'true');
-                    alert("Success!"); location.reload();
-                } else alert("Invalid Key!");
+                    alert("Account Upgraded to Premium!"); location.reload();
+                } else alert("Invalid or Expired Key!");
             });
         }
 
+        // --- Data Fetching ---
         db.ref('anime').on('value', snap => {
             const g = document.getElementById('grid');
             const t = document.getElementById('t-list');
@@ -185,7 +214,7 @@
             data.forEach(v => {
                 g.innerHTML += `<div class="card item" data-title="${v.title.toLowerCase()}" onclick="play('${v.url}','${v.type}','${v.id}','${v.title}')">
                     ${v.type==='premium'?'<div class="p-badge">PREMIUM</div>':''}<img src="${v.thumbnail}">
-                    <div class="info"><h4>${v.title}</h4><span class="views">👁️ ${v.views || 0} Views</span></div></div>`;
+                    <div class="info"><h4>${v.title}</h4><span class="views"><i class="fas fa-eye"></i> ${v.views || 0} Views</span></div></div>`;
             });
 
             data.sort((a,b) => (b.views||0)-(a.views||0)).slice(0,10).forEach((v,i) => {
@@ -194,7 +223,7 @@
         });
 
         function play(u, ty, id, nm) {
-            if(ty==='premium' && !isP) return alert("Premium only!");
+            if(ty==='premium' && !isP) return alert("Access Denied! This content is for Premium Members only.");
             document.getElementById('player-box').style.display='flex';
             document.getElementById('v-src').src = u;
             document.getElementById('v-name').innerText = nm;
@@ -208,5 +237,5 @@
         }
     </script>
 </body>
-                </html>
-    
+            </html>
+            
