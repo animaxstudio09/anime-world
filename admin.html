@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANIMAX ADMIN</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <style>
+        :root { --gold: #D4AF37; --dark: #0a0a0a; --panel: #141414; --red: #ff3b3b; --blue: #007bff; --green: #00e676; }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; font-family: 'Outfit', sans-serif; }
+        body { background: #000; color: #fff; padding-bottom: 50px; }
+
+        header {
+            background: rgba(20,20,20,0.95); padding: 15px; border-bottom: 1px solid #333;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px);
+        }
+        .brand { font-family: 'Orbitron'; font-size: 20px; font-weight: 900; }
+        .brand span { color: var(--gold); }
+
+        .nav-scroller {
+            overflow-x: auto; white-space: nowrap; padding: 10px; background: #111; border-bottom: 1px solid #222;
+        }
+        .nav-btn {
+            display: inline-block; padding: 8px 20px; margin-right: 10px; border-radius: 20px;
+            background: #222; color: #888; font-size: 12px; font-family: 'Orbitron'; cursor: pointer; border: 1px solid #333;
+        }
+        .nav-btn.active { background: var(--gold); color: #000; border-color: var(--gold); font-weight: bold; }
+
+        .section-view { display: none; padding: 20px; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .input-group { background: var(--panel); padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; }
+        .input-group h3 { color: var(--gold); font-family: 'Orbitron'; margin-bottom: 15px; font-size: 16px; }
+
+        input, select {
+            width: 100%; padding: 12px; margin-bottom: 10px; background: #000;
+            border: 1px solid #333; color: #fff; border-radius: 8px;
+        }
+        input:focus { border-color: var(--gold); }
+
+        .btn-action {
+            width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer;
+            background: linear-gradient(45deg, #b8952b, var(--gold)); color: #000; font-family: 'Orbitron';
+        }
+        .btn-action.updating {
+            background: linear-gradient(45deg, #0056b3, #007bff); color: #fff;
+        }
+
+        .data-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 20px; }
+        .data-card {
+            background: #111; border: 1px solid #333; border-radius: 8px; overflow: hidden; position: relative;
+        }
+        .data-card img { width: 100%; height: 100px; object-fit: cover; }
+        .data-info { padding: 10px; }
+        .data-title { font-size: 11px; color: #ddd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 5px;}
+        
+        .card-btns { display: flex; gap: 5px; }
+        .del-btn, .edit-btn {
+            flex: 1; border: none; padding: 5px; 
+            font-size: 10px; cursor: pointer; border-radius: 4px; font-weight: bold;
+        }
+        .del-btn { background: var(--red); color: #fff; }
+        .edit-btn { background: #333; color: var(--gold); border: 1px solid var(--gold); }
+
+        /* CODE CARD STYLE */
+        .code-card {
+            background: #1a1a1a; padding: 15px; margin-bottom: 10px; border-radius: 8px;
+            display: flex; justify-content: space-between; align-items: center; 
+            border-left: 4px solid #666; transition: 0.2s; cursor: pointer;
+        }
+        .code-card:active { transform: scale(0.98); }
+        .code-card.unused { border-left-color: var(--green); background: rgba(0, 230, 118, 0.05); }
+        .code-card.used { border-left-color: var(--red); background: rgba(255, 59, 59, 0.05); opacity: 0.7; }
+        
+        .code-text { font-family: 'Courier New', monospace; font-size: 16px; font-weight: bold; color: #fff; letter-spacing: 1px; }
+        .code-days { font-size: 11px; color: #888; margin-top: 4px; }
+        .code-status { font-size: 10px; font-weight: bold; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
+        .st-active { background: rgba(0, 230, 118, 0.2); color: var(--green); }
+        .st-used { background: rgba(255, 59, 59, 0.2); color: var(--red); }
+        
+        .code-controls { display:flex; gap:10px; margin-bottom:10px; }
+
+    </style>
+</head>
+<body>
+
+    <div id="dashboard">
+        <header>
+            <div class="brand">ANIMAX <span>ADMIN</span></div>
+            <div style="font-size:10px; color:#666;">DEV: RJ ROCKY</div>
+        </header>
+
+        <div class="nav-scroller">
+            <div class="nav-btn active" onclick="showTab('anime')">ANIME & FOLDERS</div>
+            <div class="nav-btn" onclick="showTab('movies')">MOVIE BOX</div>
+            <div class="nav-btn" onclick="showTab('shorts')">SHORTS</div>
+            <div class="nav-btn" onclick="showTab('banners')">ALL BANNERS</div>
+            <div class="nav-btn" onclick="showTab('codes')">PREMIUM CODES</div>
+        </div>
+
+        <div id="anime" class="section-view" style="display:block;">
+            <div class="input-group">
+                <h3 id="an-head"><i class="fas fa-upload"></i> UPLOAD EPISODE</h3>
+                <input type="text" id="an-folder" placeholder="Folder Name (e.g. Naruto)">
+                <input type="text" id="an-title" placeholder="Episode Title">
+                <input type="text" id="an-thumb" placeholder="Thumbnail Image URL">
+                <input type="text" id="an-url" placeholder="Video URL">
+                <select id="an-type">
+                    <option value="free">Free Content</option>
+                    <option value="premium">Premium (VIP Only)</option>
+                </select>
+                <input type="hidden" id="an-key">
+                <button id="an-btn" class="btn-action" onclick="uploadAnime()">UPLOAD ANIME & NOTIFY</button>
+                <button id="an-cancel" style="display:none; width:100%; margin-top:5px; background:#333; color:#fff; border:none; padding:8px; border-radius:5px;" onclick="cancelEdit('anime')">CANCEL EDIT</button>
+            </div>
+            <div id="anime-list" class="data-list"></div>
+        </div>
+
+        <div id="movies" class="section-view">
+            <div class="input-group" style="border-color:#ff3b3b;">
+                <h3 id="mv-head" style="color:#ff3b3b;"><i class="fas fa-film"></i> ADD MOVIE</h3>
+                <input type="text" id="mv-title" placeholder="Movie Title">
+                <input type="text" id="mv-thumb" placeholder="Poster Image URL">
+                <input type="text" id="mv-url" placeholder="Movie Link URL">
+                <input type="hidden" id="mv-key">
+                <button id="mv-btn" class="btn-action" style="background:linear-gradient(45deg, #800000, #ff3b3b); color:#fff;" onclick="uploadMovie()">UPLOAD MOVIE & NOTIFY</button>
+                <button id="mv-cancel" style="display:none; width:100%; margin-top:5px; background:#333; color:#fff; border:none; padding:8px; border-radius:5px;" onclick="cancelEdit('movies')">CANCEL EDIT</button>
+            </div>
+            <div id="movie-list" class="data-list"></div>
+        </div>
+
+        <div id="shorts" class="section-view">
+            <div class="input-group">
+                <h3><i class="fas fa-video"></i> ADD SHORT VIDEO</h3>
+                <input type="text" id="sh-url" placeholder="Short Video URL">
+                <button class="btn-action" onclick="uploadShort()">ADD SHORT</button>
+            </div>
+            <div id="shorts-list" class="data-list"></div>
+        </div>
+
+        <div id="banners" class="section-view">
+            <div class="input-group">
+                <h3 id="bn-head"><i class="fas fa-images"></i> HOME SLIDER BANNER</h3>
+                <input type="text" id="bn-img" placeholder="Banner Image URL">
+                <input type="text" id="bn-folder" placeholder="Anime Folder Name (For Watch Now click)">
+                <input type="hidden" id="bn-key">
+                <button id="bn-btn" class="btn-action" onclick="uploadBanner()">ADD HOME BANNER</button>
+                <button id="bn-cancel" style="display:none; width:100%; margin-top:5px; background:#333; color:#fff; border:none; padding:8px; border-radius:5px;" onclick="cancelEdit('banners')">CANCEL EDIT</button>
+            </div>
+            <div id="banner-list" class="data-list"></div>
+
+            <hr style="border: 1px solid #333; margin: 30px 0;">
+
+            <div class="input-group" style="border-color: #ff3b3b;">
+                <h3 style="color: #ff3b3b;"><i class="fas fa-film"></i> MOVIE BOX BANNER</h3>
+                <input type="text" id="mv-bn-img" placeholder="Movie Banner Image URL">
+                <button class="btn-action" style="background: linear-gradient(45deg, #800000, #ff3b3b); color: #fff;" onclick="uploadMovieBanner()">ADD MOVIE BANNER</button>
+            </div>
+            <div id="movie-banner-list" class="data-list"></div>
+        </div>
+
+        <div id="codes" class="section-view">
+            <div class="input-group">
+                <h3><i class="fas fa-key"></i> GENERATE VIP CODES</h3>
+                <div class="code-controls">
+                    <input type="number" id="code-days" placeholder="Days (e.g. 30)" style="flex:2">
+                    <input type="number" id="code-qty" placeholder="Qty (1-10)" value="1" min="1" max="10" style="flex:1">
+                </div>
+                <input type="text" id="custom-code" placeholder="Custom Code (Optional - Single only)">
+                <button class="btn-action" onclick="generateCode()">GENERATE LICENSE</button>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px; padding:0 5px;">
+                <span style="font-size:12px; color:#888;">RECENT CODES</span>
+                <button onclick="if(confirm('Delete USED codes?')) deleteUsedCodes()" style="background:#333; color:#888; border:none; padding:5px 10px; border-radius:5px; font-size:10px;">CLEAR USED</button>
+            </div>
+            <div id="code-list" style="margin-top:10px;"></div>
+        </div>
+
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBcWE5TCxamMSnJxqSm5X4mgSwSccIXcBI",
+            authDomain: "myanimeapp-8d079.firebaseapp.com",
+            databaseURL: "https://myanimeapp-8d079-default-rtdb.firebaseio.com",
+            projectId: "myanimeapp-8d079",
+            storageBucket: "myanimeapp-8d079.firebasestorage.app",
+            messagingSenderId: "37482342893",
+            appId: "1:37482342893:web:bebc7352e4bc102b725fe4"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // OneSignal Config
+        const ONE_SIGNAL_API_KEY = "Os_v2_app_7wwdskfc7rf4pfkbzoc24atebhgngpwcqoceoefjjehehazrf4oylyaia4qlnlly53d7brxmypdsnyqr6mjub7ugwuavak5gcduydda";
+        const ONE_SIGNAL_APP_ID = "fdac3928-a2fc-4bc7-9541-cb85ae026409";
+
+        async function sendNotification(title, message) {
+            try {
+                await fetch("https://onesignal.com/api/v1/notifications", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8",
+                        "Authorization": "Basic " + ONE_SIGNAL_API_KEY
+                    },
+                    body: JSON.stringify({
+                        app_id: ONE_SIGNAL_APP_ID,
+                        included_segments: ["All"],
+                        headings: {"en": title},
+                        contents: {"en": message},
+                        url: "https://rockyhack09.github.io/animax-x/"
+                    })
+                });
+            } catch (e) { console.error("Notification Error", e); }
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.section-view').forEach(d => d.style.display = 'none');
+            document.getElementById(tab).style.display = 'block';
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // --- ANIME FUNCTIONS ---
+        function uploadAnime() {
+            const folder = document.getElementById('an-folder').value.trim();
+            const title = document.getElementById('an-title').value;
+            const thumb = document.getElementById('an-thumb').value;
+            const url = document.getElementById('an-url').value;
+            const type = document.getElementById('an-type').value;
+            const key = document.getElementById('an-key').value;
+
+            if(!folder || !title || !url) return alert("Fill all fields!");
+
+            if (key) {
+                db.ref('anime/' + key).update({
+                    folder, title, thumbnail: thumb, url, type
+                }).then(() => {
+                    alert("Anime Updated Successfully!");
+                    cancelEdit('anime');
+                    document.getElementById('an-key').value = ""; // Clear Key
+                });
+            } else {
+                db.ref('anime').push({
+                    folder, title, thumbnail: thumb, url, type, timestamp: Date.now()
+                });
+                sendNotification("🎬 New Episode Out!", `${folder}: ${title} এখন অনলাইনে।`);
+                alert("Uploaded & Notified!");
+                clearInputs(['an-title', 'an-url']);
+            }
+        }
+
+        function editAnime(key, folder, title, thumb, url, type) {
+            document.getElementById('an-key').value = key;
+            document.getElementById('an-folder').value = folder;
+            document.getElementById('an-title').value = title;
+            document.getElementById('an-thumb').value = thumb;
+            document.getElementById('an-url').value = url;
+            document.getElementById('an-type').value = type;
+            const btn = document.getElementById('an-btn');
+            btn.innerText = "UPDATE CHANGES";
+            btn.classList.add('updating');
+            document.getElementById('an-head').innerText = "EDITING MODE";
+            document.getElementById('an-cancel').style.display = 'block';
+            window.scrollTo(0,0);
+        }
+
+        // --- MOVIE FUNCTIONS ---
+        function uploadMovie() {
+            const title = document.getElementById('mv-title').value;
+            const thumb = document.getElementById('mv-thumb').value;
+            const url = document.getElementById('mv-url').value;
+            const key = document.getElementById('mv-key').value;
+
+            if(!title || !url) return alert("Fill all fields!");
+
+            if(key) {
+                db.ref('movies/' + key).update({ title, thumbnail: thumb, url })
+                .then(() => {
+                    alert("Movie Updated Successfully!");
+                    cancelEdit('movies');
+                    document.getElementById('mv-key').value = ""; 
+                });
+            } else {
+                db.ref('movies').push({ title, thumbnail: thumb, url });
+                sendNotification("🎬 New Movie Added!", `${title} মুভিটি যুক্ত হয়েছে। এখনই দেখুন!`);
+                alert("Movie Uploaded & Notified!");
+                clearInputs(['mv-title', 'mv-thumb', 'mv-url']);
+            }
+        }
+
+        function editMovie(key, title, thumb, url) {
+            document.getElementById('mv-key').value = key;
+            document.getElementById('mv-title').value = title;
+            document.getElementById('mv-thumb').value = thumb;
+            document.getElementById('mv-url').value = url;
+            const btn = document.getElementById('mv-btn');
+            btn.innerText = "UPDATE MOVIE";
+            btn.classList.add('updating');
+            document.getElementById('mv-head').innerText = "EDITING MOVIE";
+            document.getElementById('mv-cancel').style.display = 'block';
+            window.scrollTo(0,0);
+        }
+
+        function cancelEdit(type) {
+            if(type === 'anime') {
+                document.getElementById('an-key').value = "";
+                clearInputs(['an-folder', 'an-title', 'an-thumb', 'an-url']);
+                const btn = document.getElementById('an-btn');
+                btn.innerText = "UPLOAD ANIME & NOTIFY";
+                btn.classList.remove('updating');
+                document.getElementById('an-head').innerHTML = '<i class="fas fa-upload"></i> UPLOAD EPISODE';
+                document.getElementById('an-cancel').style.display = 'none';
+            } else if(type === 'movies') {
+                document.getElementById('mv-key').value = "";
+                clearInputs(['mv-title', 'mv-thumb', 'mv-url']);
+                const btn = document.getElementById('mv-btn');
+                btn.innerText = "UPLOAD MOVIE & NOTIFY";
+                btn.classList.remove('updating');
+                document.getElementById('mv-head').innerHTML = '<i class="fas fa-film"></i> ADD MOVIE';
+                document.getElementById('mv-cancel').style.display = 'none';
+            } else if (type === 'banners') {
+                // Cancel for Banner
+                document.getElementById('bn-key').value = "";
+                clearInputs(['bn-img', 'bn-folder']);
+                const btn = document.getElementById('bn-btn');
+                btn.innerText = "ADD HOME BANNER";
+                btn.classList.remove('updating');
+                document.getElementById('bn-head').innerHTML = '<i class="fas fa-images"></i> HOME SLIDER BANNER';
+                document.getElementById('bn-cancel').style.display = 'none';
+            }
+        }
+
+        // --- SHORTS, BANNERS & CODES ---
+        function uploadShort() {
+            const url = document.getElementById('sh-url').value;
+            if(!url) return;
+            db.ref('shorts').push({ id: Date.now().toString(), url: url });
+            alert("Short Video Added!");
+            document.getElementById('sh-url').value = "";
+        }
+
+        // --- BANNER UPLOAD & EDIT LOGIC ---
+        function uploadBanner() {
+            const img = document.getElementById('bn-img').value;
+            const folderName = document.getElementById('bn-folder').value.trim(); 
+            const key = document.getElementById('bn-key').value; // Get hidden key
+            
+            if(!img) return alert("Image URL is required!");
+            
+            if(key) {
+                // Update Existing Banner
+                db.ref('banners/' + key).update({ image: img, folderName: folderName })
+                .then(() => {
+                    alert("Banner Updated Successfully!");
+                    cancelEdit('banners'); // Clear fields and reset button
+                });
+            } else {
+                // Create New Banner
+                db.ref('banners').push({ image: img, folderName: folderName });
+                alert("Home Banner Added!");
+                document.getElementById('bn-img').value = "";
+                document.getElementById('bn-folder').value = "";
+            }
+        }
+
+        function editBanner(key, img, folderName) {
+            document.getElementById('bn-key').value = key;
+            document.getElementById('bn-img').value = img;
+            document.getElementById('bn-folder').value = folderName;
+            
+            const btn = document.getElementById('bn-btn');
+            btn.innerText = "UPDATE BANNER";
+            btn.classList.add('updating');
+            
+            document.getElementById('bn-head').innerHTML = '<i class="fas fa-edit"></i> EDIT BANNER';
+            document.getElementById('bn-cancel').style.display = 'block';
+            window.scrollTo(0,0);
+        }
+
+        function uploadMovieBanner() {
+            const img = document.getElementById('mv-bn-img').value;
+            if(!img) return;
+            db.ref('movie_banners').push({ image: img });
+            alert("Movie Banner Added!");
+            document.getElementById('mv-bn-img').value = "";
+        }
+
+        function generateCode() {
+            const days = parseInt(document.getElementById('code-days').value) || 30;
+            const qty = parseInt(document.getElementById('code-qty').value) || 1;
+            let custom = document.getElementById('custom-code').value.trim();
+            
+            if(custom) {
+                // Generate Single Custom Code
+                custom = custom.replace(/[.#$\[\]\s]/g, '');
+                db.ref('premium_codes/' + custom).set({ status: 'unused', days: days, created: Date.now() })
+                .then(() => { 
+                    alert("Generated Custom: " + custom); 
+                    document.getElementById('custom-code').value = "";
+                });
+            } else {
+                // Generate Multiple Random Codes
+                const updates = {};
+                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; 
+                
+                for(let k=0; k<qty; k++) {
+                    let r1 = ''; let r2 = '';
+                    for(let i = 0; i < 4; i++) r1 += chars.charAt(Math.floor(Math.random() * chars.length));
+                    for(let i = 0; i < 4; i++) r2 += chars.charAt(Math.floor(Math.random() * chars.length));
+                    const code = `VIP-${r1}-${r2}`;
+                    updates[code] = { status: 'unused', days: days, created: Date.now() + k };
+                }
+                
+                db.ref('premium_codes').update(updates).then(() => {
+                    alert(`Generated ${qty} Codes Successfully!`);
+                });
+            }
+        }
+
+        function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert("Code Copied: " + text);
+                });
+            } else {
+                const el = document.createElement('textarea');
+                el.value = text;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+                alert("Code Copied: " + text);
+            }
+        }
+
+        function deleteCode(e, key) {
+            e.stopPropagation(); 
+            if(confirm("Delete this code permanently?")) {
+                db.ref('premium_codes/' + key).remove();
+            }
+        }
+
+        function deleteUsedCodes() {
+            db.ref('premium_codes').once('value', s => {
+                const updates = {};
+                s.forEach(c => {
+                    if(c.val().status === 'used') updates[c.key] = null;
+                });
+                db.ref('premium_codes').update(updates);
+            });
+        }
+
+        // --- LOAD DATA ---
+        function loadAllData() {
+            // Anime
+            db.ref('anime').on('value', s => {
+                const c = document.getElementById('anime-list'); c.innerHTML = "";
+                const data = [];
+                s.forEach(d => { data.unshift({k: d.key, v: d.val()}); }); 
+                
+                data.forEach(item => {
+                    const d = item.v;
+                    const safeFolder = (d.folder || "").replace(/'/g, "\\'");
+                    const safeTitle = (d.title || "").replace(/'/g, "\\'");
+                    const safeThumb = (d.thumbnail || "").replace(/'/g, "\\'");
+                    const safeUrl = (d.url || "").replace(/'/g, "\\'");
+                    
+                    c.innerHTML += `
+                    <div class="data-card">
+                        <img src="${d.thumbnail || ''}">
+                        <div class="data-info">
+                            <div class="data-title">${d.folder || 'Unknown'}: ${d.title || 'Untitled'}</div>
+                            <div class="card-btns">
+                                <button class="edit-btn" onclick="editAnime('${item.k}', '${safeFolder}', '${safeTitle}', '${safeThumb}', '${safeUrl}', '${d.type || 'free'}')">EDIT</button>
+                                <button class="del-btn" onclick="deleteItem('anime','${item.k}')">DEL</button>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+            });
+
+            // Movies
+            db.ref('movies').on('value', s => {
+                const c = document.getElementById('movie-list'); c.innerHTML = "";
+                s.forEach(d => { 
+                    const val = d.val();
+                    const safeTitle = (val.title || "").replace(/'/g, "\\'");
+                    const safeThumb = (val.thumbnail || "").replace(/'/g, "\\'");
+                    const safeUrl = (val.url || "").replace(/'/g, "\\'");
+
+                    c.innerHTML += `
+                    <div class="data-card">
+                        <img src="${val.thumbnail || ''}">
+                        <div class="data-info">
+                            <div class="data-title">${val.title || 'Untitled'}</div>
+                            <div class="card-btns">
+                                <button class="edit-btn" onclick="editMovie('${d.key}', '${safeTitle}', '${safeThumb}', '${safeUrl}')">EDIT</button>
+                                <button class="del-btn" onclick="deleteItem('movies','${d.key}')">DEL</button>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+            });
+
+            // Shorts
+            db.ref('shorts').on('value', s => {
+               const c = document.getElementById('shorts-list'); c.innerHTML="";
+               s.forEach(d => {
+                   c.innerHTML += `<div class="data-card"><div class="data-info"><div class="data-title">Short Video</div><button class="del-btn" onclick="deleteItem('shorts','${d.key}')">DELETE</button></div></div>`;
+               });
+            });
+
+            // Banners UPDATED: Added Edit Button
+            db.ref('banners').on('value', s => {
+               const c = document.getElementById('banner-list'); c.innerHTML="";
+               s.forEach(d => {
+                   const val = d.val();
+                   const safeImg = (val.image || "").replace(/'/g, "\\'");
+                   const safeFolder = (val.folderName || "").replace(/'/g, "\\'");
+                   
+                   const linkedFolder = val.folderName ? `<span style="color:var(--gold)">Link: ${val.folderName}</span>` : `<span style="color:#666">No Link</span>`;
+                   
+                   c.innerHTML += `
+                   <div class="data-card">
+                       <img src="${val.image || ''}">
+                       <div class="data-info">
+                           <div class="data-title">Home Banner<br>${linkedFolder}</div>
+                           <div class="card-btns">
+                               <button class="edit-btn" onclick="editBanner('${d.key}', '${safeImg}', '${safeFolder}')">EDIT</button>
+                               <button class="del-btn" onclick="deleteItem('banners','${d.key}')">DEL</button>
+                           </div>
+                       </div>
+                   </div>`;
+               });
+            });
+
+            // Movie Banners
+            db.ref('movie_banners').on('value', s => {
+               const c = document.getElementById('movie-banner-list'); c.innerHTML="";
+               s.forEach(d => {
+                   c.innerHTML += `<div class="data-card"><img src="${d.val().image || ''}"><div class="data-info"><div class="data-title" style="color:#ff3b3b">Movie Banner</div><button class="del-btn" onclick="deleteItem('movie_banners','${d.key}')">DELETE</button></div></div>`;
+               });
+            });
+
+            // Premium Codes 
+            db.ref('premium_codes').limitToLast(50).on('value', s => {
+                const list = document.getElementById('code-list');
+                list.innerHTML = "";
+                const codes = [];
+                s.forEach(c => codes.unshift({ key: c.key, val: c.val() }));
+
+                codes.forEach(c => {
+                    const data = c.val || {};
+                    const isUnused = data.status === 'unused';
+                    const statusClass = isUnused ? 'unused' : 'used';
+                    const statusText = isUnused ? 'ACTIVE' : 'USED';
+                    const badgeClass = isUnused ? 'st-active' : 'st-used';
+                    const icon = isUnused ? 'fa-check-circle' : 'fa-times-circle';
+                    const usedBy = data.usedBy ? `<div style="font-size:10px; color:#ff3b3b;">User: ${data.usedBy}</div>` : '';
+
+                    list.innerHTML += `
+                        <div class="code-card ${statusClass}" onclick="copyToClipboard('${c.key}')" title="Click to Copy">
+                            <div>
+                                <div class="code-status ${badgeClass}">${statusText}</div>
+                                <div class="code-text"><i class="fas ${icon}"></i> ${c.key}</div>
+                                <div class="code-days">${data.days || 0} Days Validity</div>
+                                ${usedBy}
+                            </div>
+                            <div style="text-align:right;">
+                                <button class="del-btn" style="padding: 5px 15px;" onclick="deleteCode(event, '${c.key}')">DELETE</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        function deleteItem(path, key) { if(confirm("Delete this item permanently?")) db.ref(path + '/' + key).remove(); }
+        function clearInputs(ids) { ids.forEach(id => document.getElementById(id).value = ""); }
+
+        window.onload = loadAllData;
+    </script>
+</body>
+</html>
