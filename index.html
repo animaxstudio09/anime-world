@@ -2,777 +2,609 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ANIMAX WORLD</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANIMAX SECURE ADMIN</title>
     
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
-    <meta name="theme-color" content="#000000">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-
-    <!-- OneSignal & Firebase -->
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.init({ appId: "fdac3928-a2fc-4bc7-9541-cb85ae026409" });
-      });
-    </script>
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Outfit:wght@300;400;600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <style>
-        :root { 
-            --gold: #FFD700; 
-            --black: #090909; 
-            --glass: rgba(255, 255, 255, 0.05);
-            --neon-pink: #ff0055;
-            --card-bg: #121212;
-        }
+        :root { --gold: #D4AF37; --dark: #0a0a0a; --panel: #141414; --red: #ff3b3b; --green: #00e676; --cyan: #00f3ff; }
         
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { font-family: 'Outfit', sans-serif; background: #000; color: #fff; overflow-x: hidden; padding-bottom: 80px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; font-family: 'Outfit', sans-serif; user-select: none; }
+        body { background: #000; color: #fff; padding-bottom: 50px; }
 
-        /* --- HEADER & SEARCH --- */
-        header { 
-            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; 
-            background: rgba(5, 5, 5, 0.9); position: fixed; top: 0; left: 0; right: 0; z-index: 100; 
-            backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.05);
+        /* Login Screen */
+        #admin-login-view {
+            display: flex; justify-content: center; align-items: center; height: 100vh;
+            background: radial-gradient(circle, #1a0505 0%, #000 100%);
         }
-        .logo { font-family: 'Orbitron'; font-weight: 900; font-size: 20px; letter-spacing: 1px; color: #fff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
-        .logo span { color: var(--gold); }
-        
-        .search-wrapper { position: relative; width: 50%; }
-        .search-glow {
-            width: 100%; padding: 10px 15px; padding-right: 35px;
-            background: #111; border: 1px solid #333;
-            border-radius: 50px; color: #fff; font-family: 'Outfit', sans-serif; font-size: 12px;
-            transition: all 0.3s ease;
+        .login-box {
+            background: var(--panel); padding: 30px; border-radius: 15px; border: 1px solid var(--red);
+            width: 350px; text-align: center; box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
         }
-        .search-glow:focus {
-            box-shadow: 0 0 15px var(--neon-pink); border-color: var(--neon-pink); background: #000;
-        }
-        .search-icon-pos { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #666; font-size: 14px; pointer-events: none; }
+        .login-box h2 { font-family: 'Orbitron'; color: var(--gold); margin-bottom: 25px; font-size: 22px; }
 
-        /* --- HOME LAYOUT --- */
-        .app-view { display: none; padding-top: 75px; animation: fadeIn 0.4s; }
+        #dashboard { display: none; }
+
+        header {
+            background: rgba(20,20,20,0.95); padding: 15px; border-bottom: 1px solid #333;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px);
+        }
+        .brand { font-family: 'Orbitron'; font-size: 20px; font-weight: 900; }
+        .brand span { color: var(--gold); }
+
+        /* NEW: Stats Bar */
+        .stats-bar { display: flex; gap: 10px; padding: 15px; background: #050505; }
+        .stat-card { background: var(--panel); flex: 1; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #333; }
+        .stat-card p { font-size: 10px; color: #888; text-transform: uppercase; margin-bottom: 5px; font-family: 'Orbitron'; }
+        .stat-card div { font-size: 24px; font-weight: bold; font-family: 'Orbitron'; }
+
+        .nav-scroller { overflow-x: auto; white-space: nowrap; padding: 10px; background: #111; border-bottom: 1px solid #222; }
+        .nav-btn { display: inline-block; padding: 8px 20px; margin-right: 10px; border-radius: 20px; background: #222; color: #888; font-size: 12px; font-family: 'Orbitron'; cursor: pointer; border: 1px solid #333; transition: 0.3s; }
+        .nav-btn.active { background: var(--gold); color: #000; border-color: var(--gold); font-weight: bold; }
+
+        .section-view { display: none; padding: 20px; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Banner Slider */
-        #banner-slider, #movie-banner-slider { 
-            width: 94%; height: 200px; margin: 10px auto 20px auto; border-radius: 16px; 
-            overflow: hidden; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.7);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .slide { position: absolute; inset: 0; opacity: 0; transition: 0.8s ease-in-out; background-size: cover; background-position: center; cursor: pointer; }
-        .slide.active { opacity: 1; transform: scale(1.02); }
-        .banner-watch-btn {
-            position: absolute; bottom: 20px; left: 20px;
-            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(4px);
-            padding: 8px 20px; border-radius: 30px; color: #fff; font-family: 'Orbitron';
-            font-size: 11px; font-weight: 700; border: 1px solid var(--gold);
-            display: flex; align-items: center; gap: 8px; z-index: 10;
-        }
+        .input-group { background: var(--panel); padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; }
+        .input-group h3 { color: var(--gold); font-family: 'Orbitron'; margin-bottom: 15px; font-size: 16px; }
 
-        /* Section Title */
-        .section-header { padding: 0 15px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
-        .sec-title-text { font-family: 'Orbitron'; font-size: 14px; font-weight: 700; color: #ddd; display: flex; align-items: center; gap: 8px; }
-        .see-all { font-size: 10px; color: var(--neon-pink); font-weight: 600; cursor: pointer; }
+        input[type="text"], input[type="email"], input[type="password"], input[type="number"], select { 
+            width: 100%; padding: 14px 12px; margin-bottom: 15px; background: #050505; 
+            border: 1px solid #333; color: #fff; border-radius: 8px; font-size: 14px; transition: 0.3s;
+        }
+        input:focus, select:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
 
-        /* Grid */
-        .grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 12px; }
-        .folder-card { 
-            position: relative; border-radius: 10px; overflow: hidden; background: #1a1a1a; 
-            aspect-ratio: 2/3; box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: 0.2s; border: 1px solid #222;
+        .cat-checkboxes { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; 
+            background: #050505; padding: 15px; border: 1px solid #333; 
+            border-radius: 8px; margin-bottom: 15px; 
         }
-        .folder-card:active { transform: scale(0.96); }
-        .folder-card img { width: 100%; height: 100%; object-fit: cover; }
-        .folder-overlay { 
-            position: absolute; inset: 0; background: linear-gradient(to top, #000 0%, transparent 70%);
-            display: flex; flex-direction: column; justify-content: flex-end; padding: 8px;
-        }
-        .folder-title { font-size: 10px; font-weight: 600; color: #fff; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .folder-ep { font-size: 9px; color: var(--gold); margin-top: 2px; font-family: 'Orbitron'; }
+        .cat-checkboxes label { color: #ddd; font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-family: 'Orbitron'; font-weight: 500; }
+        .cat-checkboxes input[type="checkbox"] { width: 18px; height: 18px; margin: 0; accent-color: var(--gold); cursor: pointer; }
 
-        /* --- LUXURY PROFILE --- */
-        .profile-container {
-            width: 100%;
-        }
+        .btn-action { width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; background: linear-gradient(45deg, #b8952b, var(--gold)); color: #000; font-family: 'Orbitron'; font-size: 14px; transition: 0.2s;}
+        .btn-action:active { transform: scale(0.98); }
+        .btn-action.updating { background: linear-gradient(45deg, #0056b3, #007bff); color: #fff; }
 
-        .prof-cover-area {
-            height: 180px; width: 100%;
-            background: url('https://w.wallhaven.cc/full/ex/wallhaven-ex9gwo.jpg'); /* Anime Banner */
-            background-size: cover; background-position: center;
-            position: relative;
-        }
-        .prof-cover-overlay {
-            position: absolute; inset: 0;
-            background: linear-gradient(to bottom, transparent 0%, #050505 100%);
-        }
+        .data-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 20px; }
+        .data-card { background: #111; border: 1px solid #333; border-radius: 8px; overflow: hidden; position: relative; }
+        .data-card img { width: 100%; height: 100px; object-fit: cover; }
+        .data-info { padding: 10px; }
+        .data-title { font-size: 11px; color: #ddd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 5px;}
+        .data-badge { font-size: 8px; font-weight: bold; padding: 3px 6px; background: #333; color: var(--gold); border-radius: 4px; margin-bottom: 5px; display: inline-block; font-family: 'Orbitron';}
+        .vip-badge-small { position: absolute; top:5px; right:5px; background:rgba(0,0,0,0.8); color:var(--gold); font-size:9px; padding:2px 5px; border-radius:4px; font-weight:bold; }
 
-        .prof-avatar-section {
-            margin-top: -60px; /* Pulls up over the banner */
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            position: relative; z-index: 2;
-        }
+        .card-btns { display: flex; gap: 5px; }
+        .del-btn, .edit-btn { flex: 1; border: none; padding: 6px; font-size: 10px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .del-btn { background: var(--red); color: #fff; }
+        .edit-btn { background: #333; color: var(--gold); border: 1px solid var(--gold); }
 
-        .avatar-circle-glow {
-            width: 110px; height: 110px; border-radius: 50%;
-            padding: 4px; background: #000;
-            position: relative;
-            box-shadow: 0 0 30px rgba(255, 0, 85, 0.6); /* Neon Pink Glow */
-        }
-        .avatar-img-real {
-            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
-            border: 2px solid #fff;
-        }
-        .status-dot-green {
-            position: absolute; bottom: 5px; right: 5px;
-            width: 22px; height: 22px; background: #00ff00;
-            border: 3px solid #000; border-radius: 50%;
-        }
-
-        .prof-username {
-            font-family: 'Orbitron'; font-weight: 900; font-size: 24px; color: #fff;
-            margin-top: 15px; letter-spacing: 1px;
-        }
-        .prof-rank-pill {
-            background: #222; padding: 5px 15px; border-radius: 20px;
-            font-size: 10px; color: #aaa; font-weight: 600;
-            margin-top: 5px; border: 1px solid #333;
-        }
-
-        /* Stats Row */
-        .prof-stats-row {
-            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
-            padding: 25px 20px 20px 20px;
-        }
-        .stat-box-modern {
-            background: #111; border-radius: 12px; padding: 15px 5px;
-            text-align: center; border: 1px solid #222;
-        }
-        .stat-val-m { font-family: 'Orbitron'; font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 2px; }
-        .stat-lbl-m { font-size: 11px; color: #888; }
-
-        /* Menu List */
-        .prof-menu-list {
-            padding: 10px 20px 40px 20px; display: flex; flex-direction: column; gap: 12px;
-        }
-        .menu-btn-modern {
-            background: #111; border: 1px solid #222; border-radius: 14px;
-            padding: 15px; display: flex; align-items: center; justify-content: space-between;
-            cursor: pointer; transition: 0.2s;
-        }
-        .menu-btn-modern:active { transform: scale(0.98); background: #1a1a1a; }
-        
-        .menu-left-content { display: flex; align-items: center; gap: 15px; }
-        .menu-icon-square {
-            width: 38px; height: 38px; border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px;
-        }
-        
-        .icon-blue { background: rgba(0, 243, 255, 0.1); color: #00f3ff; }
-        .icon-red { background: rgba(255, 0, 85, 0.1); color: #ff0055; }
-        .icon-cyan { background: rgba(0, 120, 255, 0.1); color: #0078ff; }
-        
-        .menu-text-m { font-size: 14px; font-weight: 500; color: #fff; }
-        .arrow-right { color: #444; font-size: 12px; }
-
-        .logout-btn-top {
-            position: absolute; top: 20px; right: 20px; z-index: 10;
-            background: rgba(0,0,0,0.6); width: 35px; height: 35px;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        /* Premium Section */
-        .premium-card-gold {
-            margin: 0 20px 20px 20px; padding: 20px; border-radius: 15px;
-            background: linear-gradient(45deg, #111, #000); border: 1px solid var(--gold);
-            text-align: center; position: relative; overflow: hidden;
-        }
-        .gold-shine { position: absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle, rgba(255,215,0,0.15), transparent 70%); pointer-events:none; }
-        .prem-inp { width: 100%; background: #222; border: 1px solid #444; padding: 10px; color: #fff; border-radius: 6px; margin: 10px 0; }
-        .prem-act-btn { width: 100%; background: var(--gold); color: #000; font-weight: bold; padding: 10px; border-radius: 6px; border: none; font-family: 'Orbitron'; cursor: pointer; }
-
-
-        /* --- Login Styles --- */
-        .login-page-wrapper { display: flex; justify-content: center; align-items: center; min-height: 85vh; width: 100%; background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.9)), url('https://images.alphacoders.com/132/1322502.jpeg'); background-size: cover; background-position: center; position: relative; }
-        .login-container { position: relative; width: 850px; max-width: 90vw; height: 500px; background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; box-shadow: 0 0 40px rgba(255, 0, 85, 0.15); overflow: hidden; }
-        .form-box { position: absolute; top: 0; width: 50%; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 40px; transition: 0.6s ease-in-out; z-index: 1; }
-        .login-box { left: 0; } .register-box { right: -50%; opacity: 0; pointer-events: none; }
-        .login-container.active .login-box { left: -50%; opacity: 0; pointer-events: none; }
-        .login-container.active .register-box { right: 0; opacity: 1; pointer-events: auto; }
-        .animation { transform: translateX(50px); opacity: 0; filter: blur(10px); transition: 0.7s ease; transition-delay: calc(0.1s * var(--li)); }
-        .login-container:not(.active) .login-box .animation, .login-container.active .register-box .animation { transform: translateX(0); opacity: 1; filter: blur(0); }
-        .login-title { font-family: 'Orbitron', sans-serif; color: #fff; font-size: 2rem; margin-bottom: 20px; text-shadow: 0 0 10px var(--neon-pink); }
-        .input-box { position: relative; margin: 15px 0; border-bottom: 2px solid rgba(255, 255, 255, 0.2); }
-        .input-box input { width: 100%; padding: 10px 0; background: transparent; border: none; outline: none; color: #fff; font-size: 1rem; }
-        .btn-neon { width: 100%; padding: 12px; background: var(--neon-pink); border: none; border-radius: 5px; color: #fff; font-family: 'Orbitron', sans-serif; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 0 15px var(--neon-pink); }
-        .toggle-text { color: #ccc; margin-top: 15px; text-align: center; font-size: 0.9rem; }
-        .toggle-panel { position: absolute; top: 0; left: 50%; width: 50%; height: 100%; background: rgba(255, 0, 85, 0.15); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; transition: 0.6s ease-in-out; z-index: 2; border-left: 1px solid rgba(255, 255, 255, 0.2); }
-        .login-container.active .toggle-panel { left: 0; border-left: none; border-right: 1px solid rgba(255, 255, 255, 0.2); }
-        @media (max-width: 768px) { .login-container { height: 550px; width: 90%; } .toggle-panel { display: none; } .form-box { width: 100%; padding: 30px; } .register-box { right: -100%; } .login-container.active .login-box { left: -100%; } }
-
-        /* Ad Containers */
-        .ad-container-center { display: flex; justify-content: center; align-items: center; margin: 15px 0; overflow: hidden; width: 100%; min-height: 50px; }
-        
-        /* Other views */
-        #movie-box-view { background: #0a0a0a; min-height: 100vh; }
-        .movie-header { background: #1a0505; border-bottom: 1px solid #ff3b3b; }
-        #shorts-view { position: fixed; inset: 0; background: #000; z-index: 200; padding: 0; overflow-y: scroll; scroll-snap-type: y mandatory; }
-        .short-item { width: 100%; height: 100vh; scroll-snap-align: start; position: relative; background: #111; display: flex; align-items: center; justify-content: center; }
-        .short-item video { width: 100%; height: 100%; object-fit: cover; }
-        .short-overlay { position: absolute; bottom: 80px; right: 10px; display: flex; flex-direction: column; gap: 20px; z-index: 10; }
-        .short-btn { color: #fff; text-align: center; font-size: 24px; text-shadow: 0 2px 5px #000; cursor: pointer; }
-        .short-btn.liked { color: var(--red); }
-        .short-btn span { display: block; font-size: 10px; font-family: 'Orbitron'; margin-top: 5px; }
-        #player-view { position: fixed; inset: 0; background: #000; z-index: 5000; overflow-y: auto; display: none; }
-        .video-wrapper { position: sticky; top: 0; z-index: 5001; background: #000; width: 100%; aspect-ratio: 16/9; }
-        video { width: 100%; height: 100%; }
-        .player-meta-container { padding: 15px; background: #050505; min-height: 100vh; }
-        .meta-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-        .meta-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 5px; font-family: 'Outfit', sans-serif; line-height: 1.2; }
-        .meta-info { font-size: 11px; color: #aaa; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .rating-star { color: #ffb400; font-size: 10px; }
-        .action-buttons-row { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
-        .act-btn { background: #1e1e1e; color: #fff; border: 1px solid #333; padding: 10px 16px; border-radius: 8px; font-size: 12px; display: flex; align-items: center; gap: 6px; white-space: nowrap; cursor: pointer; transition: 0.2s; }
-        .act-btn.liked { color: var(--red); border-color: var(--red); background: rgba(255, 59, 59, 0.1); }
-        .resources-section { margin-bottom: 25px; }
-        .res-title { font-size: 13px; color: #fff; margin-bottom: 12px; font-weight: 600; }
-        .dropdown-row { display: flex; gap: 10px; margin-bottom: 15px; }
-        select.custom-drop { background: #1e1e1e; color: #ddd; border: 1px solid #333; padding: 8px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; outline: none; }
-        .ep-pill-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; scrollbar-width: none; }
-        .ep-pill { min-width: 45px; height: 40px; background: #111; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #aaa; border: 1px solid #2a2a2a; flex-shrink: 0; cursor: pointer; }
-        .ep-pill.active { background: var(--green-accent); color: #fff; border-color: var(--green-accent); font-weight: 700; }
-        .comment-section { padding: 0; margin-bottom: 50px; }
-        .comment-box { display: flex; margin-bottom: 15px; background: #111; padding: 10px; border-radius: 8px; border: 1px solid #222; }
-        .c-avatar { width: 30px; height: 30px; background: #333; border-radius: 50%; margin-right: 10px; color: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 12px; }
-        .tab-header { display: flex; gap: 25px; border-bottom: 1px solid #222; margin-bottom: 20px; }
-        .tab-item { padding-bottom: 10px; font-size: 14px; color: #888; position: relative; cursor: pointer; font-weight: 500; }
-        .tab-item.active { color: #fff; font-weight: 700; }
-        .tab-item.active::after { content:''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: #fff; }
-        .rec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
-        .rec-card { position: relative; aspect-ratio: 2/3; border-radius: 8px; overflow: hidden; background: #111; cursor: pointer; }
-        .rec-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
-        .rec-badge { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.8); color: #fff; font-size: 9px; padding: 2px 5px; border-radius: 4px; }
-        .rec-title { position: absolute; bottom: 0; width: 100%; padding: 8px 5px; background: linear-gradient(to top, #000, transparent); font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
-        
-        nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(15px); border-radius: 25px; padding: 12px; display: flex; justify-content: space-around; border: 1px solid #333; z-index: 1000; box-shadow: 0 5px 20px rgba(0,0,0,0.8); }
-        nav i { font-size: 20px; color: #555; transition: 0.3s; padding: 10px; border-radius: 50%; }
-        nav i.active { color: #000; background: var(--gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
-
-        #history-view { display:none; position:fixed; inset:0; background:#000; z-index:6000; overflow-y:auto; padding:20px; animation: fadeIn 0.3s; }
-        .history-item { background: #111; padding: 15px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
+        .code-card { background: #1a1a1a; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #666; transition: 0.2s; cursor: pointer; }
+        .code-card.unused { border-left-color: var(--green); background: rgba(0, 230, 118, 0.05); }
+        .code-card.used { border-left-color: var(--red); background: rgba(255, 59, 59, 0.05); opacity: 0.7; }
+        .code-text { font-family: 'Courier New', monospace; font-size: 16px; font-weight: bold; color: #fff; letter-spacing: 1px; }
+        .code-days { font-size: 11px; color: #888; margin-top: 4px; }
+        .code-status { font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
+        .st-active { background: rgba(0, 230, 118, 0.2); color: var(--green); }
+        .st-used { background: rgba(255, 59, 59, 0.2); color: var(--red); }
+        .code-controls { display:flex; gap:10px; margin-bottom:10px; }
 
     </style>
 </head>
 <body>
 
-    <!-- HOME -->
-    <div id="main-app" class="app-view" style="display:block;">
+    <!-- ADMIN LOGIN SCREEN -->
+    <div id="admin-login-view">
+        <div class="login-box">
+            <h2>ADMIN LOGIN</h2>
+            <input type="email" id="admin-email" placeholder="Admin Email">
+            <input type="password" id="admin-pass" placeholder="Admin Password">
+            <button class="btn-action" onclick="loginAdmin()">VERIFY IDENTITY</button>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div id="dashboard">
         <header>
-            <div class="logo">ANIMAX <span>WORLD</span></div>
-            <div class="search-wrapper">
-                <input type="text" class="search-glow" placeholder="Search..." oninput="filterAnime(this.value)">
-                <i class="fas fa-search search-icon-pos"></i>
+            <div class="brand">ANIMAX <span>ADMIN</span></div>
+            <div>
+                <span style="font-size:10px; color:#666; margin-right: 15px;">SECURED BY RJ ROCKY</span>
+                <button onclick="logoutAdmin()" style="background: var(--red); color: #fff; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-family: 'Orbitron'; font-size: 10px;">LOGOUT</button>
             </div>
         </header>
 
-        <div id="banner-slider"></div>
-
-        <div id="ad-banner-top" class="ad-container-center"></div>
-        
-        <div class="section-header">
-            <div class="sec-title-text"><i class="fas fa-bolt"></i> NEW RELEASE</div>
-            <div class="see-all">See All</div>
-        </div>
-
-        <div id="anime-grid" class="grid-container"></div>
-        <div style="height:50px;"></div>
-    </div>
-
-    <!-- MOVIE -->
-    <div id="movie-box-view" class="app-view">
-        <header class="movie-header">
-            <div class="logo">MOVIE <span>BOX</span></div>
-            <i class="fas fa-sign-out-alt" style="color:#fff;" onclick="switchInterface('main')"></i>
-        </header>
-        <div id="movie-banner-slider"></div>
-        <div class="section-header"><div class="sec-title-text" style="color:#ff3b3b"><i class="fas fa-film"></i> MOVIES</div></div>
-        <div id="movie-grid" class="grid-container"></div>
-    </div>
-
-    <!-- PROFILE VIEW -->
-    <div id="profile-view" class="app-view" style="background:#000; height:100vh; overflow-y:auto; padding-top:0;">
-        
-        <!-- LOGIN -->
-        <div id="guest-login-content" style="display:none;">
-            <div class="login-page-wrapper">
-                <div class="login-container">
-                    <div class="form-box login-box">
-                        <form onsubmit="event.preventDefault(); handleAuth('login');">
-                            <h1 class="login-title animation" style="--li:0">Welcome Back</h1>
-                            <div class="input-box animation" style="--li:1"><input type="email" id="email-in" placeholder="Email" required></div>
-                            <div class="input-box animation" style="--li:2"><input type="password" id="pass-in" placeholder="Password" required></div>
-                            <button class="btn-neon animation" style="--li:3">LOGIN</button>
-                            <p class="toggle-text animation" style="--li:4">No account? <a class="register-link">Sign up</a></p>
-                        </form>
-                    </div>
-                    <div class="form-box register-box">
-                        <form onsubmit="event.preventDefault(); handleAuth('reg');">
-                            <h1 class="login-title animation" style="--li:0">JOIN SQUAD</h1>
-                            <div class="input-box animation" style="--li:1"><input type="email" id="remail-in" placeholder="Email" required></div>
-                            <div class="input-box animation" style="--li:2"><input type="password" id="rpass-in" placeholder="Password" required></div>
-                            <button class="btn-neon animation" style="--li:3">REGISTER</button>
-                            <p class="toggle-text animation" style="--li:4">Member? <a class="login-link">Login</a></p>
-                        </form>
-                    </div>
-                    <div class="toggle-panel">
-                        <div style="text-align:center; color:#fff;">
-                            <h2 style="font-family:'Orbitron'; font-size:1.5rem; margin-bottom:10px;">ANIMAX WORLD</h2>
-                            <p style="font-size:0.9rem; opacity:0.8;">The ultimate anime destination.</p>
-                        </div>
-                    </div>
-                </div>
+        <!-- ADDED: REAL-TIME STATS BAR -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <p>Online Users</p>
+                <div id="online-count" style="color: var(--cyan);">0</div>
+            </div>
+            <div class="stat-card">
+                <p>Total Users</p>
+                <div id="total-count" style="color: var(--gold);">0</div>
             </div>
         </div>
 
-        <!-- USER PROFILE CONTENT -->
-        <div id="user-profile-content" style="display:none;">
-            <div class="profile-container">
+        <div class="nav-scroller">
+            <div class="nav-btn active" onclick="showTab('anime')">ANIME SERIES</div>
+            <div class="nav-btn" onclick="showTab('movies')">MOVIE BOX</div>
+            <div class="nav-btn" onclick="showTab('cartoons')">CARTOON BOX</div>
+            <div class="nav-btn" onclick="showTab('shorts')">SHORTS</div>
+            <div class="nav-btn" onclick="showTab('banners')">ALL BANNERS</div>
+            <div class="nav-btn" onclick="showTab('codes')">PREMIUM CODES</div>
+        </div>
+
+        <!-- ANIME SECTION -->
+        <div id="anime" class="section-view" style="display:block;">
+            <div class="input-group">
+                <h3 id="an-head"><i class="fas fa-upload"></i> UPLOAD ANIME EPISODES</h3>
                 
-                <div class="prof-cover-area">
-                    <div class="prof-cover-overlay"></div>
-                    <div class="logout-btn-top" onclick="auth.signOut()">
-                        <i class="fas fa-sign-out-alt" style="color:#fff;"></i>
-                    </div>
+                <!-- Category Checkboxes -->
+                <div class="cat-checkboxes">
+                    <label><input type="checkbox" value="anime" class="cat-chk" checked> Anime</label>
+                    <label><input type="checkbox" value="movie" class="cat-chk"> Movie</label>
+                    <label><input type="checkbox" value="trending" class="cat-chk"> Trending</label>
                 </div>
 
-                <div class="prof-avatar-section">
-                    <div class="avatar-circle-glow">
-                        <img src="https://wallpapers.com/images/hd/cool-anime-girl-pfp-v2h1y9x9y9x9y9x9.jpg" class="avatar-img-real">
-                        <div class="status-dot-green"></div>
-                    </div>
-                    <h2 class="prof-username" id="profile-name">USER</h2>
-                    <div class="prof-rank-pill" id="vip-badge">NOVICE</div>
-                </div>
-
-                <div class="prof-stats-row">
-                    <div class="stat-box-modern">
-                        <div class="stat-val-m" id="profile-watch-count">0</div>
-                        <div class="stat-lbl-m">Anime</div>
-                    </div>
-                    <div class="stat-box-modern">
-                        <div class="stat-val-m" id="profile-rank-val">#--</div>
-                        <div class="stat-lbl-m">Rank</div>
-                    </div>
-                    <div class="stat-box-modern">
-                        <div class="stat-val-m">4.5</div>
-                        <div class="stat-lbl-m">Rating</div>
-                    </div>
-                </div>
-
-                <div class="prof-menu-list">
-                    <div class="menu-btn-modern" onclick="openHistory()">
-                        <div class="menu-left-content">
-                            <div class="menu-icon-square icon-blue"><i class="fas fa-history"></i></div>
-                            <div class="menu-text-m">Watch History</div>
-                        </div>
-                        <i class="fas fa-chevron-right arrow-right"></i>
-                    </div>
-
-                    <div class="menu-btn-modern" onclick="switchInterface('movie')">
-                        <div class="menu-left-content">
-                            <div class="menu-icon-square icon-red"><i class="fas fa-film"></i></div>
-                            <div class="menu-text-m">Movie Box</div>
-                        </div>
-                        <i class="fas fa-chevron-right arrow-right"></i>
-                    </div>
-
-                    <div class="menu-btn-modern" onclick="window.open('https://t.me/animax090', '_blank')">
-                        <div class="menu-left-content">
-                            <div class="menu-icon-square icon-cyan"><i class="fab fa-telegram-plane"></i></div>
-                            <div class="menu-text-m">Community</div>
-                        </div>
-                        <i class="fas fa-chevron-right arrow-right"></i>
-                    </div>
-                </div>
-
-                <div class="premium-card-gold">
-                    <div class="gold-shine"></div>
-                    <h3 class="prem-title"><i class="fas fa-crown"></i> VIP STATUS</h3>
-                    <p class="prem-sub">No Ads • 4K Quality • Early Access</p>
-                    <input type="text" id="prem-code" class="prem-inp" placeholder="Paste Key">
-                    <button class="prem-act-btn" onclick="redeemCode()">ACTIVATE</button>
-                    <p style="font-size:10px; margin-top:10px; color:#666; cursor:pointer;" onclick="buyPremium()">Get key from Admin</p>
-                </div>
+                <input type="text" id="an-folder" placeholder="Folder Name (e.g. Naruto)">
+                <input type="text" id="an-title" placeholder="Episode Title">
+                <input type="text" id="an-thumb" placeholder="Thumbnail Image URL">
+                <input type="text" id="an-url" placeholder="Video URL (Original)">
+                <input type="text" id="an-url-hin" placeholder="Video URL (Hindi) - Optional">
+                <input type="text" id="an-url-eng" placeholder="Video URL (English) - Optional">
+                <select id="an-type">
+                    <option value="free">Free Content</option>
+                    <option value="premium">Premium (VIP Only)</option>
+                </select>
+                <input type="hidden" id="an-key">
+                <button id="an-btn" class="btn-action" onclick="uploadAnime()">UPLOAD ANIME & NOTIFY</button>
+                <button id="an-cancel" style="display:none; width:100%; margin-top:5px; background:#333; color:#fff; border:none; padding:12px; border-radius:8px; font-weight:bold; font-family:'Orbitron'; cursor:pointer;" onclick="cancelEdit('anime')">CANCEL EDIT</button>
             </div>
+            <div id="anime-list" class="data-list"></div>
         </div>
-    </div>
 
-    <!-- OTHERS -->
-    <div id="shorts-view" style="display:none;">
-        <div style="position:fixed; top:20px; left:20px; z-index:101; color:#fff;" onclick="hideShorts()"><i class="fas fa-arrow-left" style="background:rgba(0,0,0,0.5); padding:10px; border-radius:50%;"></i></div>
-        <div id="shorts-container"></div>
-        <div id="shorts-comments-modal">
-            <div style="display:flex; justify-content:space-between; margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;"><span style="font-family:'Orbitron'; color:var(--gold);">COMMENTS</span><i class="fas fa-times" onclick="document.getElementById('shorts-comments-modal').style.display='none'"></i></div>
-            <div id="shorts-comments-list" style="height:calc(100% - 100px); overflow-y:auto; margin-bottom:10px;"></div>
-            <div style="display:flex; gap:10px;"><input type="text" id="short-comment-in" placeholder="Write a comment..." style="margin-bottom:0;"><button class="btn-royal" style="width:50px; margin-top:0;" onclick="postShortComment()"><i class="fas fa-paper-plane"></i></button></div>
-        </div>
-    </div>
-
-    <!-- PLAYER VIEW -->
-    <div id="player-view">
-        <div class="video-wrapper">
-            <div style="position:absolute; top:15px; left:15px; z-index:10;" onclick="closePlayer()"><i class="fas fa-arrow-left" style="font-size:18px; color:#fff; background:rgba(0,0,0,0.6); padding:10px; border-radius:50%;"></i></div>
-            <video id="main-video" controls playsinline></video>
-        </div>
-        <div class="player-meta-container">
-            <div class="meta-header">
-                <div>
-                    <div class="meta-title" id="player-title">Episode Title</div>
-                    <div class="meta-info"><i class="fas fa-tv"></i><span><i class="fas fa-star rating-star"></i> 8.5</span><span>| <span id="content-type-badge">Anime</span></span><span id="view-count" style="display:none">0</span><span id="like-count" style="display:none">0</span></div>
+        <!-- MOVIE SECTION -->
+        <div id="movies" class="section-view">
+            <div class="input-group" style="border-color:#ff3b3b;">
+                <h3 id="mv-head" style="color:#ff3b3b;"><i class="fas fa-film"></i> UPLOAD MOVIE</h3>
+                
+                <!-- Category Checkboxes for Movie Section -->
+                <div class="cat-checkboxes">
+                    <label><input type="checkbox" value="movie" class="mv-cat-chk" checked> General Movie</label>
+                    <label><input type="checkbox" value="anime" class="mv-cat-chk"> Anime Movie</label>
+                    <label><input type="checkbox" value="cartoon" class="mv-cat-chk"> Cartoon Movie</label>
+                    <label><input type="checkbox" value="trending" class="mv-cat-chk"> Trending</label>
                 </div>
+
+                <input type="text" id="mv-title" placeholder="Movie Title">
+                <input type="text" id="mv-thumb" placeholder="Poster Image URL">
+                <input type="text" id="mv-url" placeholder="Movie Link URL">
+                <select id="mv-type" style="border-color:#ff3b3b;">
+                    <option value="free">Free Movie</option>
+                    <option value="premium">Premium Movie (VIP)</option>
+                </select>
+
+                <input type="hidden" id="mv-key">
+                <button id="mv-btn" class="btn-action" style="background:linear-gradient(45deg, #800000, #ff3b3b); color:#fff;" onclick="uploadMovie()">UPLOAD MOVIE & NOTIFY</button>
+                <button id="mv-cancel" style="display:none; width:100%; margin-top:5px; background:#333; color:#fff; border:none; padding:12px; border-radius:8px; font-weight:bold; font-family:'Orbitron'; cursor:pointer;" onclick="cancelEdit('movies')">CANCEL EDIT</button>
             </div>
-            <div class="action-buttons-row">
-                <div class="act-btn" id="like-btn" onclick="toggleLike()"><i class="fas fa-plus"></i> Add to list</div>
-                <div class="act-btn" onclick="shareContent()"><i class="fas fa-share-alt"></i> Share</div>
-                <div class="act-btn"><i class="fas fa-download"></i> Download</div>
-            </div>
-            <div class="resources-section">
-                <div class="res-title">Resources</div>
-                <div class="dropdown-row">
-                    <!-- Season Select Updated -->
-                    <select id="season-select" onchange="switchSeason(this.value)" class="custom-drop" style="flex: 1;"></select>
-                    <!-- Language Select Added -->
-                    <select id="language-select" onchange="changeLanguage(this.value)" class="custom-drop" style="width: 100px;">
-                        <option value="hindi">Hindi</option>
-                        <option value="english">English</option>
-                    </select>
-                </div>
-                <div class="ep-pill-row" id="episode-pill-container"></div>
-            </div>
-            <div class="tab-header">
-                <div class="tab-item active" id="tab-btn-foryou" onclick="switchPlayerTab('foryou')">For you</div>
-                <div class="tab-item" id="tab-btn-comments" onclick="switchPlayerTab('comments')">Comments</div>
-            </div>
-            <div id="tab-content-foryou">
-                <div class="rec-grid" id="dynamic-rec-grid"></div>
-                <div id="ad-banner-player" class="ad-container-center" style="margin-top:20px;"></div>
-            </div>
-            <div id="tab-content-comments" style="display: none;">
-                <div class="comment-section">
-                    <div style="display:flex; gap:10px; margin-bottom:20px; margin-top:20px;"><input type="text" id="comment-input" placeholder="Add a comment..." style="margin-bottom:0; background:#1e1e1e; border:none;"><button class="btn-royal" style="width:60px; margin-top:0;" onclick="postComment()"><i class="fas fa-paper-plane"></i></button></div>
-                    <div id="comments-list"></div>
-                </div>
-            </div>
+            <div id="movie-list" class="data-list"></div>
         </div>
-    </div>
 
-    <div id="history-view">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:15px; border-bottom:1px solid #333;"><h2 style="font-family:'Orbitron'; color:var(--gold);">WATCH HISTORY</h2><i class="fas fa-times" style="font-size:24px; color:#fff;" onclick="closeHistory()"></i></div>
-        <div id="history-list-container"></div>
-    </div>
+        <!-- CARTOON SECTION -->
+        <div id="cartoons" class="section-view">
+            <div class="input-group" style="border-color:var(--cyan);">
+                <h3 id="ct-head" style="color:var(--cyan);"><i class="fas fa-paw"></i> UPLOAD CARTOON</h3>
 
-    <nav id="main-nav">
-        <i class="fas fa-home active" onclick="switchTab('home')"></i>
-        <i class="fas fa-play-circle" onclick="showShorts()"></i>
-        <i class="fas fa-user" onclick="switchTab('profile')"></i>
-    </nav>
+                <!-- Category Checkboxes for Cartoon Section -->
+                <div class="cat-checkboxes">
+                    <label><input type="checkbox" value="cartoon" class="ct-cat-chk" checked> Cartoon Series</label>
+                    <label><input type="checkbox" value="movie" class="ct-cat-chk"> Cartoon Movie</label>
+                    <label><input type="checkbox" value="trending" class="ct-cat-chk"> Trending</label>
+                </div>
+
+                <input type="text" id="ct-title" placeholder="Cartoon Title">
+                <input type="text" id="ct-thumb" placeholder="Poster Image URL">
+                <input type="text" id="ct-url" placeholder="Video Link URL">
+                <select id="ct-type" style="border-color:var(--cyan);">
+                    <option value="free">Free Cartoon</option>
+                    <option value="premium">Premium Cartoon (VIP)</option>
+                </select>
+
+                <input type="hidden" id="ct-key">
+                <button id="ct-btn" class="btn-action" style="background:linear-gradient(45deg, #008b99, var(--cyan)); color:#000;" onclick="uploadCartoon()">UPLOAD CARTOON</button>
+                <button id="ct-cancel" style="display:none; width:100%; margin-top:5px; background:#333; color:#fff; border:none; padding:12px; border-radius:8px; font-weight:bold; font-family:'Orbitron'; cursor:pointer;" onclick="cancelEdit('cartoons')">CANCEL EDIT</button>
+            </div>
+            <div id="cartoon-list" class="data-list"></div>
+        </div>
+
+        <div id="shorts" class="section-view">
+            <div class="input-group">
+                <h3><i class="fas fa-video"></i> ADD SHORT VIDEO</h3>
+                <input type="text" id="sh-url" placeholder="Short Video URL">
+                <button class="btn-action" onclick="uploadShort()">ADD SHORT</button>
+            </div>
+            <div id="shorts-list" class="data-list"></div>
+        </div>
+
+        <div id="banners" class="section-view">
+            <div class="input-group">
+                <h3 id="bn-head"><i class="fas fa-images"></i> HOME SLIDER BANNER</h3>
+                <input type="text" id="bn-img" placeholder="Banner Image URL">
+                <input type="text" id="bn-folder" placeholder="Folder Name (For Watch Now click)">
+                <input type="hidden" id="bn-key">
+                <button id="bn-btn" class="btn-action" onclick="uploadBanner()">ADD HOME BANNER</button>
+                <button id="bn-cancel" style="display:none; width:100%; margin-top:5px; background:#333; color:#fff; border:none; padding:12px; border-radius:8px; font-weight:bold; font-family:'Orbitron'; cursor:pointer;" onclick="cancelEdit('banners')">CANCEL EDIT</button>
+            </div>
+            <div id="banner-list" class="data-list"></div>
+
+            <hr style="border: 1px solid #333; margin: 30px 0;">
+
+            <div class="input-group" style="border-color: #ff3b3b;">
+                <h3 style="color: #ff3b3b;"><i class="fas fa-film"></i> MOVIE BOX BANNER</h3>
+                <input type="text" id="mv-bn-img" placeholder="Movie Banner Image URL">
+                <button class="btn-action" style="background: linear-gradient(45deg, #800000, #ff3b3b); color: #fff;" onclick="uploadMovieBanner()">ADD MOVIE BANNER</button>
+            </div>
+            <div id="movie-banner-list" class="data-list"></div>
+        </div>
+
+        <div id="codes" class="section-view">
+            <div class="input-group">
+                <h3><i class="fas fa-key"></i> GENERATE VIP CODES</h3>
+                <div class="code-controls">
+                    <input type="number" id="code-days" placeholder="Days (e.g. 30)" style="flex:2">
+                    <input type="number" id="code-qty" placeholder="Qty (1-10)" value="1" min="1" max="10" style="flex:1">
+                </div>
+                <input type="text" id="custom-code" placeholder="Custom Code (Optional - Single only)">
+                <button class="btn-action" onclick="generateCode()">GENERATE LICENSE</button>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px; padding:0 5px;">
+                <span style="font-size:12px; color:#888;">RECENT CODES</span>
+                <button onclick="if(confirm('Delete USED codes?')) deleteUsedCodes()" style="background:#333; color:#888; border:none; padding:5px 10px; border-radius:5px; font-size:10px;">CLEAR USED</button>
+            </div>
+            <div id="code-list" style="margin-top:10px;"></div>
+        </div>
+
+    </div>
 
     <script>
-        // --- JS LOGIC ---
-        const loginContainer = document.querySelector('.login-container');
-        const registerLink = document.querySelector('.register-link');
-        const loginLink = document.querySelector('.login-link');
-        if(registerLink && loginLink && loginContainer) {
-            registerLink.onclick = () => { loginContainer.classList.add('active'); };
-            loginLink.onclick = () => { loginContainer.classList.remove('active'); };
-        }
+        // --- ANTI HACKER & DEVTOOLS PROTECTOR ---
+        document.addEventListener('contextmenu', event => event.preventDefault()); 
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) return false; 
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; 
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; 
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; 
+        };
 
-        const firebaseConfig = { apiKey: "AIzaSyBcWE5TCxamMSnJxqSm5X4mgSwSccIXcBI", authDomain: "myanimeapp-8d079.firebaseapp.com", databaseURL: "https://myanimeapp-8d079-default-rtdb.firebaseio.com", projectId: "myanimeapp-8d079", storageBucket: "myanimeapp-8d079.firebasestorage.app", messagingSenderId: "37482342893", appId: "1:37482342893:web:bebc7352e4bc102b725fe4" };
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth(), db = firebase.database();
+        const firebaseConfig = {
+            apiKey: "AIzaSyBcWE5TCxamMSnJxqSm5X4mgSwSccIXcBI",
+            authDomain: "myanimeapp-8d079.firebaseapp.com",
+            databaseURL: "https://myanimeapp-8d079-default-rtdb.firebaseio.com",
+            projectId: "myanimeapp-8d079",
+            storageBucket: "myanimeapp-8d079.firebasestorage.app",
+            messagingSenderId: "37482342893",
+            appId: "1:37482342893:web:bebc7352e4bc102b725fe4"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
 
-        let currentUser = null, isPremium = false, currentVideoId = null, adSessionClick = false, adsLoaded = false, isMovieContent = false;
-        let currentLikesCountRef, currentUserLikeRef, currentViewsRef, currentCommentsRef;
-        let currentFolder = null, currentPlayingEpisodeData = null; // Added for Language and Season fix
+        const ONE_SIGNAL_API_KEY = "Os_v2_app_7wwdskfc7rf4pfkbzoc24atebhgngpwcqoceoefjjehehazrf4oylyaia4qlnlly53d7brxmypdsnyqr6mjub7ugwuavak5gcduydda";
+        const ONE_SIGNAL_APP_ID = "fdac3928-a2fc-4bc7-9541-cb85ae026409";
+        const ADMIN_EMAIL = "admin@animax.com"; 
 
         auth.onAuthStateChanged(user => {
-            if (user) {
-                currentUser = user;
-                document.getElementById('guest-login-content').style.display = 'none';
-                document.getElementById('user-profile-content').style.display = 'block';
-                document.getElementById('profile-name').innerText = user.email.split('@')[0].toUpperCase();
-                checkPremium(user.uid);
+            if (user && user.email === ADMIN_EMAIL) {
+                document.getElementById('admin-login-view').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                loadAllData(); 
             } else {
-                currentUser = null; isPremium = false;
-                document.getElementById('guest-login-content').style.display = 'block';
-                document.getElementById('user-profile-content').style.display = 'none';
-                loadFreeUserAds();
+                document.getElementById('admin-login-view').style.display = 'flex';
+                document.getElementById('dashboard').style.display = 'none';
+                if(user) auth.signOut(); 
             }
-            loadContent();
         });
 
-        function filterAnime(query) {
-            let filter = query.toUpperCase();
-            document.querySelectorAll('.folder-card').forEach(card => {
-                let title = card.querySelector('.folder-title').innerText.toUpperCase();
-                card.style.display = title.indexOf(filter) > -1 ? "" : "none";
-            });
+        function loginAdmin() {
+            const e = document.getElementById('admin-email').value;
+            const p = document.getElementById('admin-pass').value;
+            if(!e || !p) return alert("Enter credentials!");
+            auth.signInWithEmailAndPassword(e, p).catch(err => { alert("Access Denied: " + err.message); });
         }
 
-        function loadFreeUserAds() {
-            if(adsLoaded) return; 
-            adsLoaded = true;
-            const bt = document.getElementById('ad-banner-top'); 
-            if(bt) {
-                bt.innerHTML = `<iframe src="javascript:false" scrolling="no" frameborder="0" style="border:none; width:320px; height:50px; overflow:hidden;" srcdoc='<script>atOptions = { "key" : "9f634c6894bc13ff8f0f19de1fcac9f3", "format" : "iframe", "height" : 50, "width" : 320, "params" : {} };<\/script><script src="https://www.highperformanceformat.com/9f634c6894bc13ff8f0f19de1fcac9f3/invoke.js"><\/script>'></iframe>`;
-            }
-            const bp = document.getElementById('ad-banner-player'); 
-            if(bp) {
-                bp.innerHTML = `<iframe src="javascript:false" scrolling="no" frameborder="0" style="border:none; width:468px; height:60px; overflow:hidden;" srcdoc='<script>atOptions = { "key" : "3c0655cdf72da98fdd68dcdd704f9766", "format" : "iframe", "height" : 60, "width" : 468, "params" : {} };<\/script><script src="https://www.highperformanceformat.com/3c0655cdf72da98fdd68dcdd704f9766/invoke.js"><\/script>'></iframe>`;
-            }
-            let s1 = document.createElement('script'); 
-            s1.src = "https://pl28670634.effectivegatecpm.com/2f/28/1a/2f281ac58d64e6a580eb2d4171fe33d7.js"; 
-            document.body.appendChild(s1);
-        }
+        function logoutAdmin() { auth.signOut().then(() => alert("Logged out safely.")); }
 
-        function triggerSmartLink() { 
-            if(!isPremium && !adSessionClick) { 
-                window.open("https://www.effectivegatecpm.com/e3t9unhgv?key=2723dc497461b7507ba151e88ee0e871", "_blank"); 
-                adSessionClick = true; 
-            } 
-        }
-
-        function checkPremium(uid) {
-            db.ref(`users/${uid}`).on('value', s => {
-                const d = s.val() || {};
-                document.getElementById('profile-rank-val').innerText = d.rank ? `#${d.rank}` : '#N/A';
-                db.ref(`users/${uid}/watchlist`).once('value', w => {
-                    document.getElementById('profile-watch-count').innerText = w.numChildren() || "0";
+        async function sendNotification(title, message) {
+            try {
+                await fetch("https://onesignal.com/api/v1/notifications", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json; charset=utf-8", "Authorization": "Basic " + ONE_SIGNAL_API_KEY },
+                    body: JSON.stringify({ app_id: ONE_SIGNAL_APP_ID, included_segments: ["All"], headings: {"en": title}, contents: {"en": message}, url: "https://rockyhack09.github.io/animax-x/" })
                 });
-                if(d.premiumExpiry && d.premiumExpiry > Date.now()) {
-                    isPremium = true;
-                    document.getElementById('vip-badge').innerText = "ELITE MEMBER";
-                    document.getElementById('ad-banner-top').style.display = 'none'; document.getElementById('ad-banner-player').style.display = 'none';
-                } else {
-                    isPremium = false;
-                    document.getElementById('vip-badge').innerText = "NOVICE";
-                    loadFreeUserAds();
+            } catch (e) { console.error("Notification Error", e); }
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.section-view').forEach(d => d.style.display = 'none');
+            document.getElementById(tab).style.display = 'block';
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // --- ANIME FUNCTIONS ---
+        function uploadAnime() {
+            let selectedCats = [];
+            document.querySelectorAll('.cat-chk:checked').forEach(cb => selectedCats.push(cb.value));
+            const category = selectedCats.length > 0 ? selectedCats.join(',') : 'anime';
+
+            const folder = document.getElementById('an-folder').value.trim();
+            const title = document.getElementById('an-title').value;
+            const thumb = document.getElementById('an-thumb').value;
+            const url = document.getElementById('an-url').value;
+            const url_hin = document.getElementById('an-url-hin').value;
+            const url_eng = document.getElementById('an-url-eng').value;
+            const type = document.getElementById('an-type').value;
+            const key = document.getElementById('an-key').value;
+
+            if(!folder || !title || !url) return alert("Fill all required fields!");
+
+            if (key) {
+                db.ref('anime/' + key).update({ category, folder, title, thumbnail: thumb, url, url_hin, url_eng, type }).then(() => {
+                    alert("Anime Updated Successfully!");
+                    cancelEdit('anime');
+                });
+            } else {
+                db.ref('anime').push({ category, folder, title, thumbnail: thumb, url, url_hin, url_eng, type, timestamp: Date.now() });
+                sendNotification("🎬 New Episode Out!", `${folder}: ${title} এখন অনলাইনে।`);
+                alert("Uploaded & Notified!");
+                clearInputs(['an-title', 'an-url', 'an-url-hin', 'an-url-eng']);
+            }
+        }
+
+        function editAnime(key, folder, title, thumb, url, type, url_hin, url_eng, categoryStr) {
+            document.getElementById('an-key').value = key; 
+            const catArray = (categoryStr || 'anime').split(',');
+            document.querySelectorAll('.cat-chk').forEach(cb => { cb.checked = catArray.includes(cb.value); });
+            document.getElementById('an-folder').value = folder;
+            document.getElementById('an-title').value = title; 
+            document.getElementById('an-thumb').value = thumb;
+            document.getElementById('an-url').value = url; 
+            document.getElementById('an-url-hin').value = url_hin || "";
+            document.getElementById('an-url-eng').value = url_eng || ""; 
+            document.getElementById('an-type').value = type;
+            const btn = document.getElementById('an-btn'); btn.innerText = "UPDATE CHANGES"; btn.classList.add('updating');
+            document.getElementById('an-head').innerText = "EDITING MODE"; document.getElementById('an-cancel').style.display = 'block';
+            window.scrollTo(0,0);
+        }
+
+        // --- MOVIE FUNCTIONS ---
+        function uploadMovie() {
+            let selectedCats = [];
+            document.querySelectorAll('.mv-cat-chk:checked').forEach(cb => selectedCats.push(cb.value));
+            const category = selectedCats.length > 0 ? selectedCats.join(',') : 'movie';
+
+            const title = document.getElementById('mv-title').value; const thumb = document.getElementById('mv-thumb').value;
+            const url = document.getElementById('mv-url').value; const key = document.getElementById('mv-key').value;
+            const type = document.getElementById('mv-type').value;
+            
+            if(!title || !url) return alert("Fill all fields!");
+
+            if(key) {
+                db.ref('movies/' + key).update({ category, title, thumbnail: thumb, url, type }).then(() => { alert("Movie Updated!"); cancelEdit('movies'); });
+            } else {
+                db.ref('movies').push({ category, title, thumbnail: thumb, url, type, timestamp: Date.now() });
+                sendNotification("🎬 New Movie Added!", `${title} মুভিটি যুক্ত হয়েছে। এখনই দেখুন!`);
+                alert("Movie Uploaded & Notified!"); clearInputs(['mv-title', 'mv-thumb', 'mv-url']);
+            }
+        }
+
+        function editMovie(key, title, thumb, url, type, categoryStr) {
+            document.getElementById('mv-key').value = key; document.getElementById('mv-title').value = title;
+            document.getElementById('mv-thumb').value = thumb; document.getElementById('mv-url').value = url;
+            document.getElementById('mv-type').value = type || 'free'; 
+            
+            const catArray = (categoryStr || 'movie').split(',');
+            document.querySelectorAll('.mv-cat-chk').forEach(cb => { cb.checked = catArray.includes(cb.value); });
+
+            const btn = document.getElementById('mv-btn'); btn.innerText = "UPDATE MOVIE"; btn.classList.add('updating');
+            document.getElementById('mv-head').innerText = "EDITING MOVIE"; document.getElementById('mv-cancel').style.display = 'block';
+            window.scrollTo(0,0);
+        }
+
+        // --- CARTOON FUNCTIONS ---
+        function uploadCartoon() {
+            let selectedCats = [];
+            document.querySelectorAll('.ct-cat-chk:checked').forEach(cb => selectedCats.push(cb.value));
+            const category = selectedCats.length > 0 ? selectedCats.join(',') : 'cartoon';
+
+            const title = document.getElementById('ct-title').value; const thumb = document.getElementById('ct-thumb').value;
+            const url = document.getElementById('ct-url').value; const key = document.getElementById('ct-key').value;
+            const type = document.getElementById('ct-type').value; 
+            
+            if(!title || !url) return alert("Fill all fields!");
+
+            if(key) {
+                db.ref('cartoons/' + key).update({ category, title, thumbnail: thumb, url, type }).then(() => { alert("Cartoon Updated!"); cancelEdit('cartoons'); });
+            } else {
+                db.ref('cartoons').push({ category, title, thumbnail: thumb, url, type, timestamp: Date.now() });
+                sendNotification("🐼 New Cartoon Added!", `${title} কার্টুনটি যুক্ত হয়েছে।`);
+                alert("Cartoon Uploaded!"); clearInputs(['ct-title', 'ct-thumb', 'ct-url']);
+            }
+        }
+
+        function editCartoon(key, title, thumb, url, type, categoryStr) {
+            document.getElementById('ct-key').value = key; document.getElementById('ct-title').value = title;
+            document.getElementById('ct-thumb').value = thumb; document.getElementById('ct-url').value = url;
+            document.getElementById('ct-type').value = type || 'free'; 
+            
+            const catArray = (categoryStr || 'cartoon').split(',');
+            document.querySelectorAll('.ct-cat-chk').forEach(cb => { cb.checked = catArray.includes(cb.value); });
+
+            const btn = document.getElementById('ct-btn'); btn.innerText = "UPDATE CARTOON"; btn.classList.add('updating');
+            document.getElementById('ct-head').innerText = "EDITING CARTOON"; document.getElementById('ct-cancel').style.display = 'block';
+            window.scrollTo(0,0);
+        }
+
+        function cancelEdit(type) {
+            if(type === 'anime') {
+                document.getElementById('an-key').value = ""; document.querySelectorAll('.cat-chk').forEach(cb => cb.checked = false); document.querySelector('.cat-chk[value="anime"]').checked = true;
+                clearInputs(['an-folder', 'an-title', 'an-thumb', 'an-url', 'an-url-hin', 'an-url-eng']);
+                const btn = document.getElementById('an-btn'); btn.innerText = "UPLOAD ANIME & NOTIFY"; btn.classList.remove('updating');
+                document.getElementById('an-head').innerHTML = '<i class="fas fa-upload"></i> UPLOAD ANIME EPISODES'; document.getElementById('an-cancel').style.display = 'none';
+            } else if(type === 'movies') {
+                document.getElementById('mv-key').value = ""; document.querySelectorAll('.mv-cat-chk').forEach(cb => cb.checked = false); document.querySelector('.mv-cat-chk[value="movie"]').checked = true;
+                clearInputs(['mv-title', 'mv-thumb', 'mv-url']);
+                const btn = document.getElementById('mv-btn'); btn.innerText = "UPLOAD MOVIE & NOTIFY"; btn.classList.remove('updating');
+                document.getElementById('mv-head').innerHTML = '<i class="fas fa-film"></i> UPLOAD MOVIE'; document.getElementById('mv-cancel').style.display = 'none';
+            } else if(type === 'cartoons') {
+                document.getElementById('ct-key').value = ""; document.querySelectorAll('.ct-cat-chk').forEach(cb => cb.checked = false); document.querySelector('.ct-cat-chk[value="cartoon"]').checked = true;
+                clearInputs(['ct-title', 'ct-thumb', 'ct-url']);
+                const btn = document.getElementById('ct-btn'); btn.innerText = "UPLOAD CARTOON"; btn.classList.remove('updating');
+                document.getElementById('ct-head').innerHTML = '<i class="fas fa-paw"></i> UPLOAD CARTOON'; document.getElementById('ct-cancel').style.display = 'none';
+            } else if (type === 'banners') {
+                document.getElementById('bn-key').value = ""; clearInputs(['bn-img', 'bn-folder']);
+                const btn = document.getElementById('bn-btn'); btn.innerText = "ADD HOME BANNER"; btn.classList.remove('updating');
+                document.getElementById('bn-head').innerHTML = '<i class="fas fa-images"></i> HOME SLIDER BANNER'; document.getElementById('bn-cancel').style.display = 'none';
+            }
+        }
+
+        function uploadShort() {
+            const url = document.getElementById('sh-url').value;
+            if(!url) return;
+            db.ref('shorts').push({ id: Date.now().toString(), url: url });
+            alert("Short Video Added!"); document.getElementById('sh-url').value = "";
+        }
+
+        function uploadBanner() {
+            const img = document.getElementById('bn-img').value; const folderName = document.getElementById('bn-folder').value.trim(); 
+            const key = document.getElementById('bn-key').value; 
+            if(!img) return alert("Image URL is required!");
+            if(key) { db.ref('banners/' + key).update({ image: img, folderName: folderName }).then(() => { alert("Banner Updated Successfully!"); cancelEdit('banners'); });
+            } else { db.ref('banners').push({ image: img, folderName: folderName }); alert("Home Banner Added!"); document.getElementById('bn-img').value = ""; document.getElementById('bn-folder').value = ""; }
+        }
+
+        function editBanner(key, img, folderName) {
+            document.getElementById('bn-key').value = key; document.getElementById('bn-img').value = img; document.getElementById('bn-folder').value = folderName;
+            const btn = document.getElementById('bn-btn'); btn.innerText = "UPDATE BANNER"; btn.classList.add('updating');
+            document.getElementById('bn-head').innerHTML = '<i class="fas fa-edit"></i> EDIT BANNER'; document.getElementById('bn-cancel').style.display = 'block'; window.scrollTo(0,0);
+        }
+
+        function uploadMovieBanner() {
+            const img = document.getElementById('mv-bn-img').value;
+            if(!img) return; db.ref('movie_banners').push({ image: img }); alert("Movie Banner Added!"); document.getElementById('mv-bn-img').value = "";
+        }
+
+        function generateCode() {
+            const days = parseInt(document.getElementById('code-days').value) || 30;
+            const qty = parseInt(document.getElementById('code-qty').value) || 1;
+            let custom = document.getElementById('custom-code').value.trim();
+            
+            if(custom) {
+                custom = custom.replace(/[.#$\[\]\s]/g, '');
+                db.ref('premium_codes/' + custom).set({ status: 'unused', days: days, created: Date.now() }).then(() => { alert("Generated Custom: " + custom); document.getElementById('custom-code').value = ""; });
+            } else {
+                const updates = {}; const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; 
+                for(let k=0; k<qty; k++) {
+                    let r1 = ''; let r2 = '';
+                    for(let i = 0; i < 4; i++) r1 += chars.charAt(Math.floor(Math.random() * chars.length));
+                    for(let i = 0; i < 4; i++) r2 += chars.charAt(Math.floor(Math.random() * chars.length));
+                    const code = `VIP-${r1}-${r2}`;
+                    updates[code] = { status: 'unused', days: days, created: Date.now() + k };
                 }
+                db.ref('premium_codes').update(updates).then(() => { alert(`Generated ${qty} Codes Successfully!`); });
+            }
+        }
+
+        function copyToClipboard(text) {
+            if (navigator.clipboard) { navigator.clipboard.writeText(text).then(() => { alert("Code Copied: " + text); });
+            } else { const el = document.createElement('textarea'); el.value = text; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); alert("Code Copied: " + text); }
+        }
+
+        function deleteCode(e, key) { e.stopPropagation(); if(confirm("Delete this code permanently?")) { db.ref('premium_codes/' + key).remove(); } }
+        function deleteUsedCodes() { db.ref('premium_codes').once('value', s => { const updates = {}; s.forEach(c => { if(c.val().status === 'used') updates[c.key] = null; }); db.ref('premium_codes').update(updates); }); }
+
+        function loadAllData() {
+            // REAL TIME STATS
+            db.ref('online_users').on('value', s => { document.getElementById('online-count').innerText = s.exists() ? s.numChildren() : 0; });
+            db.ref('users').on('value', s => { document.getElementById('total-count').innerText = s.exists() ? s.numChildren() : 0; });
+
+            db.ref('anime').on('value', s => {
+                const c = document.getElementById('anime-list'); c.innerHTML = ""; const data = []; s.forEach(d => { data.unshift({k: d.key, v: d.val()}); }); 
+                data.forEach(item => {
+                    const d = item.v; 
+                    const safeFolder = (d.folder || "").replace(/'/g, "\\'"); const safeTitle = (d.title || "").replace(/'/g, "\\'");
+                    const safeThumb = (d.thumbnail || "").replace(/'/g, "\\'"); const safeUrl = (d.url || "").replace(/'/g, "\\'");
+                    const safeUrlHin = (d.url_hin || "").replace(/'/g, "\\'"); const safeUrlEng = (d.url_eng || "").replace(/'/g, "\\'");
+                    const safeCat = (d.category || "anime").replace(/'/g, "\\'");
+                    const vipLabel = d.type === 'premium' ? '<span class="vip-badge-small">VIP</span>' : '';
+                    
+                    c.innerHTML += `<div class="data-card"><img src="${d.thumbnail || ''}">${vipLabel}<div class="data-info"><div class="data-badge">${(d.category || 'anime').toUpperCase().replace(/,/g, ' & ')}</div><div class="data-title">${d.folder || 'Unknown'}: ${d.title || 'Untitled'}</div><div class="card-btns"><button class="edit-btn" onclick="editAnime('${item.k}', '${safeFolder}', '${safeTitle}', '${safeThumb}', '${safeUrl}', '${d.type || 'free'}', '${safeUrlHin}', '${safeUrlEng}', '${safeCat}')">EDIT</button><button class="del-btn" onclick="deleteItem('anime','${item.k}')">DEL</button></div></div></div>`;
+                });
+            });
+
+            db.ref('movies').on('value', s => {
+                const c = document.getElementById('movie-list'); c.innerHTML = "";
+                s.forEach(d => { 
+                    const val = d.val(); const safeTitle = (val.title || "").replace(/'/g, "\\'"); const safeThumb = (val.thumbnail || "").replace(/'/g, "\\'"); const safeUrl = (val.url || "").replace(/'/g, "\\'");
+                    const safeCat = (val.category || "movie").replace(/'/g, "\\'");
+                    const vipLabel = val.type === 'premium' ? '<span class="vip-badge-small">VIP</span>' : '';
+                    c.innerHTML += `<div class="data-card"><img src="${val.thumbnail || ''}">${vipLabel}<div class="data-info"><div class="data-badge">${safeCat.toUpperCase().replace(/,/g, ' & ')}</div><div class="data-title">${val.title || 'Untitled'}</div><div class="card-btns"><button class="edit-btn" onclick="editMovie('${d.key}', '${safeTitle}', '${safeThumb}', '${safeUrl}', '${val.type || 'free'}', '${safeCat}')">EDIT</button><button class="del-btn" onclick="deleteItem('movies','${d.key}')">DEL</button></div></div></div>`;
+                });
+            });
+
+            db.ref('cartoons').on('value', s => {
+                const c = document.getElementById('cartoon-list'); c.innerHTML = "";
+                s.forEach(d => { 
+                    const val = d.val(); const safeTitle = (val.title || "").replace(/'/g, "\\'"); const safeThumb = (val.thumbnail || "").replace(/'/g, "\\'"); const safeUrl = (val.url || "").replace(/'/g, "\\'");
+                    const safeCat = (val.category || "cartoon").replace(/'/g, "\\'");
+                    const vipLabel = val.type === 'premium' ? '<span class="vip-badge-small">VIP</span>' : '';
+                    c.innerHTML += `<div class="data-card"><img src="${val.thumbnail || ''}">${vipLabel}<div class="data-info"><div class="data-badge" style="color:var(--cyan);">${safeCat.toUpperCase().replace(/,/g, ' & ')}</div><div class="data-title" style="color:var(--cyan)">${val.title || 'Untitled'}</div><div class="card-btns"><button class="edit-btn" onclick="editCartoon('${d.key}', '${safeTitle}', '${safeThumb}', '${safeUrl}', '${val.type || 'free'}', '${safeCat}')" style="border-color:var(--cyan); color:var(--cyan)">EDIT</button><button class="del-btn" onclick="deleteItem('cartoons','${d.key}')">DEL</button></div></div></div>`;
+                });
+            });
+
+            db.ref('shorts').on('value', s => {
+               const c = document.getElementById('shorts-list'); c.innerHTML="";
+               s.forEach(d => { c.innerHTML += `<div class="data-card"><div class="data-info"><div class="data-title">Short Video</div><button class="del-btn" onclick="deleteItem('shorts','${d.key}')">DELETE</button></div></div>`; });
+            });
+
+            db.ref('banners').on('value', s => {
+               const c = document.getElementById('banner-list'); c.innerHTML="";
+               s.forEach(d => {
+                   const val = d.val(); const safeImg = (val.image || "").replace(/'/g, "\\'"); const safeFolder = (val.folderName || "").replace(/'/g, "\\'");
+                   const linkedFolder = val.folderName ? `<span style="color:var(--gold)">Link: ${val.folderName}</span>` : `<span style="color:#666">No Link</span>`;
+                   c.innerHTML += `<div class="data-card"><img src="${val.image || ''}"><div class="data-info"><div class="data-title">Home Banner<br>${linkedFolder}</div><div class="card-btns"><button class="edit-btn" onclick="editBanner('${d.key}', '${safeImg}', '${safeFolder}')">EDIT</button><button class="del-btn" onclick="deleteItem('banners','${d.key}')">DEL</button></div></div></div>`;
+               });
+            });
+
+            db.ref('movie_banners').on('value', s => {
+               const c = document.getElementById('movie-banner-list'); c.innerHTML="";
+               s.forEach(d => { c.innerHTML += `<div class="data-card"><img src="${d.val().image || ''}"><div class="data-info"><div class="data-title" style="color:#ff3b3b">Movie Banner</div><button class="del-btn" onclick="deleteItem('movie_banners','${d.key}')">DELETE</button></div></div>`; });
+            });
+
+            db.ref('premium_codes').limitToLast(50).on('value', s => {
+                const list = document.getElementById('code-list'); list.innerHTML = ""; const codes = []; s.forEach(c => codes.unshift({ key: c.key, val: c.val() }));
+                codes.forEach(c => {
+                    const data = c.val || {}; const isUnused = data.status === 'unused'; const statusClass = isUnused ? 'unused' : 'used';
+                    const statusText = isUnused ? 'ACTIVE' : 'USED'; const badgeClass = isUnused ? 'st-active' : 'st-used'; const icon = isUnused ? 'fa-check-circle' : 'fa-times-circle';
+                    const usedBy = data.usedBy ? `<div style="font-size:10px; color:#ff3b3b;">User: ${data.usedBy}</div>` : '';
+                    list.innerHTML += `<div class="code-card ${statusClass}" onclick="copyToClipboard('${c.key}')" title="Click to Copy"><div><div class="code-status ${badgeClass}">${statusText}</div><div class="code-text"><i class="fas ${icon}"></i> ${c.key}</div><div class="code-days">${data.days || 0} Days Validity</div>${usedBy}</div><div style="text-align:right;"><button class="del-btn" style="padding: 5px 15px;" onclick="deleteCode(event, '${c.key}')">DELETE</button></div></div>`;
+                });
             });
         }
 
-        function handleAuth(t) { 
-            const e = document.getElementById(t==='login'?'email-in':'remail-in').value;
-            const p = document.getElementById(t==='login'?'pass-in':'rpass-in').value; 
-            if(t==='login') {
-                auth.signInWithEmailAndPassword(e,p).catch(err=>alert(err.message)); 
-            } else { 
-                auth.createUserWithEmailAndPassword(e,p).then((cred) => {
-                    db.ref('metadata/totalUsers').transaction(current => (current || 0) + 1, (err, committed, snap) => {
-                        if(committed) { db.ref(`users/${cred.user.uid}`).update({ rank: snap.val() }); }
-                    });
-                }).catch(err=>alert(err.message)); 
-            }
-        }
+        function deleteItem(path, key) { if(confirm("Delete this item permanently?")) db.ref(path + '/' + key).remove(); }
+        function clearInputs(ids) { ids.forEach(id => document.getElementById(id).value = ""); }
 
-        function switchTab(t) { 
-            document.querySelectorAll('.app-view').forEach(d => d.style.display='none'); hideShorts();
-            if(t==='home') document.getElementById('main-app').style.display='block';
-            if(t==='profile') document.getElementById('profile-view').style.display='block';
-            document.querySelectorAll('nav i').forEach(i=>i.classList.remove('active'));
-            if(t==='home') document.querySelector('.fa-home').classList.add('active');
-            if(t==='profile') document.querySelector('.fa-user').classList.add('active');
-        }
-        function switchInterface(to) { document.querySelectorAll('.app-view').forEach(d=>d.style.display='none'); if(to==='movie'){ document.getElementById('movie-box-view').style.display='block'; document.getElementById('main-nav').style.display='none'; loadMovies(); } else { document.getElementById('main-app').style.display='block'; document.getElementById('main-nav').style.display='flex'; } }
-
-        function loadContent() {
-            db.ref('anime').on('value', snap => {
-                const grid = document.getElementById('anime-grid'); grid.innerHTML = ""; let folders = {};
-                snap.forEach(c => { let d = c.val(), f = (d.folder||'Misc').trim(); if(!folders[f]) folders[f]=[]; folders[f].push(d); });
-                window.animeData = folders;
-                Object.keys(folders).forEach(name => {
-                    let thumb = folders[name][0].thumbnail, epCount = folders[name].length;
-                    grid.innerHTML += `<div class="folder-card" onclick="openFolder('${name.replace(/'/g, "\\'")}')"><img src="${thumb}"><div class="folder-overlay"><div class="folder-title">${name}</div><div class="folder-ep">${epCount} EPISODES</div></div></div>`;
-                });
-                
-                db.ref('banners').on('value', s => {
-                    const c = document.getElementById('banner-slider'); c.innerHTML = ""; let i=0;
-                    s.forEach(b => { 
-                        let data = b.val();
-                        let fName = (data.folderName || "").trim(); 
-                        c.innerHTML += `
-                        <div class="slide ${i++===0?'active':''}" onclick="playBannerAnime(event, '${fName.replace(/'/g, "\\'")}')" style="background-image:url('${data.image}')">
-                            <div class="banner-watch-btn">WATCH NOW <i class="fas fa-play"></i></div>
-                        </div>`; 
-                    });
-                    startSlider('banner-slider');
-                });
-            });
-        }
-
-        function playBannerAnime(event, f) { 
-            if(event) event.stopPropagation();
-            if(!f) { alert("Admin Error: No folderName added to this banner database."); return; }
-            if(window.animeData && window.animeData[f]) { openFolder(f); } else { alert("Folder not found!"); }
-        }
-
-        function openFolder(n) { 
-            currentFolder = n; // Store current folder
-            const episodes = window.animeData[n]; 
-            if(!episodes||episodes.length===0)return; 
-            const firstEp = episodes[0], epId = firstEp.id?firstEp.id:firstEp.title.replace(/[^a-zA-Z0-9]/g, '_'); 
-            playVideo(firstEp.title, firstEp.url, epId, firstEp.type==='premium', 0); 
-            loadPlayerUI(n); 
-        }
-
-        // --- UPDATED SEASON LOGIC ---
-        function loadPlayerUI(f) { 
-            const s = document.getElementById('season-select'); 
-            s.innerHTML=""; 
-            
-            // Extract base name to filter seasons
-            let baseName = f.split(/ season/i)[0].trim();
-
-            Object.keys(window.animeData).forEach(k => { 
-                if(k.toLowerCase().startsWith(baseName.toLowerCase())) {
-                    let o = document.createElement('option'); 
-                    o.value = k; 
-                    
-                    let match = k.match(/season\s*(\d+)/i);
-                    if(match) { o.innerText = "Season " + match[1]; } 
-                    else { o.innerText = k === baseName ? "Season 1" : k.replace(baseName, '').trim() || "Season 1"; }
-                    
-                    if(k === f) o.selected = true; 
-                    s.appendChild(o); 
-                }
-            }); 
-            renderEpisodeButtons(f); 
-        }
-
-        function renderEpisodeButtons(f) { const c = document.getElementById('episode-pill-container'); c.innerHTML=""; window.animeData[f].forEach((ep,i)=>{ let b=document.createElement('div'); b.className='ep-pill'; b.innerText=i+1; b.id=`ep-btn-${i}`; b.onclick=()=>{let eid=ep.id?ep.id:ep.title.replace(/[^a-zA-Z0-9]/g,'_'); playVideo(ep.title,ep.url,eid,ep.type==='premium',i);}; c.appendChild(b); }); }
-        function switchSeason(n) { openFolder(n); }
-        function loadMovies() {
-            db.ref('movie_banners').on('value', s => { const c=document.getElementById('movie-banner-slider'); c.innerHTML=""; let i=0; s.forEach(b=>{ c.innerHTML+=`<div class="slide ${i++===0?'active':''}" style="background-image:url('${b.val().image}')"></div>`; }); startSlider('movie-banner-slider'); });
-            db.ref('movies').on('value', snap => { const grid=document.getElementById('movie-grid'); grid.innerHTML=""; window.movieData=[]; snap.forEach(c=>{ let d=c.val(), sid=d.id||d.title.replace(/[^a-zA-Z0-9]/g,'_'); window.movieData.push(d); grid.innerHTML+=`<div class="folder-card" onclick="playVideo('${d.title}','${d.url}','${sid}',true,-1)"><img src="${d.thumbnail}"><div class="folder-overlay"><div class="folder-title">${d.title}</div><div class="folder-ep">MOVIE</div></div></div>`; }); });
-        }
-        function startSlider(id) { setInterval(() => { let p=document.getElementById(id), a=p.querySelector('.active'); if(a) { a.classList.remove('active'); (a.nextElementSibling||p.querySelector('.slide')).classList.add('active'); } }, 4000); }
-
-        // --- UPDATED VIDEO PLAYER WITH LANGUAGE SUPPORT ---
-        function playVideo(t, u, id, ip, idx) {
-            if(ip && !isPremium) { alert("ROYAL VIP REQUIRED! Please Login/Upgrade."); switchTab('profile'); return; }
-            if(currentLikesCountRef) currentLikesCountRef.off(); if(currentUserLikeRef) currentUserLikeRef.off(); if(currentViewsRef) currentViewsRef.off(); if(currentCommentsRef) currentCommentsRef.off();
-            if(!id) id = t.replace(/[^a-zA-Z0-9]/g, '_'); 
-            
-            triggerSmartLink(); 
-            currentVideoId = id; document.getElementById('player-title').innerText = t;
-            
-            // Get episode data for language switching
-            if (idx !== -1 && currentFolder && window.animeData[currentFolder]) {
-                currentPlayingEpisodeData = window.animeData[currentFolder][idx];
-            } else { currentPlayingEpisodeData = null; }
-
-            if(idx === -1) { 
-                isMovieContent = true; document.getElementById('content-type-badge').innerText="Movie"; document.getElementById('episode-pill-container').style.display='none'; document.querySelector('.dropdown-row').style.display='none'; 
-            } else { 
-                isMovieContent = false; document.getElementById('content-type-badge').innerText="Anime"; document.getElementById('episode-pill-container').style.display='flex'; document.querySelector('.dropdown-row').style.display='flex'; document.querySelectorAll('.ep-pill').forEach(b=>b.classList.remove('active')); let ab=document.getElementById(`ep-btn-${idx}`); if(ab) ab.classList.add('active'); 
-            }
-            
-            // Language URL decision logic
-            const langSelect = document.getElementById('language-select');
-            let initialLang = langSelect ? langSelect.value : 'hindi';
-            let finalUrl = u; 
-            if (currentPlayingEpisodeData) {
-                if (initialLang === 'english' && currentPlayingEpisodeData.url_eng) finalUrl = currentPlayingEpisodeData.url_eng;
-                else if (initialLang === 'hindi' && currentPlayingEpisodeData.url_hin) finalUrl = currentPlayingEpisodeData.url_hin;
-            }
-
-            const v = document.getElementById('main-video'); 
-            let prevTime = 0;
-            if (v.src && !v.paused && v.dataset.currentId === id) prevTime = v.currentTime;
-
-            v.src = finalUrl; 
-            v.dataset.currentId = id; 
-            if(prevTime > 0) v.currentTime = prevTime;
-            v.play(); 
-
-            document.getElementById('player-view').style.display='block'; switchPlayerTab('foryou'); loadForYouVideos();
-            if(currentUser) db.ref(`users/${currentUser.uid}/watchlist/${id}`).set({title: t, date: Date.now()});
-            db.ref(`views/${id}`).transaction(c => (c||0)+1); loadSocialData(id);
-        }
-
-        // --- LANGUAGE CHANGER ---
-        function changeLanguage(lang) {
-            const v = document.getElementById('main-video');
-            if(!currentPlayingEpisodeData) return; 
-            
-            let newUrl = currentPlayingEpisodeData.url; // Fallback
-            if (lang === 'english' && currentPlayingEpisodeData.url_eng) newUrl = currentPlayingEpisodeData.url_eng;
-            else if (lang === 'hindi' && currentPlayingEpisodeData.url_hin) newUrl = currentPlayingEpisodeData.url_hin;
-            
-            if (v.src !== newUrl && newUrl) {
-                let currentTime = v.currentTime;
-                let isPaused = v.paused;
-                v.src = newUrl;
-                v.currentTime = currentTime; 
-                if(!isPaused) v.play();
-            }
-        }
-
-        function loadSocialData(id) {
-            currentLikesCountRef = db.ref(`likes/${id}/count`); currentLikesCountRef.on('value', s => document.getElementById('like-count').innerText=s.val()||0);
-            if(currentUser) { currentUserLikeRef=db.ref(`likes/${id}/${currentUser.uid}`); currentUserLikeRef.on('value', s => { const b=document.getElementById('like-btn'); if(s.exists()){ b.classList.add('liked'); b.innerHTML=`<i class="fas fa-check"></i> Added`; } else { b.classList.remove('liked'); b.innerHTML=`<i class="fas fa-plus"></i> Add to list`; } }); }
-            else { document.getElementById('like-btn').classList.remove('liked'); document.getElementById('like-btn').innerHTML=`<i class="fas fa-plus"></i> Add to list`; }
-            currentViewsRef=db.ref(`views/${id}`); currentViewsRef.on('value', s=>document.getElementById('view-count').innerText=s.val()||0);
-            const l=document.getElementById('comments-list'); l.innerHTML=""; currentCommentsRef=db.ref(`comments/${id}`); currentCommentsRef.on('value', s=>document.getElementById('tab-btn-comments').innerText=`Comments (${s.numChildren()})`);
-            currentCommentsRef.on('child_added', s=>{ const c=s.val(); l.innerHTML=`<div class="comment-box"><div class="c-avatar">${c.user[0]}</div><div class="c-body"><h4>${c.user}</h4><p>${c.text}</p></div></div>`+l.innerHTML; });
-        }
-        function toggleLike() { if(!currentUser){alert("Please Login");return;} if(!currentVideoId)return; const r=db.ref(`likes/${currentVideoId}/${currentUser.uid}`), c=db.ref(`likes/${currentVideoId}/count`); r.once('value', s=>{ if(s.exists()){ r.remove(); c.transaction(v=>(v||0)-1); } else { r.set(true); c.transaction(v=>(v||0)+1); } }); }
-        function postComment() { if(!currentUser){alert("Please Login");return;} const t=document.getElementById('comment-input').value; if(!t)return; db.ref(`comments/${currentVideoId}`).push({user:currentUser.email.split('@')[0], text:t, time:Date.now()}); document.getElementById('comment-input').value=""; }
-        function shareContent() { navigator.clipboard.writeText(`https://t.me/aminezone09`).then(()=>alert("Link Copied!")); }
-        function switchPlayerTab(t) { if(t==='foryou'){ document.getElementById('tab-btn-foryou').classList.add('active'); document.getElementById('tab-btn-comments').classList.remove('active'); document.getElementById('tab-content-foryou').style.display='block'; document.getElementById('tab-content-comments').style.display='none'; } else { document.getElementById('tab-btn-comments').classList.add('active'); document.getElementById('tab-btn-foryou').classList.remove('active'); document.getElementById('tab-content-comments').style.display='block'; document.getElementById('tab-content-foryou').style.display='none'; } }
-        function closePlayer() { const v=document.getElementById('main-video'); v.pause(); v.src=""; document.getElementById('player-view').style.display='none'; if(currentLikesCountRef)currentLikesCountRef.off(); if(currentUserLikeRef)currentUserLikeRef.off(); if(currentViewsRef)currentViewsRef.off(); if(currentCommentsRef)currentCommentsRef.off(); }
-        function loadForYouVideos() { const g=document.getElementById('dynamic-rec-grid'); g.innerHTML=""; if(isMovieContent){ if(!window.movieData)return; window.movieData.forEach(m=>{ let sid=m.id||m.title.replace(/[^a-zA-Z0-9]/g,'_'); g.innerHTML+=`<div class="rec-card" onclick="playVideo('${m.title}','${m.url}','${sid}',true,-1)"><img src="${m.thumbnail}"><div class="rec-badge">Movie</div><div class="rec-title">${m.title}</div></div>`; }); } else { if(!window.animeData)return; Object.keys(window.animeData).forEach(n=>{ let f=window.animeData[n][0]; g.innerHTML+=`<div class="rec-card" onclick="openFolder('${n.replace(/'/g, "\\'")}')"><img src="${f.thumbnail}"><div class="rec-badge">${f.type==='premium'?'VIP':'Free'}</div><div class="rec-title">${n}</div></div>`; }); } }
-
-        let shortsObserver=null, activeShortId=null;
-        function showShorts() { document.getElementById('shorts-view').style.display='block'; const c=document.getElementById('shorts-container'); if(c.children.length===0){ db.ref('shorts').once('value', s=>{ s.forEach(i=>{ let d=i.val(), k=i.key; c.innerHTML+=`<div class="short-item" data-id="${k}"><video src="${d.url}" loop onclick="this.paused?this.play():this.pause()"></video><div class="short-overlay"><div class="short-btn" id="s-like-${k}" onclick="toggleShortLike('${k}')"><i class="fas fa-heart"></i><span id="s-like-cnt-${k}">0</span></div><div class="short-btn" onclick="openShortComments('${k}')"><i class="fas fa-comment"></i><span>Comment</span></div></div></div>`; loadShortLikes(k); }); initShortsObserver(); }); } else initShortsObserver(); }
-        function hideShorts() { document.getElementById('shorts-view').style.display='none'; document.querySelectorAll('#shorts-container video').forEach(v=>v.pause()); }
-        function initShortsObserver() { let o={root:document.getElementById('shorts-view'), threshold:0.7}; shortsObserver=new IntersectionObserver((e)=>{ e.forEach(i=>{ let v=i.target.querySelector('video'); if(i.isIntersecting)v.play(); else{v.pause();v.currentTime=0;} }); }, o); document.querySelectorAll('.short-item').forEach(e=>shortsObserver.observe(e)); }
-        function loadShortLikes(k) { db.ref(`shorts_likes/${k}`).on('value', s=>{ const d=s.val()||{}, c=d.count||0, b=document.getElementById(`s-like-${k}`), t=document.getElementById(`s-like-cnt-${k}`); if(b&&t){ t.innerText=c; if(currentUser&&d[currentUser.uid])b.classList.add('liked'); else b.classList.remove('liked'); } }); }
-        function toggleShortLike(k) { if(!currentUser){alert("Login required");return;} const r=db.ref(`shorts_likes/${k}`); r.child(currentUser.uid).once('value', s=>{ if(s.exists()){ r.child(currentUser.uid).remove(); r.child('count').transaction(c=>(c||0)-1); } else { r.child(currentUser.uid).set(true); r.child('count').transaction(c=>(c||0)+1); } }); }
-        function openShortComments(k) { activeShortId=k; document.getElementById('shorts-comments-modal').style.display='block'; const l=document.getElementById('shorts-comments-list'); l.innerHTML=""; db.ref(`shorts_comments/${k}`).on('child_added', s=>{ const c=s.val(); l.innerHTML=`<div class="comment-box" style="padding:5px;"><div class="c-avatar" style="width:25px;height:25px;font-size:10px;">${c.user[0]}</div><div class="c-body"><h4 style="font-size:11px;">${c.user}</h4><p style="font-size:10px;">${c.text}</p></div></div>`+l.innerHTML; }); }
-        function postShortComment() { if(!currentUser){alert("Login required");return;} if(!activeShortId)return; const t=document.getElementById('short-comment-in').value; if(!t)return; db.ref(`shorts_comments/${activeShortId}`).push({user:currentUser.email.split('@')[0], text:t, time:Date.now()}); document.getElementById('short-comment-in').value=""; }
-
-        function openHistory() { 
-            if(!currentUser) { alert("Please login first."); return; }
-            document.getElementById('history-view').style.display='block'; 
-            db.ref(`users/${currentUser.uid}/watchlist`).limitToLast(20).on('value', s=>{ 
-                const c = document.getElementById('history-list-container'); 
-                c.innerHTML=""; 
-                if(!s.exists()){ c.innerHTML="<p style='color:#666;text-align:center;'>No history found.</p>"; return; } 
-                let a=[]; 
-                s.forEach(i=>a.push(i)); 
-                a.reverse().forEach(i=>{ 
-                    const d=i.val(); 
-                    c.innerHTML+=`<div class="history-item"><span style="color:#ddd;font-size:14px;">${d.title}</span><span style="color:#666;font-size:10px;">Watched</span></div>`; 
-                }); 
-            }); 
-        }
-        function closeHistory() { document.getElementById('history-view').style.display='none'; }
-
-        function redeemCode() { if(!currentUser)return; const c=document.getElementById('prem-code').value.trim(); db.ref(`premium_codes/${c}`).once('value', s=>{ if(s.exists()&&s.val().status==='unused'){ const d=s.val().days||30; db.ref(`premium_codes/${c}`).update({status:'used',usedBy:currentUser.email}); db.ref(`users/${currentUser.uid}`).update({premiumExpiry:Date.now()+(d*24*60*60*1000)}); alert("VIP ACTIVATED!"); location.reload(); } else alert("Invalid Code"); }); }
-        function buyPremium() { if(!currentUser){alert("Login First");return;} window.open(`https://t.me/aminezone09?text=Hi Admin, I need premium for ${currentUser.email}`, '_blank'); }
     </script>
 </body>
 </html>
