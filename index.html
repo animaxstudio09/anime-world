@@ -121,7 +121,7 @@
             </div>
         </header>
 
-        <!-- ADDED: REAL-TIME STATS BAR -->
+        <!-- REAL-TIME STATS BAR -->
         <div class="stats-bar">
             <div class="stat-card">
                 <p>Online Users</p>
@@ -147,7 +147,6 @@
             <div class="input-group">
                 <h3 id="an-head"><i class="fas fa-upload"></i> UPLOAD ANIME EPISODES</h3>
                 
-                <!-- Category Checkboxes -->
                 <div class="cat-checkboxes">
                     <label><input type="checkbox" value="anime" class="cat-chk" checked> Anime</label>
                     <label><input type="checkbox" value="movie" class="cat-chk"> Movie</label>
@@ -176,7 +175,6 @@
             <div class="input-group" style="border-color:#ff3b3b;">
                 <h3 id="mv-head" style="color:#ff3b3b;"><i class="fas fa-film"></i> UPLOAD MOVIE</h3>
                 
-                <!-- Category Checkboxes for Movie Section -->
                 <div class="cat-checkboxes">
                     <label><input type="checkbox" value="movie" class="mv-cat-chk" checked> General Movie</label>
                     <label><input type="checkbox" value="anime" class="mv-cat-chk"> Anime Movie</label>
@@ -204,7 +202,6 @@
             <div class="input-group" style="border-color:var(--cyan);">
                 <h3 id="ct-head" style="color:var(--cyan);"><i class="fas fa-paw"></i> UPLOAD CARTOON</h3>
 
-                <!-- Category Checkboxes for Cartoon Section -->
                 <div class="cat-checkboxes">
                     <label><input type="checkbox" value="cartoon" class="ct-cat-chk" checked> Cartoon Series</label>
                     <label><input type="checkbox" value="movie" class="ct-cat-chk"> Cartoon Movie</label>
@@ -504,14 +501,19 @@
             if(!img) return; db.ref('movie_banners').push({ image: img }); alert("Movie Banner Added!"); document.getElementById('mv-bn-img').value = "";
         }
 
+        // --- VIP CODE LOGIC FIX (UPPERCASE ENFORCED) ---
         function generateCode() {
             const days = parseInt(document.getElementById('code-days').value) || 30;
             const qty = parseInt(document.getElementById('code-qty').value) || 1;
             let custom = document.getElementById('custom-code').value.trim();
             
             if(custom) {
-                custom = custom.replace(/[.#$\[\]\s]/g, '');
-                db.ref('premium_codes/' + custom).set({ status: 'unused', days: days, created: Date.now() }).then(() => { alert("Generated Custom: " + custom); document.getElementById('custom-code').value = ""; });
+                // BUG FIXED: Always saves custom code in uppercase format to match user panel
+                custom = custom.replace(/[.#$\[\]\s]/g, '').toUpperCase();
+                db.ref('premium_codes/' + custom).set({ status: 'unused', days: days, created: Date.now() }).then(() => { 
+                    alert("Generated Custom Code: " + custom); 
+                    document.getElementById('custom-code').value = ""; 
+                });
             } else {
                 const updates = {}; const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; 
                 for(let k=0; k<qty; k++) {
@@ -534,17 +536,24 @@
         function deleteUsedCodes() { db.ref('premium_codes').once('value', s => { const updates = {}; s.forEach(c => { if(c.val().status === 'used') updates[c.key] = null; }); db.ref('premium_codes').update(updates); }); }
 
         function loadAllData() {
-            // REAL TIME STATS
-            db.ref('online_users').on('value', s => { document.getElementById('online-count').innerText = s.exists() ? s.numChildren() : 0; });
-            db.ref('users').on('value', s => { document.getElementById('total-count').innerText = s.exists() ? s.numChildren() : 0; });
+            // REAL TIME STATS FETCHING
+            db.ref('online_users').on('value', s => {
+                document.getElementById('online-count').innerText = s.exists() ? s.numChildren() : 0;
+            });
+            db.ref('users').on('value', s => {
+                document.getElementById('total-count').innerText = s.exists() ? s.numChildren() : 0;
+            });
 
             db.ref('anime').on('value', s => {
                 const c = document.getElementById('anime-list'); c.innerHTML = ""; const data = []; s.forEach(d => { data.unshift({k: d.key, v: d.val()}); }); 
                 data.forEach(item => {
                     const d = item.v; 
-                    const safeFolder = (d.folder || "").replace(/'/g, "\\'"); const safeTitle = (d.title || "").replace(/'/g, "\\'");
-                    const safeThumb = (d.thumbnail || "").replace(/'/g, "\\'"); const safeUrl = (d.url || "").replace(/'/g, "\\'");
-                    const safeUrlHin = (d.url_hin || "").replace(/'/g, "\\'"); const safeUrlEng = (d.url_eng || "").replace(/'/g, "\\'");
+                    const safeFolder = (d.folder || "").replace(/'/g, "\\'"); 
+                    const safeTitle = (d.title || "").replace(/'/g, "\\'");
+                    const safeThumb = (d.thumbnail || "").replace(/'/g, "\\'"); 
+                    const safeUrl = (d.url || "").replace(/'/g, "\\'");
+                    const safeUrlHin = (d.url_hin || "").replace(/'/g, "\\'"); 
+                    const safeUrlEng = (d.url_eng || "").replace(/'/g, "\\'");
                     const safeCat = (d.category || "anime").replace(/'/g, "\\'");
                     const vipLabel = d.type === 'premium' ? '<span class="vip-badge-small">VIP</span>' : '';
                     
