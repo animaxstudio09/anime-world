@@ -62,6 +62,9 @@
         }
         input:focus, select:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
 
+        /* TEXT COPY FIX - Allows copying text from inputs and titles */
+        input, textarea, select, .data-title, .code-text { user-select: text !important; -webkit-user-select: text !important; }
+
         .cat-checkboxes { 
             display: grid; grid-template-columns: 1fr 1fr; gap: 15px; 
             background: #050505; padding: 15px; border: 1px solid #333; 
@@ -338,7 +341,7 @@
             event.target.classList.add('active');
         }
 
-        // --- ANIME FUNCTIONS ---
+        // --- ANIME FUNCTIONS FAST FIX ---
         function uploadAnime() {
             let selectedCats = [];
             document.querySelectorAll('.cat-chk:checked').forEach(cb => selectedCats.push(cb.value));
@@ -356,15 +359,14 @@
             if(!folder || !title || !url) return alert("Fill all required fields!");
 
             if (key) {
-                db.ref('anime/' + key).update({ category, folder, title, thumbnail: thumb, url, url_hin, url_eng, type }).then(() => {
-                    alert("Anime Updated Successfully!");
-                    cancelEdit('anime');
-                });
+                db.ref('anime/' + key).update({ category, folder, title, thumbnail: thumb, url, url_hin, url_eng, type });
+                cancelEdit('anime');
+                setTimeout(() => alert("Anime Updated Successfully!"), 10);
             } else {
                 db.ref('anime').push({ category, folder, title, thumbnail: thumb, url, url_hin, url_eng, type, timestamp: Date.now() });
                 sendNotification("🎬 New Episode Out!", `${folder}: ${title} এখন অনলাইনে।`);
-                alert("Uploaded & Notified!");
                 clearInputs(['an-title', 'an-url', 'an-url-hin', 'an-url-eng']);
+                setTimeout(() => alert("Uploaded & Notified!"), 10);
             }
         }
 
@@ -384,7 +386,7 @@
             window.scrollTo(0,0);
         }
 
-        // --- MOVIE FUNCTIONS ---
+        // --- MOVIE FUNCTIONS FAST FIX ---
         function uploadMovie() {
             let selectedCats = [];
             document.querySelectorAll('.mv-cat-chk:checked').forEach(cb => selectedCats.push(cb.value));
@@ -397,11 +399,14 @@
             if(!title || !url) return alert("Fill all fields!");
 
             if(key) {
-                db.ref('movies/' + key).update({ category, title, thumbnail: thumb, url, type }).then(() => { alert("Movie Updated!"); cancelEdit('movies'); });
+                db.ref('movies/' + key).update({ category, title, thumbnail: thumb, url, type });
+                cancelEdit('movies');
+                setTimeout(() => alert("Movie Updated!"), 10);
             } else {
                 db.ref('movies').push({ category, title, thumbnail: thumb, url, type, timestamp: Date.now() });
                 sendNotification("🎬 New Movie Added!", `${title} মুভিটি যুক্ত হয়েছে। এখনই দেখুন!`);
-                alert("Movie Uploaded & Notified!"); clearInputs(['mv-title', 'mv-thumb', 'mv-url']);
+                clearInputs(['mv-title', 'mv-thumb', 'mv-url']);
+                setTimeout(() => alert("Movie Uploaded & Notified!"), 10);
             }
         }
 
@@ -418,7 +423,7 @@
             window.scrollTo(0,0);
         }
 
-        // --- CARTOON FUNCTIONS ---
+        // --- CARTOON FUNCTIONS FAST FIX ---
         function uploadCartoon() {
             let selectedCats = [];
             document.querySelectorAll('.ct-cat-chk:checked').forEach(cb => selectedCats.push(cb.value));
@@ -431,11 +436,14 @@
             if(!title || !url) return alert("Fill all fields!");
 
             if(key) {
-                db.ref('cartoons/' + key).update({ category, title, thumbnail: thumb, url, type }).then(() => { alert("Cartoon Updated!"); cancelEdit('cartoons'); });
+                db.ref('cartoons/' + key).update({ category, title, thumbnail: thumb, url, type });
+                cancelEdit('cartoons');
+                setTimeout(() => alert("Cartoon Updated!"), 10);
             } else {
                 db.ref('cartoons').push({ category, title, thumbnail: thumb, url, type, timestamp: Date.now() });
                 sendNotification("🐼 New Cartoon Added!", `${title} কার্টুনটি যুক্ত হয়েছে।`);
-                alert("Cartoon Uploaded!"); clearInputs(['ct-title', 'ct-thumb', 'ct-url']);
+                clearInputs(['ct-title', 'ct-thumb', 'ct-url']);
+                setTimeout(() => alert("Cartoon Uploaded!"), 10);
             }
         }
 
@@ -479,15 +487,23 @@
             const url = document.getElementById('sh-url').value;
             if(!url) return;
             db.ref('shorts').push({ id: Date.now().toString(), url: url });
-            alert("Short Video Added!"); document.getElementById('sh-url').value = "";
+            document.getElementById('sh-url').value = "";
+            setTimeout(() => alert("Short Video Added!"), 10);
         }
 
         function uploadBanner() {
             const img = document.getElementById('bn-img').value; const folderName = document.getElementById('bn-folder').value.trim(); 
             const key = document.getElementById('bn-key').value; 
             if(!img) return alert("Image URL is required!");
-            if(key) { db.ref('banners/' + key).update({ image: img, folderName: folderName }).then(() => { alert("Banner Updated Successfully!"); cancelEdit('banners'); });
-            } else { db.ref('banners').push({ image: img, folderName: folderName }); alert("Home Banner Added!"); document.getElementById('bn-img').value = ""; document.getElementById('bn-folder').value = ""; }
+            if(key) { 
+                db.ref('banners/' + key).update({ image: img, folderName: folderName });
+                cancelEdit('banners');
+                setTimeout(() => alert("Banner Updated Successfully!"), 10);
+            } else { 
+                db.ref('banners').push({ image: img, folderName: folderName }); 
+                document.getElementById('bn-img').value = ""; document.getElementById('bn-folder').value = ""; 
+                setTimeout(() => alert("Home Banner Added!"), 10);
+            }
         }
 
         function editBanner(key, img, folderName) {
@@ -498,7 +514,10 @@
 
         function uploadMovieBanner() {
             const img = document.getElementById('mv-bn-img').value;
-            if(!img) return; db.ref('movie_banners').push({ image: img }); alert("Movie Banner Added!"); document.getElementById('mv-bn-img').value = "";
+            if(!img) return; 
+            db.ref('movie_banners').push({ image: img }); 
+            document.getElementById('mv-bn-img').value = "";
+            setTimeout(() => alert("Movie Banner Added!"), 10);
         }
 
         // --- VIP CODE LOGIC FIX (UPPERCASE ENFORCED) ---
