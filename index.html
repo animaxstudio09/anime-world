@@ -31,7 +31,8 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent;}
         .bangla-text { font-family: 'Hind Siliguri', sans-serif; }
         
-        body { background-color: #000; display: flex; justify-content: center; height: 100vh; overflow: hidden; color: var(--text-main); }
+        /* Fixed Mobile Bottom Cutoff Issue with 100dvh */
+        body { background-color: #000; display: flex; justify-content: center; height: 100vh; height: 100dvh; overflow: hidden; color: var(--text-main); }
 
         .app-container { width: 100%; max-width: 420px; height: 100%; background: var(--bg-app); position: relative; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 30px rgba(255,0,60,0.15);}
         .hidden { display: none !important; }
@@ -41,8 +42,6 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .btn-anim:active { transform: scale(0.94); transition: 0.15s ease-in-out; }
-        
-        @keyframes spinRing { 100% { transform: rotate(360deg); } }
 
         /* ================= AUTHENTICATION UI ================= */
         #auth-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at top, #1a0006 0%, var(--bg-app) 100%); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px;}
@@ -84,7 +83,7 @@
         .section-header i { font-size: 1.2rem; cursor: pointer; color: var(--text-main); background: rgba(255,255,255,0.05); width: 38px; height: 38px; display: flex; justify-content: center; align-items: center; border-radius: 10px; border: 1px solid var(--card-border);}
         .section-header h2 { font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
 
-        /* ================= HOME TAB (VIDEO INSPIRED CATEGORIES) ================= */
+        /* ================= HOME TAB ================= */
         .slider-container { margin: 15px 20px; border-radius: 16px; height: 170px; overflow: hidden; position: relative; box-shadow: var(--glow-card); border: 1px solid var(--card-border);}
         .slides { display: flex; width: 100%; height: 100%; transition: transform 0.5s ease-in-out; }
         .slide { min-width: 100%; height: 100%; background-size: cover; background-position: center; }
@@ -94,13 +93,11 @@
 
         .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px;}
         
-        /* UPDATED: TEXT REMOVED, OPACITY SET TO 1 FOR CLEAR BANNERS */
         .cat-card { height: 130px; border-radius: 16px; position: relative; overflow: hidden; cursor: pointer; background: #000; border: 1px solid var(--card-border); box-shadow: 0 4px 15px rgba(0,0,0,0.5);}
         .cat-card img.bg-img { width: 100%; height: 100%; object-fit: cover; opacity: 1; transition: 0.5s;}
         .cat-card:hover img.bg-img { transform: scale(1.05); }
         .cat-card:hover { border-color: var(--primary); }
 
-        /* Headshot Card Layout */
         .hs-card { grid-column: span 2; height: 120px; border-color: var(--warning); box-shadow: 0 0 15px rgba(255, 179, 0, 0.2);}
         .hs-card:hover { border-color: var(--primary); }
 
@@ -136,7 +133,7 @@
             100% { opacity: 0.5; transform: scale(0.8); }
         }
 
-        /* ================= MATCH CARDS (VIDEO INSPIRED) ================= */
+        /* ================= MATCH CARDS ================= */
         .match-card { background: var(--card-bg); margin: 0 20px 20px; border-radius: 16px; border: 1px solid var(--card-border); overflow: hidden; box-shadow: var(--glow-card); position: relative;}
         
         .mc-header { padding: 15px; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.03); background: rgba(0,0,0,0.3);}
@@ -209,29 +206,47 @@
         .allow { color: var(--success); }
         .deny { color: var(--primary); }
 
-        /* ================= DEVELOPER TAB (ANIMATED) ================= */
-        .dev-banner { background: linear-gradient(135deg, var(--card-bg), #0a0a0f); border-radius: 16px; padding: 40px 20px; border: 1px solid var(--card-border); box-shadow: var(--glow-card); text-align: center;}
+        /* ================= VIP DEVELOPER TAB ================= */
+        .dev-banner { background: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80') center/cover; border-radius: 20px; position: relative; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.9); margin-bottom: 20px;}
+        .dev-banner::before { content: ''; position: absolute; top:0; left:0; right:0; bottom:0; background: linear-gradient(135deg, rgba(8, 8, 12, 0.95) 0%, rgba(255, 0, 60, 0.1) 100%); backdrop-filter: blur(8px); z-index: 1;}
+        .dev-banner::after { content: ''; position: absolute; top: 2px; left: 2px; right: 2px; bottom: 2px; border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 18px; z-index: 2; pointer-events: none; }
         
-        .dev-img-wrap { position: relative; width: 130px; height: 130px; margin: 0 auto 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center;}
-        .dev-img-wrap::before {
-            content: ''; position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px;
-            border-radius: 50%; background: linear-gradient(45deg, var(--primary), #ff9800, var(--primary));
-            z-index: 1; animation: spinRing 3s linear infinite;
-        }
-        .dev-img-wrap::after {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            border-radius: 50%; background: var(--bg-app); z-index: 2;
-        }
+        .dev-content { position: relative; z-index: 3; padding: 40px 20px 30px; display: flex; flex-direction: column; align-items: center;}
+        
+        .dev-img-wrap { position: relative; width: 140px; height: 140px; margin: 0 auto 20px; }
+        .dev-img-wrap::before { content: ''; position: absolute; top: -6px; left: -6px; right: -6px; bottom: -6px; border-radius: 50%; background: linear-gradient(45deg, #FFD700, #ff003c, #00d2ff, #FFD700); background-size: 400%; z-index: 1; animation: gradientSpin 4s linear infinite; box-shadow: 0 0 30px rgba(255,215,0,0.4); }
+        @keyframes gradientSpin { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .dev-img-wrap::after { content: ''; position: absolute; top: 3px; left: 3px; right: 3px; bottom: 3px; border-radius: 50%; background: var(--bg-app); z-index: 2; }
         .dev-img { position: relative; z-index: 3; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid transparent; }
         
-        .dev-badge { background: rgba(255,0,60,0.1); border: 1px solid var(--primary); color: var(--primary); font-size: 0.75rem; padding: 6px 15px; border-radius: 20px; letter-spacing: 1px; font-weight: 700; margin-bottom: 20px; display: inline-block; text-transform: uppercase;}
-        .contact-btn { background: #25D366; color: white; border: none; padding: 15px 20px; border-radius: 12px; font-size: 1.05rem; font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; box-shadow: 0 5px 20px rgba(37, 211, 102, 0.3); transition: 0.3s;}
+        .dev-verified { position: absolute; bottom: 5px; right: 5px; background: #1DA1F2; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1rem; z-index: 4; border: 3px solid var(--bg-app); box-shadow: 0 0 15px rgba(29,161,242,0.6);}
+        
+        .dev-name { font-size: 2rem; color: #fff; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 0 15px rgba(255,215,0,0.5); margin-bottom: 5px; background: linear-gradient(to right, #FFF, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent;}
+        .dev-badge { background: linear-gradient(90deg, rgba(255,215,0,0.1), rgba(255,0,60,0.1)); border: 1px solid rgba(255,215,0,0.4); color: #FFD700; font-size: 0.8rem; padding: 6px 20px; border-radius: 20px; letter-spacing: 2px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; text-transform: uppercase; box-shadow: 0 0 15px rgba(255,215,0,0.2);}
+        
+        .dev-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 30px 0; width: 100%;}
+        .dev-stat-box { background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.5) 100%); border: 1px solid rgba(255,255,255,0.1); padding: 18px 5px; border-radius: 16px; backdrop-filter: blur(10px); transition: 0.3s; text-align: center;}
+        .dev-stat-box:hover { border-color: #FFD700; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(255,215,0,0.15); }
+        .dev-stat-val { font-size: 1.4rem; font-weight: 800; color: #fff; }
+        .dev-stat-val span { color: #FFD700; }
+        .dev-stat-lbl { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-top: 5px;}
+        
+        .dev-desc-box { background: rgba(0,0,0,0.6); padding: 25px 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 25px; width: 100%; box-shadow: inset 0 0 20px rgba(0,0,0,0.8);}
+        .dev-desc-text { font-size: 0.95rem; color: #e0e0e0; line-height: 1.8; text-align: center; margin-bottom: 15px;}
+        
+        .dev-services { list-style: none; text-align: left; padding: 0 10px; font-size: 0.9rem; color: #ccc;}
+        .dev-services li { margin-bottom: 12px; display: flex; align-items: center; gap: 12px; font-weight: 500;}
+        .dev-services li i { color: #00d2ff; font-size: 1rem; background: rgba(0,210,255,0.1); padding: 6px; border-radius: 50%; border: 1px solid rgba(0,210,255,0.3);}
+        
+        .contact-btn { background: linear-gradient(45deg, #128C7E, #25D366); color: white; border: none; padding: 18px 20px; border-radius: 16px; font-size: 1.1rem; font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-transform: uppercase; letter-spacing: 1px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.2);}
+        .contact-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); animation: shineBtn 2.5s infinite;}
+        @keyframes shineBtn { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+        .contact-btn:active { transform: scale(0.95); }
 
-        /* ================= MODALS & SUB-CATEGORY POPUP (UPDATED PREMIUM DESIGN) ================= */
+        /* ================= MODALS & SUB-CATEGORY POPUP ================= */
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1500; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(8px); opacity: 0; visibility: hidden; transition: 0.3s; }
         .modal-overlay.active { opacity: 1; visibility: visible; }
         
-        /* Premium Modal Box */
         .modal-box { 
             width: 100%; max-width: 340px; 
             background: linear-gradient(145deg, #1a1a24, #0f0f15); 
@@ -247,7 +262,6 @@
         .close-btn { position: absolute; top: 18px; right: 18px; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; transition: 0.3s; z-index: 10;}
         .close-btn:hover { color: var(--primary); }
 
-        /* Premium Image Based Modal Buttons */
         .mode-img-btn { 
             position: relative;
             background: #000;
@@ -275,7 +289,7 @@
         }
 
         /* ================= BOTTOM NAV ================= */
-        .bottom-nav { position: absolute; bottom: 0; width: 100%; height: 70px; background: rgba(18, 18, 26, 0.98); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; align-items: center; z-index: 100; transition: 0.3s; border-radius: 20px 20px 0 0;}
+        .bottom-nav { position: absolute; bottom: 0; width: 100%; height: 70px; background: rgba(18, 18, 26, 0.98); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; transition: 0.3s; border-radius: 20px 20px 0 0;}
         .nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; color: var(--text-muted); font-size: 0.75rem; cursor: pointer; width: 25%; font-weight: 600; transition: 0.3s;}
         .nav-item i { font-size: 1.3rem; transition: 0.3s;}
         .nav-item.active { color: var(--primary); }
@@ -466,6 +480,14 @@
                         <i class="fas fa-chevron-right"></i>
                     </div>
                     
+                    <div class="menu-item btn-anim" onclick="openTelegram()">
+                        <div class="menu-left">
+                            <div class="m-icon" style="color:#0088cc; border-color:rgba(0,136,204,0.3);"><i class="fab fa-telegram-plane"></i></div> 
+                            Telegram Group (টেলিগ্রাম গ্রুপ)
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    
                     <div class="menu-item btn-anim" onclick="switchTab('rules')">
                         <div class="menu-left">
                             <div class="m-icon" style="color:var(--text-main);"><i class="fas fa-book-open"></i></div> 
@@ -593,7 +615,7 @@
                             <li><i class="fas fa-times deny"></i> All Sniper Not Allow</li>
                             <li><i class="fas fa-exclamation-triangle warning" style="color:var(--warning)"></i> <b>Must Be Follow:</b> ৫০ লেভেলের কম Free Fire আইডি দিয়ে রুমে জয়েন করলে রুম থেকে কিক দেওয়া হবে এবং কোন প্রকার REFUND দেওয়া হবে না।</li>
                             <li><i class="fas fa-circle deny" style="font-size:0.5rem; margin-top:8px;"></i> Kord গান AR এপ থেকে ব্যান করে দেয়া হলো। Kord চালালে বা কাউকে ড্যামেজ দিলে উইনিং বাতিল কেজি।</li>
-                            <li><i class="fas fa-circle deny" style="font-size:0.5rem; margin-top:8px;"></i> ম্যাচে জয়েন করার সময় অ্যাপে যে নাম দিয়েছেন, রুমে ঠিক সেই নামেই ঢুকতে হবে।</li>
+                            <li><i class="fas fa-circle deny" style="font-size:0.5rem; margin-top:8px;"></i> ম্যাচে জয়েন করার সময় অ্যাপে যে নাম দিয়েছেন, রুমে ঠিক সেই নামেই ঢুকতে ক্ষমতায় হবে।</li>
                             <li><i class="fas fa-circle deny" style="font-size:0.5rem; margin-top:8px;"></i> সোলো বা ডুও ম্যাচে বিপক্ষ দলের সাথে টিমিং (Teaming) করা সম্পূর্ণ নিষেধ। প্রমাণ পেলে প্রাইজমানি বাতিল।</li>
                         </ul>
                     </div>
@@ -631,7 +653,7 @@
                 </div>
             </div>
 
-            <!-- DEVELOPER TAB (Animated Profile) -->
+            <!-- DEVELOPER TAB (Ultra VIP Profile) -->
             <div id="tab-developer" class="hidden fade-in">
                 <div class="section-header">
                     <i class="fas fa-arrow-left btn-anim" onclick="switchTab('profile', document.getElementById('nav-profile'))"></i>
@@ -640,26 +662,53 @@
                 
                 <div style="padding: 20px;">
                     <div class="dev-banner">
-                        <!-- Spinning Animation Photo -->
-                        <div class="dev-img-wrap">
-                            <img src="https://i.ibb.co.com/393jhdjN/1769292209713.jpg" alt="RONI VAI" class="dev-img">
-                        </div>
-                        
-                        <h2 style="font-size: 1.6rem; color: white; margin-bottom: 5px; font-weight: 800; letter-spacing: 1px;">RONI VAI</h2>
-                        <div class="dev-badge"><i class="fas fa-code"></i> Full Stack App Developer</div>
-                        
-                        <div class="bangla-text" style="font-size: 0.95rem; color: #ccc; line-height: 1.6; margin-bottom: 25px; text-align: center; background: rgba(0,0,0,0.5); padding: 18px; border-radius: 12px; border: 1px solid var(--card-border);">
-                            হ্যালো! 👋<br>
-                            আমি <b>RONI VAI</b>, একজন প্রফেশনাল অ্যাপ ডেভেলপার। 
-                            <br><br>
-                            আপনি যদি নিজের নামে এরকম প্রিমিয়াম, ফাস্ট এবং সিকিউর একটি <b>ই-স্পোর্টস টুর্নামেন্ট অ্যাপ</b> বানাতে চান, তবে খুব সহজেই আমার সাথে যোগাযোগ করতে পারেন। আমি গ্যারান্টি দিচ্ছি বেস্ট ডিজাইন এবং সিকিউরিটি।
-                            <br><br>
-                            যেকোনো প্রয়োজনে নিচে দেওয়া বাটনে ক্লিক করে আমাকে সরাসরি <b>WhatsApp</b> এ মেসেজ দিন।
-                        </div>
+                        <div class="dev-content">
+                            <!-- Spinning Animation Photo & Verified Badge -->
+                            <div class="dev-img-wrap">
+                                <img src="https://i.ibb.co.com/393jhdjN/1769292209713.jpg" alt="RONI VAI" class="dev-img">
+                                <div class="dev-verified" title="Verified Developer"><i class="fas fa-check"></i></div>
+                            </div>
+                            
+                            <h2 class="dev-name">RONI VAI</h2>
+                            <div class="dev-badge"><i class="fas fa-crown"></i> Elite App Developer</div>
 
-                        <button class="contact-btn btn-anim" onclick="window.open('https://wa.me/8801600678966', '_blank')">
-                            <i class="fab fa-whatsapp" style="font-size: 1.4rem;"></i> WhatsApp Message
-                        </button>
+                            <!-- VIP Stats Grid -->
+                            <div class="dev-stats-grid">
+                                <div class="dev-stat-box">
+                                    <div class="dev-stat-val">100<span>+</span></div>
+                                    <div class="dev-stat-lbl">Projects</div>
+                                </div>
+                                <div class="dev-stat-box">
+                                    <div class="dev-stat-val">100<span>%</span></div>
+                                    <div class="dev-stat-lbl">Secure</div>
+                                </div>
+                                <div class="dev-stat-box">
+                                    <div class="dev-stat-val">24<span>/</span>7</div>
+                                    <div class="dev-stat-lbl">Support</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Detailed Description Box -->
+                            <div class="dev-desc-box bangla-text">
+                                <div class="dev-desc-text">
+                                    <b>প্রিমিয়াম কোয়ালিটি এবং এডভান্সড টেকনোলজি!</b> 🚀<br>
+                                    আমি যেকোনো ধরনের প্রফেশনাল অ্যাপ তৈরি করতে পারি। আমার নিজের তৈরি করা <b>২টি AI অ্যাসিস্ট্যান্ট ওয়েবসাইট ও অ্যাপ</b> রয়েছে, যেখানে ক্লিক করে ভয়েসে যা বলবেন, AI অটোমেটিক সেই কাজ করে দেবে!
+                                </div>
+                                <ul class="dev-services">
+                                    <li><i class="fas fa-gamepad"></i> E-Sports & Ludo Tournament App</li>
+                                    <li><i class="fas fa-play-circle"></i> Video & Anime Streaming App</li>
+                                    <li><i class="fas fa-robot"></i> Voice AI Assistant (Web Speech API)</li>
+                                    <li><i class="fas fa-comments-dollar"></i> Chatting & Earning App</li>
+                                    <li><i class="fas fa-calculator"></i> Advanced Calculator App</li>
+                                    <li><i class="fas fa-shopping-cart"></i> E-Commerce & Business Apps</li>
+                                    <li><i class="fas fa-cogs"></i> Advanced Admin Panel & Custom API</li>
+                                </ul>
+                            </div>
+
+                            <button class="contact-btn btn-anim" onclick="window.open('https://wa.me/8801600678966', '_blank')">
+                                <i class="fab fa-whatsapp" style="font-size: 1.6rem;"></i> Message on WhatsApp
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -708,12 +757,12 @@
             </div>
         </div>
 
-        <!-- BOTTOM NAV -->
+        <!-- BOTTOM NAV (With Bangla Text) -->
         <nav class="bottom-nav">
-            <div class="nav-item active btn-anim" id="nav-home" onclick="switchTab('home', this)"><i class="fas fa-home"></i><span>Home</span></div>
-            <div class="nav-item btn-anim" id="nav-matches" onclick="openCategory('ALL'); this.classList.add('active');"><i class="fas fa-gamepad"></i><span>Matches</span></div>
-            <div class="nav-item btn-anim" id="nav-wallet" onclick="switchTab('wallet', this)"><i class="fas fa-wallet"></i><span>Wallet</span></div>
-            <div class="nav-item btn-anim" id="nav-profile" onclick="switchTab('profile', this)"><i class="fas fa-user"></i><span>Profile</span></div>
+            <div class="nav-item active btn-anim" id="nav-home" onclick="switchTab('home', this)"><i class="fas fa-home"></i><span class="bangla-text">হোমপেজ</span></div>
+            <div class="nav-item btn-anim" id="nav-matches" onclick="openCategory('ALL'); this.classList.add('active');"><i class="fas fa-gamepad"></i><span class="bangla-text">ম্যাচ</span></div>
+            <div class="nav-item btn-anim" id="nav-wallet" onclick="switchTab('wallet', this)"><i class="fas fa-wallet"></i><span class="bangla-text">উইথড্র</span></div>
+            <div class="nav-item btn-anim" id="nav-profile" onclick="switchTab('profile', this)"><i class="fas fa-user"></i><span class="bangla-text">প্রোফাইল</span></div>
         </nav>
     </div>
 </div>
@@ -738,6 +787,7 @@
     let currentCategory = 'ALL';
     let globalAppLogo = "https://i.ibb.co.com/q3nvB821/360-F-1001641661-7-JWB9f-O7-XAKal9-SXT2-FSf8as-EUb1-Qz-Im.jpg";
     let globalAppName = "AR TOUR"; 
+    let globalTelegramLink = ""; // Telegram link variable added
     let slideIndex = 0;
     let totalSlides = 1;
     
@@ -778,6 +828,11 @@
             document.getElementById('app-browser-title').innerText = globalAppName;
             if(document.getElementById('header-app-name')) document.getElementById('header-app-name').innerText = globalAppName;
             
+            // Telegram link load from database
+            if(data.telegramLink) {
+                globalTelegramLink = data.telegramLink;
+            }
+
             if(data.appLogo) {
                 globalAppLogo = data.appLogo;
                 if(document.getElementById('login-app-logo')) document.getElementById('login-app-logo').src = globalAppLogo;
@@ -812,6 +867,15 @@
         let track = document.getElementById('slider-track');
         if(track && totalSlides > 0) { slideIndex = (slideIndex + 1) % totalSlides; track.style.transform = `translateX(-${slideIndex * 100}%)`; }
     }, 4000);
+
+    // --- TELEGRAM LINK OPENS HERE ---
+    window.openTelegram = () => {
+        if(globalTelegramLink && globalTelegramLink.trim() !== "") {
+            window.open(globalTelegramLink, '_blank');
+        } else {
+            Swal.fire({title: 'Sorry!', text: 'অ্যাডমিন এখনো টেলিগ্রাম লিংক আপডেট করেনি।', icon: 'info', background: '#12121a', color: '#fff'});
+        }
+    };
 
     // --- MODAL HELPERS (REFERRAL & SUB-CATEGORY) ---
     window.openReferralModal = async () => { 
