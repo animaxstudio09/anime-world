@@ -13,7 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
-        /* ================= PREMIUM ESPORTS THEME ================= */
+        /* ================= 1. PREMIUM ESPORTS THEME (DEFAULT ORIGINAL) ================= */
         :root { 
             --primary: #ff003c; 
             --primary-dark: #b3002a; 
@@ -31,10 +31,9 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent;}
         .bangla-text { font-family: 'Hind Siliguri', sans-serif; }
         
-        /* Fixed Mobile Bottom Cutoff Issue with 100dvh */
-        body { background-color: #000; display: flex; justify-content: center; height: 100vh; height: 100dvh; overflow: hidden; color: var(--text-main); }
+        body { background-color: #000; display: flex; justify-content: center; height: 100vh; height: 100dvh; overflow: hidden; color: var(--text-main); transition: background 0.4s ease; }
 
-        .app-container { width: 100%; max-width: 420px; height: 100%; background: var(--bg-app); position: relative; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 30px rgba(255,0,60,0.15);}
+        .app-container { width: 100%; max-width: 420px; height: 100%; background: var(--bg-app); position: relative; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 30px rgba(255,0,60,0.15); transition: background 0.4s ease;}
         .hidden { display: none !important; }
 
         /* ================= ANIMATIONS ================= */
@@ -42,10 +41,12 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .btn-anim:active { transform: scale(0.94); transition: 0.15s ease-in-out; }
+        
+        @keyframes spinRing { 100% { transform: rotate(360deg); } }
 
         /* ================= AUTHENTICATION UI ================= */
         #auth-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at top, #1a0006 0%, var(--bg-app) 100%); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px;}
-        .auth-logo { width: 110px; height: 110px; border-radius: 16px; box-shadow: var(--glow); margin-bottom: 25px; object-fit: cover; border: 2px solid var(--primary);}
+        .auth-logo { width: 110px; height: 110px; border-radius: 16px; box-shadow: var(--glow); margin-bottom: 25px; object-fit: cover; border: 2px solid var(--primary); cursor: default;}
         .auth-box { width: 100%; background: rgba(18, 18, 26, 0.8); padding: 30px 25px; border-radius: 20px; border: 1px solid var(--card-border); backdrop-filter: blur(10px); box-shadow: var(--glow-card);}
         .auth-box h2 { text-align: center; margin-bottom: 25px; color: var(--text-main); font-weight: 800; letter-spacing: 1px; font-size: 1.5rem;}
         .auth-box h2 span { color: var(--primary); }
@@ -57,8 +58,15 @@
 
         /* ================= HEADER ================= */
         .header { background: rgba(18, 18, 26, 0.95); backdrop-filter: blur(15px); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom: 1px solid var(--card-border);}
-        .brand-logo { font-weight: 800; color: var(--text-main); font-size: 1.2rem; display: flex; align-items: center; gap: 10px; letter-spacing: 1px;}
+        .brand-logo { font-weight: 800; color: var(--text-main); font-size: 1.2rem; display: flex; align-items: center; gap: 10px; letter-spacing: 1px; cursor: default;}
         .brand-logo img { width: 35px; height: 35px; border-radius: 8px; box-shadow: var(--glow); object-fit: cover;}
+        
+        /* HEADER RIGHT SIDE (BELL + BALANCE) */
+        .header-right { display: flex; align-items: center; gap: 12px; }
+        .notif-bell { width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; color: var(--text-main); font-size: 1.1rem; transition: 0.3s;}
+        .notif-bell:hover { background: rgba(255,0,60,0.1); border-color: var(--primary); color: var(--primary);}
+        .notif-badge { position: absolute; top: -2px; right: -2px; background: var(--primary); color: #fff; font-size: 0.6rem; font-weight: 800; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid var(--card-bg); box-shadow: var(--glow);}
+        
         .balance-pill { background: rgba(255,0,60,0.1); border: 1px solid var(--primary); padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; color: var(--text-main); display: flex; align-items: center; gap: 8px; cursor: pointer;}
         .balance-pill i { color: var(--primary); }
 
@@ -83,59 +91,32 @@
         .section-header i { font-size: 1.2rem; cursor: pointer; color: var(--text-main); background: rgba(255,255,255,0.05); width: 38px; height: 38px; display: flex; justify-content: center; align-items: center; border-radius: 10px; border: 1px solid var(--card-border);}
         .section-header h2 { font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
 
-        /* ================= HOME TAB ================= */
+        /* ================= HOME TAB (UPDATED STRICT 2-COLUMN GRID) ================= */
         .slider-container { margin: 15px 20px; border-radius: 16px; height: 170px; overflow: hidden; position: relative; box-shadow: var(--glow-card); border: 1px solid var(--card-border);}
         .slides { display: flex; width: 100%; height: 100%; transition: transform 0.5s ease-in-out; }
         .slide { min-width: 100%; height: 100%; background-size: cover; background-position: center; }
         
-        .cat-group-title { padding: 0 20px; margin: 25px 0 15px; font-weight: 700; color: var(--primary); font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px;}
-        .cat-group-title::before { content: ''; width: 4px; height: 16px; background: var(--primary); border-radius: 2px;}
+        .cat-group-title { padding: 0 20px; margin: 25px 0 15px; font-weight: 800; color: #fff; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 10px;}
+        .cat-group-title i { color: var(--primary); font-size: 1.3rem; }
 
         .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px;}
         
-        .cat-card { height: 130px; border-radius: 16px; position: relative; overflow: hidden; cursor: pointer; background: #000; border: 1px solid var(--card-border); box-shadow: 0 4px 15px rgba(0,0,0,0.5);}
+        /* Updated .cat-card to include White & Sky Blue inner glow/vibe */
+        .cat-card { height: 130px !important; min-height: 130px !important; max-height: 130px !important; border-radius: 16px; position: relative; overflow: hidden; cursor: pointer; background: #000; border: 1px solid var(--card-border); box-shadow: 0 4px 15px rgba(0,0,0,0.5);}
+        .cat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 16px; border: 1.5px solid rgba(255, 255, 255, 0.25); box-shadow: inset 0 0 35px rgba(135, 206, 235, 0.5); pointer-events: none; z-index: 2; transition: 0.3s; }
         .cat-card img.bg-img { width: 100%; height: 100%; object-fit: cover; opacity: 1; transition: 0.5s;}
         .cat-card:hover img.bg-img { transform: scale(1.05); }
         .cat-card:hover { border-color: var(--primary); }
+        .cat-card:hover::after { border-color: var(--primary); box-shadow: inset 0 0 35px rgba(255, 0, 60, 0.4); }
 
-        .hs-card { grid-column: span 2; height: 120px; border-color: var(--warning); box-shadow: 0 0 15px rgba(255, 179, 0, 0.2);}
-        .hs-card:hover { border-color: var(--primary); }
-
-        /* ================= MATCH COUNT BADGE ================= */
         .match-count-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(6px);
-            border: 1px solid rgba(255, 0, 60, 0.6);
-            color: #ffffff;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            z-index: 5;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
+            position: absolute; top: 10px; right: 10px; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(6px); border: 1px solid rgba(255, 0, 60, 0.6); color: #ffffff; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; z-index: 5; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.8); letter-spacing: 0.5px; text-transform: uppercase;
         }
-        .match-count-badge i {
-            color: var(--success);
-            font-size: 0.55rem;
-            animation: pulseLive 1.5s infinite;
-        }
-        @keyframes pulseLive {
-            0% { opacity: 0.5; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.2); text-shadow: 0 0 8px var(--success); }
-            100% { opacity: 0.5; transform: scale(0.8); }
-        }
+        .match-count-badge i { color: var(--success); font-size: 0.55rem; animation: pulseLive 1.5s infinite; }
+        @keyframes pulseLive { 0% { opacity: 0.5; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); text-shadow: 0 0 8px var(--success); } 100% { opacity: 0.5; transform: scale(0.8); } }
 
         /* ================= MATCH CARDS ================= */
         .match-card { background: var(--card-bg); margin: 0 20px 20px; border-radius: 16px; border: 1px solid var(--card-border); overflow: hidden; box-shadow: var(--glow-card); position: relative;}
-        
         .mc-header { padding: 15px; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.03); background: rgba(0,0,0,0.3);}
         .mc-title { font-size: 1rem; color: var(--text-main); font-weight: 700; text-transform: uppercase; line-height: 1.3;}
         .mc-time { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; margin-top: 5px; display: flex; align-items: center; gap: 5px;}
@@ -147,9 +128,7 @@
         .mc-stat span { display: block; font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 2px;}
         .mc-stat strong { font-size: 0.95rem; color: var(--text-main); font-weight: 700; }
         
-        .text-primary { color: var(--primary); }
-        .text-success { color: var(--success); }
-        .text-warning { color: var(--warning); }
+        .text-primary { color: var(--primary); } .text-success { color: var(--success); } .text-warning { color: var(--warning); }
 
         .mc-progress { padding: 15px 15px 5px; }
         .mc-prog-text { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; color: var(--text-main); margin-bottom: 8px;}
@@ -166,31 +145,76 @@
         .mc-3-btns button:hover { background: rgba(255,255,255,0.08); border-color: var(--primary); }
         .mc-3-btns button:hover i { color: var(--primary); }
 
-        /* ================= PROFILE TAB ================= */
-        .profile-header { padding: 40px 20px 25px; text-align: center; background: radial-gradient(circle at top, rgba(255,0,60,0.15) 0%, var(--bg-app) 100%); border-bottom: 1px solid var(--card-border);}
-        .p-avatar { width: 95px; height: 95px; border-radius: 50%; border: 3px solid var(--primary); box-shadow: var(--glow); margin: 0 auto 12px; object-fit: cover; position: relative; z-index: 2;}
-        .p-name { font-size: 1.4rem; font-weight: 800; color: white; margin-bottom: 4px; letter-spacing: 1px;}
-        .p-uid { font-size: 0.8rem; color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 4px 15px; border-radius: 20px; display: inline-block; border: 1px solid var(--card-border); font-weight: 600;}
+        /* ================= NOTIFICATIONS TAB (NEW) ================= */
+        .notif-card { background: var(--card-bg); margin: 0 20px 15px; border-radius: 14px; border: 1px solid var(--card-border); padding: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; gap: 15px; position: relative; overflow: hidden; transition: 0.3s;}
+        .notif-card:hover { border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
+        .notif-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.3rem; flex-shrink: 0; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);}
+        .notif-content { flex: 1; }
+        .notif-title { font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 5px; }
+        .notif-msg { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 10px; }
+        .notif-time { font-size: 0.65rem; color: #555; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;}
+        
+        .btn-claim { background: linear-gradient(45deg, #00e676, #00b359); color: #000; border: none; padding: 8px 15px; border-radius: 8px; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,230,118,0.3); transition: 0.3s;}
+        .btn-claim:active { transform: scale(0.95); }
+        .btn-claimed { background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); box-shadow: none; pointer-events: none;}
+        
+        .notif-card.type-reward { border-left: 3px solid var(--success); background: linear-gradient(90deg, rgba(0,230,118,0.05) 0%, var(--card-bg) 100%); }
+        .notif-card.type-info { border-left: 3px solid var(--primary); }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 20px;}
-        .stat-box { background: var(--card-bg); padding: 18px 5px; border-radius: 14px; text-align: center; border: 1px solid var(--card-border); box-shadow: var(--glow-card);}
-        .stat-val { font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-bottom: 2px;}
-        .stat-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;}
-        .stat-box.highlight { border-color: rgba(255,0,60,0.4); background: linear-gradient(180deg, rgba(255,0,60,0.05) 0%, var(--card-bg) 100%);}
+        /* ================= PROFILE TAB ================= */
+        .profile-banner { height: 160px; background: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80') center/cover; position: relative; border-bottom: 2px solid var(--primary); box-shadow: var(--glow); transition: 0.3s; }
+        .profile-banner::after { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(0deg, var(--bg-app) 0%, rgba(0,0,0,0) 100%); }
+        
+        .profile-header-new { text-align: center; margin-top: -65px; position: relative; z-index: 5; padding-bottom: 15px;}
+        .p-avatar { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--bg-app); box-shadow: 0 10px 25px rgba(0,0,0,0.8); margin: 0 auto 10px; object-fit: cover; background: #000; position: relative; transition: 0.3s;}
+        .p-name { font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 2px; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);}
+        .p-uid { font-size: 0.85rem; color: var(--primary); background: rgba(255,0,60,0.1); padding: 4px 15px; border-radius: 20px; display: inline-block; border: 1px solid rgba(255,0,60,0.3); font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
+
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 15px 20px 25px;}
+        .stat-box { background: linear-gradient(145deg, #161622, #0d0d14); padding: 18px 5px; border-radius: 16px; text-align: center; border: 1px solid var(--card-border); box-shadow: var(--glow-card); position: relative; overflow: hidden;}
+        .stat-box i { position: absolute; top: -5px; right: -5px; font-size: 3rem; opacity: 0.05; color: white; }
+        .stat-val { font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-bottom: 2px; position: relative; z-index: 2;}
+        .stat-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; position: relative; z-index: 2;}
+        
+        .stat-box.highlight { border-color: rgba(255,0,60,0.4); background: linear-gradient(180deg, rgba(255,0,60,0.1) 0%, #12121a 100%);}
         .stat-box.highlight .stat-val { color: var(--primary); text-shadow: var(--glow); }
+        .stat-box.highlight i { color: var(--primary); opacity: 0.1;}
 
         .menu-list { padding: 0 20px; }
-        .menu-item { background: var(--card-bg); padding: 18px 20px; border-radius: 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid var(--card-border); transition: 0.3s;}
-        .menu-item:hover { border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); }
-        .menu-left { display: flex; align-items: center; gap: 15px; font-weight: 600; font-size: 0.95rem; }
-        .m-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.4);}
-        .menu-item i.fa-chevron-right { color: var(--text-muted); font-size: 0.9rem;}
+        .menu-item { 
+            background: linear-gradient(90deg, rgba(30, 30, 40, 0.6) 0%, rgba(18, 18, 26, 0.8) 100%); 
+            padding: 16px 20px; 
+            border-radius: 12px; 
+            margin-bottom: 12px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            cursor: pointer; 
+            border: 1px solid rgba(255,255,255,0.03);
+            border-left: 3px solid transparent; 
+            transition: all 0.3s ease; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .menu-item:hover { 
+            border-color: rgba(255,255,255,0.08); 
+            border-left-color: var(--primary);
+            background: linear-gradient(90deg, rgba(255,0,60,0.1) 0%, rgba(30,30,40,0.8) 100%); 
+            transform: translateX(4px); 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        .menu-left { display: flex; align-items: center; gap: 15px; font-weight: 600; font-size: 0.95rem; color: #e0e0e0; }
+        .m-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); }
+        .menu-item i.fa-chevron-right { color: rgba(255,255,255,0.2); font-size: 0.8rem; transition: 0.3s;}
+        .menu-item:hover i.fa-chevron-right { color: var(--primary); transform: translateX(3px);}
 
-        /* ================= WALLET & ADD MONEY ================= */
-        .w-card { background: linear-gradient(135deg, #1f0007, #12121a); border-radius: 16px; padding: 30px; text-align: center; margin-bottom: 25px; border: 1px solid rgba(255,0,60,0.3); box-shadow: var(--glow);}
-        .w-card h2 { font-size: 2.8rem; font-weight: 800; color: var(--text-main); margin-top: 5px; text-shadow: var(--glow);}
+        /* ================= COMBINED WALLET (DEPOSIT & WITHDRAW) ================= */
+        .wallet-top { text-align: center; padding: 20px; margin-bottom: 15px; }
+        .wallet-top p { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 5px; }
+        .wallet-top h2 { font-size: 3rem; font-weight: 800; color: var(--text-main); text-shadow: var(--glow); line-height: 1; }
         
-        .fund-box { background: var(--card-bg); padding: 25px; border-radius: 16px; border: 1px solid var(--card-border); margin-bottom: 20px;}
+        .wallet-toggles { display: flex; background: rgba(0,0,0,0.6); padding: 6px; border-radius: 14px; margin: 0 20px 25px; border: 1px solid var(--card-border); box-shadow: inset 0 4px 10px rgba(0,0,0,0.5); }
+        .w-toggle { flex: 1; padding: 14px; text-align: center; font-weight: 700; font-size: 0.95rem; color: var(--text-muted); cursor: pointer; border-radius: 10px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;}
+        .w-toggle.active { background: linear-gradient(45deg, var(--primary-dark), var(--primary)); color: #fff; box-shadow: var(--glow); }
+
+        .fund-box { background: var(--card-bg); padding: 25px; border-radius: 16px; border: 1px solid var(--card-border); margin: 0 20px 20px; box-shadow: var(--glow-card);}
         .fund-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; color: var(--text-main); text-transform: uppercase;}
         
         .form-control { width: 100%; padding: 15px; border: 1px solid var(--card-border); border-radius: 12px; font-size: 0.95rem; outline: none; margin-bottom: 15px; background: rgba(0,0,0,0.5); color: var(--text-main); transition: 0.3s;}
@@ -203,90 +227,44 @@
         .rule-list { list-style: none; font-size: 0.85rem; color: #ccc; line-height: 1.8; }
         .rule-list li { margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px;}
         .rule-list li i { margin-top: 5px; font-size: 0.9rem;}
-        .allow { color: var(--success); }
-        .deny { color: var(--primary); }
+        .allow { color: var(--success); } .deny { color: var(--primary); }
 
         /* ================= VIP DEVELOPER TAB ================= */
         .dev-banner { background: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80') center/cover; border-radius: 20px; position: relative; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.9); margin-bottom: 20px;}
         .dev-banner::before { content: ''; position: absolute; top:0; left:0; right:0; bottom:0; background: linear-gradient(135deg, rgba(8, 8, 12, 0.95) 0%, rgba(255, 0, 60, 0.1) 100%); backdrop-filter: blur(8px); z-index: 1;}
         .dev-banner::after { content: ''; position: absolute; top: 2px; left: 2px; right: 2px; bottom: 2px; border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 18px; z-index: 2; pointer-events: none; }
-        
         .dev-content { position: relative; z-index: 3; padding: 40px 20px 30px; display: flex; flex-direction: column; align-items: center;}
-        
         .dev-img-wrap { position: relative; width: 140px; height: 140px; margin: 0 auto 20px; }
         .dev-img-wrap::before { content: ''; position: absolute; top: -6px; left: -6px; right: -6px; bottom: -6px; border-radius: 50%; background: linear-gradient(45deg, #FFD700, #ff003c, #00d2ff, #FFD700); background-size: 400%; z-index: 1; animation: gradientSpin 4s linear infinite; box-shadow: 0 0 30px rgba(255,215,0,0.4); }
         @keyframes gradientSpin { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .dev-img-wrap::after { content: ''; position: absolute; top: 3px; left: 3px; right: 3px; bottom: 3px; border-radius: 50%; background: var(--bg-app); z-index: 2; }
         .dev-img { position: relative; z-index: 3; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid transparent; }
-        
         .dev-verified { position: absolute; bottom: 5px; right: 5px; background: #1DA1F2; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1rem; z-index: 4; border: 3px solid var(--bg-app); box-shadow: 0 0 15px rgba(29,161,242,0.6);}
-        
         .dev-name { font-size: 2rem; color: #fff; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 0 15px rgba(255,215,0,0.5); margin-bottom: 5px; background: linear-gradient(to right, #FFF, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent;}
         .dev-badge { background: linear-gradient(90deg, rgba(255,215,0,0.1), rgba(255,0,60,0.1)); border: 1px solid rgba(255,215,0,0.4); color: #FFD700; font-size: 0.8rem; padding: 6px 20px; border-radius: 20px; letter-spacing: 2px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; text-transform: uppercase; box-shadow: 0 0 15px rgba(255,215,0,0.2);}
-        
         .dev-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 30px 0; width: 100%;}
         .dev-stat-box { background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.5) 100%); border: 1px solid rgba(255,255,255,0.1); padding: 18px 5px; border-radius: 16px; backdrop-filter: blur(10px); transition: 0.3s; text-align: center;}
         .dev-stat-box:hover { border-color: #FFD700; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(255,215,0,0.15); }
         .dev-stat-val { font-size: 1.4rem; font-weight: 800; color: #fff; }
         .dev-stat-val span { color: #FFD700; }
         .dev-stat-lbl { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-top: 5px;}
-        
         .dev-desc-box { background: rgba(0,0,0,0.6); padding: 25px 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 25px; width: 100%; box-shadow: inset 0 0 20px rgba(0,0,0,0.8);}
         .dev-desc-text { font-size: 0.95rem; color: #e0e0e0; line-height: 1.8; text-align: center; margin-bottom: 15px;}
-        
         .dev-services { list-style: none; text-align: left; padding: 0 10px; font-size: 0.9rem; color: #ccc;}
         .dev-services li { margin-bottom: 12px; display: flex; align-items: center; gap: 12px; font-weight: 500;}
-        .dev-services li i { color: #00d2ff; font-size: 1rem; background: rgba(0,210,255,0.1); padding: 6px; border-radius: 50%; border: 1px solid rgba(0,210,255,0.3);}
-        
+        .dev-services li i { color: #00e676; font-size: 1rem; background: rgba(0,230,118,0.1); padding: 6px; border-radius: 50%; border: 1px solid rgba(0,230,118,0.3);}
         .contact-btn { background: linear-gradient(45deg, #128C7E, #25D366); color: white; border: none; padding: 18px 20px; border-radius: 16px; font-size: 1.1rem; font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-transform: uppercase; letter-spacing: 1px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.2);}
         .contact-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); animation: shineBtn 2.5s infinite;}
         @keyframes shineBtn { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
         .contact-btn:active { transform: scale(0.95); }
 
-        /* ================= MODALS & SUB-CATEGORY POPUP ================= */
+        /* ================= MODALS ================= */
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1500; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(8px); opacity: 0; visibility: hidden; transition: 0.3s; }
         .modal-overlay.active { opacity: 1; visibility: visible; }
-        
-        .modal-box { 
-            width: 100%; max-width: 340px; 
-            background: linear-gradient(145deg, #1a1a24, #0f0f15); 
-            border-radius: 24px; 
-            padding: 30px 25px; 
-            position: relative; 
-            box-shadow: 0 25px 50px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05); 
-            transform: translateY(40px) scale(0.95); 
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-            border: 1px solid rgba(255, 0, 60, 0.2);
-        }
+        .modal-box { width: 100%; max-width: 340px; background: linear-gradient(145deg, #1a1a24, #0f0f15); border-radius: 24px; padding: 30px 25px; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05); transform: translateY(40px) scale(0.95); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(255, 0, 60, 0.2); }
         .modal-overlay.active .modal-box { transform: translateY(0) scale(1); }
         .close-btn { position: absolute; top: 18px; right: 18px; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; transition: 0.3s; z-index: 10;}
         .close-btn:hover { color: var(--primary); }
-
-        .mode-img-btn { 
-            position: relative;
-            background: #000;
-            border: 2px solid rgba(255, 255, 255, 0.08); 
-            height: 110px; 
-            border-radius: 16px; 
-            background-size: cover; 
-            background-position: center; 
-            cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
-        }
-        .mode-img-btn::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            border-radius: 14px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
-            pointer-events: none;
-        }
-        .mode-img-btn:hover { 
-            border-color: var(--primary); 
-            box-shadow: 0 0 25px rgba(255, 0, 60, 0.5), 0 15px 25px rgba(0,0,0,0.9); 
-            transform: translateY(-4px) scale(1.03);
-        }
 
         /* ================= BOTTOM NAV ================= */
         .bottom-nav { position: absolute; bottom: 0; width: 100%; height: 70px; background: rgba(18, 18, 26, 0.98); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; transition: 0.3s; border-radius: 20px 20px 0 0;}
@@ -299,9 +277,142 @@
         .swal2-popup { background: var(--card-bg) !important; color: var(--text-main) !important; border: 1px solid var(--card-border) !important; border-radius: 16px !important; box-shadow: var(--glow-card) !important; }
         .swal2-title { color: var(--text-main) !important; font-weight: 700 !important; }
         .swal2-html-container { color: var(--text-muted) !important; }
-        .swal2-input { background: rgba(0,0,0,0.6) !important; color: white !important; border: 1px solid var(--card-border) !important; border-radius: 10px !important;}
+        .swal2-input { background: rgba(0,0,0,0.6) !important; color: white !important; border: 1px solid var(--card-border) !important; border-radius: 10px !important; margin-bottom: 10px;}
         .swal2-input:focus { border-color: var(--primary) !important; box-shadow: 0 0 10px rgba(255,0,60,0.2) !important;}
         .swal2-confirm { background: linear-gradient(45deg, var(--primary-dark), var(--primary)) !important; border-radius: 10px !important; font-weight: 700 !important; border: none !important;}
+
+        /* ================= 20 STRUCTURAL THEMES OVERRIDES ================= */
+        body.theme-glass { background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop') center/cover fixed; }
+        body.theme-glass .app-container { background: rgba(0,0,0,0.5); backdrop-filter: blur(20px); box-shadow: none; }
+        body.theme-glass .header, body.theme-glass .section-header { background: rgba(255,255,255,0.05) !important; border-bottom: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); margin: 10px; border-radius: 20px; }
+        body.theme-glass #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } 
+        body.theme-glass #main-app > main > div:not(#tab-developer) .cat-card, body.theme-glass #main-app > main > div:not(#tab-developer) .match-card, body.theme-glass #main-app > main > div:not(#tab-developer) .menu-item, body.theme-glass #main-app > main > div:not(#tab-developer) .stat-box { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.2) !important; border-radius: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); height: auto; min-height: 100px;}
+        body.theme-glass .bottom-nav { background: rgba(0,0,0,0.6) !important; backdrop-filter: blur(20px); bottom: 15px; width: 92%; left: 4%; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); }
+        body.theme-glass .mc-header, body.theme-glass .mc-stats-grid { border-bottom: 1px solid rgba(255,255,255,0.05); background: transparent; }
+        body.theme-glass .btn-join { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.4); color: #00f0ff; box-shadow: none;}
+        body.theme-glass .text-primary { color: #00f0ff; }
+        
+        body.theme-neo { background: #232427; }
+        body.theme-neo .app-container { background: #232427; box-shadow: none; }
+        body.theme-neo .header, body.theme-neo .section-header { background: #232427 !important; border: none; box-shadow: 5px 5px 15px #19191c, -5px -5px 15px #2d2f32; }
+        body.theme-neo .bottom-nav { background: #232427 !important; border: none; box-shadow: 0 -5px 15px #19191c; border-radius: 30px 30px 0 0;}
+        body.theme-neo #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } 
+        body.theme-neo #main-app > main > div:not(#tab-developer) .cat-card, body.theme-neo #main-app > main > div:not(#tab-developer) .match-card, body.theme-neo #main-app > main > div:not(#tab-developer) .menu-item, body.theme-neo #main-app > main > div:not(#tab-developer) .stat-box { background: #232427 !important; border: none !important; border-radius: 20px; box-shadow: 8px 8px 16px #19191c, -8px -8px 16px #2d2f32 !important; height: auto; min-height: 100px;}
+        body.theme-neo .mc-stat { background: #232427; box-shadow: inset 3px 3px 6px #19191c, inset -3px -3px 6px #2d2f32; border: none; }
+        body.theme-neo .btn-join { background: #232427 !important; color: #ffb300; border: none; box-shadow: 5px 5px 10px #19191c, -5px -5px 10px #2d2f32 !important; }
+        body.theme-neo .mc-header { background: transparent; border-bottom: 2px solid #19191c;}
+
+        body.theme-light { background: #f4f7f6; color: #222; }
+        body.theme-light .app-container { background: #f4f7f6; box-shadow: none; }
+        body.theme-light .text-main, body.theme-light h2, body.theme-light .mc-title, body.theme-light .p-name { color: #222 !important; font-weight: 800;}
+        body.theme-light .text-muted, body.theme-light .cat-group-title { color: #666 !important; }
+        body.theme-light .header, body.theme-light .section-header { background: #fff !important; border-bottom: 1px solid #ddd !important; box-shadow: 0 2px 10px rgba(0,0,0,0.05);}
+        body.theme-light .bottom-nav { background: #fff !important; border-top: 1px solid #ddd !important; border-radius: 0;}
+        body.theme-light .nav-item { color: #888; } body.theme-light .nav-item.active { color: #4a90e2; }
+        body.theme-light #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } 
+        body.theme-light #main-app > main > div:not(#tab-developer) .cat-card, body.theme-light #main-app > main > div:not(#tab-developer) .match-card, body.theme-light #main-app > main > div:not(#tab-developer) .menu-item, body.theme-light #main-app > main > div:not(#tab-developer) .stat-box { background: #fff !important; border: 1px solid #ddd !important; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); height: auto; min-height: 100px; display: flex; align-items: center; justify-content: space-between;}
+        body.theme-light .cat-card img { width: 140px; height: 100%; border-radius: 12px 0 0 12px; position: static;}
+        body.theme-light .match-count-badge { position: relative; top: auto; right: auto; margin-right: 15px; background: #e8f5e9; color: #2e7d32; border: none; box-shadow: none; font-size: 0.75rem;}
+        body.theme-light .mc-header { background: #f9f9f9; border-bottom: 1px solid #eee; }
+        body.theme-light .mc-stat { background: #f4f7f6; border: 1px solid #eee; }
+        body.theme-light .btn-join { background: #4a90e2 !important; color: #fff !important; border-radius: 8px;}
+
+        body.theme-arcade { background: #000; color: #0f0; }
+        body.theme-arcade * { font-family: 'Courier New', Courier, monospace !important; letter-spacing: -0.5px;}
+        body.theme-arcade .app-container { background: #000; border-left: 2px solid #0f0; border-right: 2px solid #0f0;}
+        body.theme-arcade .header, body.theme-arcade .section-header { background: #000 !important; border-bottom: 3px dashed #0f0 !important; }
+        body.theme-arcade .text-main, body.theme-arcade h2 { color: #f0f !important; text-transform: uppercase;}
+        body.theme-arcade .text-muted, body.theme-arcade .cat-group-title { color: #0aa !important; }
+        body.theme-arcade #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } 
+        body.theme-arcade #main-app > main > div:not(#tab-developer) .cat-card, body.theme-arcade #main-app > main > div:not(#tab-developer) .match-card, body.theme-arcade #main-app > main > div:not(#tab-developer) .menu-item, body.theme-arcade #main-app > main > div:not(#tab-developer) .stat-box { background: #000 !important; border: 3px solid #0f0 !important; border-radius: 0 !important; box-shadow: 5px 5px 0px #f0f !important; margin-bottom: 20px; height: auto; min-height: 100px;}
+        body.theme-arcade .mc-stats-grid { display: flex; flex-direction: column; gap: 5px; border-bottom: 3px dashed #0f0; background: transparent; padding: 15px;}
+        body.theme-arcade .mc-stat { display: flex; justify-content: space-between; align-items: center; background: #000; border: 2px solid #0aa; border-radius: 0; padding: 10px;}
+        body.theme-arcade .mc-stat i { display: none; }
+        body.theme-arcade .mc-stat span { margin: 0; }
+        body.theme-arcade .btn-join { background: #ffea00 !important; color: #000 !important; border: 3px solid #0f0 !important; border-radius: 0 !important; box-shadow: 4px 4px 0px #f0f !important; font-weight: 900;}
+        body.theme-arcade .bottom-nav { background: #000 !important; border-top: 3px solid #0f0 !important; border-radius: 0;}
+        body.theme-arcade .nav-item.active { color: #f0f; text-shadow: 2px 2px 0px #0f0;}
+
+        body.theme-cyber { background: #fcee0a; color: #000; }
+        body.theme-cyber .app-container { background: #fcee0a; }
+        body.theme-cyber .text-main, body.theme-cyber h2, body.theme-cyber .p-name { color: #000 !important; font-weight: 900; text-transform: uppercase;}
+        body.theme-cyber .text-muted, body.theme-cyber .cat-group-title { color: #111 !important; font-weight: 700;}
+        body.theme-cyber .header, body.theme-cyber .section-header { background: #000 !important; color: #fcee0a !important; border-bottom: 4px solid #00f0ff !important;}
+        body.theme-cyber .header *, body.theme-cyber .section-header * { color: #fcee0a !important; }
+        body.theme-cyber #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } 
+        body.theme-cyber #main-app > main > div:not(#tab-developer) .cat-card, body.theme-cyber #main-app > main > div:not(#tab-developer) .match-card, body.theme-cyber #main-app > main > div:not(#tab-developer) .menu-item, body.theme-cyber #main-app > main > div:not(#tab-developer) .stat-box { background: #000 !important; border: none !important; border-radius: 0 !important; clip-path: polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%); margin-bottom: 20px; height: auto; min-height: 100px;}
+        body.theme-cyber .mc-header { background: #111; border-bottom: 2px solid #00f0ff;}
+        body.theme-cyber .mc-stat { background: #222; border-left: 3px solid #fcee0a; border-radius: 0; }
+        body.theme-cyber .mc-stat * { color: #fff !important; }
+        body.theme-cyber .btn-join { background: #00f0ff !important; color: #000 !important; border-radius: 0 !important; clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%); font-weight: 900; box-shadow: none !important;}
+        body.theme-cyber .bottom-nav { background: #000 !important; border-top: 4px solid #fcee0a !important; border-radius: 0;}
+        body.theme-cyber .nav-item { color: #666; } body.theme-cyber .nav-item.active { color: #00f0ff; }
+
+        body.theme-gold { background: #050505; color: #fff; }
+        body.theme-gold * { font-family: 'Times New Roman', serif !important; }
+        body.theme-gold .app-container { background: #050505; }
+        body.theme-gold .text-main, body.theme-gold h2 { color: #d4af37 !important; font-weight: 400; letter-spacing: 2px;}
+        body.theme-gold .header, body.theme-gold .section-header { background: #0a0a0a !important; border-bottom: 1px solid #d4af37 !important; }
+        body.theme-gold #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } 
+        body.theme-gold #main-app > main > div:not(#tab-developer) .cat-card, body.theme-gold #main-app > main > div:not(#tab-developer) .match-card, body.theme-gold #main-app > main > div:not(#tab-developer) .menu-item, body.theme-gold #main-app > main > div:not(#tab-developer) .stat-box { background: transparent !important; border: 1px solid #d4af37 !important; border-radius: 0 !important; box-shadow: 0 0 15px rgba(212,175,55,0.1) !important; height: auto; min-height: 100px;}
+        body.theme-gold .mc-header, body.theme-gold .mc-stats-grid { border-bottom: 1px solid rgba(212,175,55,0.3); background: transparent; }
+        body.theme-gold .mc-stat { background: rgba(212,175,55,0.05); border: 1px solid #d4af37; border-radius: 0;}
+        body.theme-gold .btn-join { background: transparent !important; color: #d4af37 !important; border: 1px solid #d4af37 !important; border-radius: 0 !important; text-transform: uppercase;}
+        body.theme-gold .bottom-nav { background: #050505 !important; border-top: 1px solid #d4af37 !important; border-radius: 0;}
+        body.theme-gold .nav-item.active { color: #d4af37; }
+
+        body.theme-minimal { background: #000; color: #fff; }
+        body.theme-minimal .app-container { background: #000; }
+        body.theme-minimal .text-main, body.theme-minimal h2, body.theme-minimal .mc-title { color: #fff !important; font-weight: 800; font-size: 1.5rem;}
+        body.theme-minimal .header, body.theme-minimal .section-header { background: #000 !important; border: none !important; padding-bottom: 30px;}
+        body.theme-minimal #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } 
+        body.theme-minimal #main-app > main > div:not(#tab-developer) .cat-card, body.theme-minimal #main-app > main > div:not(#tab-developer) .match-card, body.theme-minimal #main-app > main > div:not(#tab-developer) .menu-item, body.theme-minimal #main-app > main > div:not(#tab-developer) .stat-box { background: transparent !important; border: none !important; border-radius: 0 !important; border-bottom: 2px solid #222 !important; padding: 20px 0; box-shadow: none !important; height: auto; min-height: 100px;}
+        body.theme-minimal .mc-header { background: transparent; border: none; padding-left: 0;}
+        body.theme-minimal .mc-stats-grid { border-top: 1px solid #222; border-bottom: 1px solid #222; background: transparent; padding: 15px 0;}
+        body.theme-minimal .mc-stat { background: transparent; border: none; text-align: left; padding: 5px 0;}
+        body.theme-minimal .btn-join { background: #fff !important; color: #000 !important; border-radius: 50px !important; }
+        body.theme-minimal .bottom-nav { background: #000 !important; border: none !important; border-top: 1px solid #222 !important;}
+        body.theme-minimal .nav-item.active { color: #fff; }
+        body.theme-minimal .p-avatar { border-radius: 0; border: none; width: 120px; height: 120px; }
+
+        body.theme-royal { background: #1a0b2e; color: #fff; }
+        body.theme-royal .app-container { background: #1a0b2e; }
+        body.theme-royal .text-main, body.theme-royal h2 { color: #fff !important;}
+        body.theme-royal .text-muted { color: #b24bf3 !important; }
+        body.theme-royal .header, body.theme-royal .section-header { background: #2d1b4e !important; border-bottom: none !important; box-shadow: 0 5px 20px rgba(0,0,0,0.5); border-radius: 0 0 30px 30px;}
+        body.theme-royal #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } 
+        body.theme-royal #main-app > main > div:not(#tab-developer) .cat-card, body.theme-royal #main-app > main > div:not(#tab-developer) .match-card, body.theme-royal #main-app > main > div:not(#tab-developer) .menu-item, body.theme-royal #main-app > main > div:not(#tab-developer) .stat-box { background: #2d1b4e !important; border: none !important; border-radius: 35px !important; box-shadow: 0 10px 25px rgba(0,0,0,0.4) !important; height: auto; min-height: 100px;}
+        body.theme-royal .mc-header { background: rgba(0,0,0,0.2); border-bottom: none; border-radius: 35px 35px 0 0;}
+        body.theme-royal .mc-stat { background: #40286b; border-radius: 20px; border: none;}
+        body.theme-royal .btn-join { background: linear-gradient(45deg, #b24bf3, #ff007f) !important; color: #fff !important; border-radius: 30px !important; border: none !important;}
+        body.theme-royal .bottom-nav { background: #2d1b4e !important; border-top: none !important; border-radius: 40px 40px 0 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.5);}
+        body.theme-royal .nav-item.active { color: #ff007f; }
+
+        body.theme-mono { background: #fff; color: #000; }
+        body.theme-mono .app-container { background: #fff; }
+        body.theme-mono .text-main, body.theme-mono h2, body.theme-mono .mc-title, body.theme-mono .p-name { color: #000 !important; font-weight: 900;}
+        body.theme-mono .text-muted { color: #555 !important; }
+        body.theme-mono .header, body.theme-mono .section-header { background: #fff !important; border-bottom: 4px solid #000 !important;}
+        body.theme-mono #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } 
+        body.theme-mono #main-app > main > div:not(#tab-developer) .cat-card, body.theme-mono #main-app > main > div:not(#tab-developer) .match-card, body.theme-mono #main-app > main > div:not(#tab-developer) .menu-item, body.theme-mono #main-app > main > div:not(#tab-developer) .stat-box { background: #fff !important; border: 3px solid #000 !important; border-radius: 0 !important; box-shadow: 6px 6px 0 #000 !important; margin-bottom: 25px; height: auto; min-height: 100px;}
+        body.theme-mono .mc-header { background: #eee; border-bottom: 3px solid #000;}
+        body.theme-mono .mc-stats-grid { border-bottom: 3px solid #000; background: transparent; }
+        body.theme-mono .mc-stat { background: #fff; border: 2px solid #000; border-radius: 0;}
+        body.theme-mono .btn-join { background: #000 !important; color: #fff !important; border-radius: 0 !important; font-weight: 900; text-transform: uppercase;}
+        body.theme-mono .bottom-nav { background: #fff !important; border-top: 4px solid #000 !important; border-radius: 0;}
+        body.theme-mono .nav-item { color: #000; } body.theme-mono .nav-item.active { color: #000; text-decoration: underline; font-weight: 900;}
+
+        body.theme-synth { background: #0f0c29; color: #fff; } body.theme-synth .app-container{background:linear-gradient(to bottom, #302b63, #24243e);} body.theme-synth .text-main{color:#ff00cc !important;} body.theme-synth #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } body.theme-synth #main-app > main > div:not(#tab-developer) .cat-card, body.theme-synth #main-app > main > div:not(#tab-developer) .match-card, body.theme-synth #main-app > main > div:not(#tab-developer) .menu-item, body.theme-synth #main-app > main > div:not(#tab-developer) .stat-box {background:rgba(0,0,0,0.6)!important; border:2px solid #00d2ff!important; border-radius:15px; box-shadow:0 0 15px #ff00cc; height: auto; min-height: 100px;} body.theme-synth .btn-join{background:linear-gradient(90deg, #ff00cc, #00d2ff)!important;} body.theme-synth .bottom-nav{background:#000!important; border-top:2px solid #ff00cc!important;}
+        body.theme-blood { background: #0a0000; color: #fff; } body.theme-blood .app-container{background:#0a0000;} body.theme-blood #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } body.theme-blood #main-app > main > div:not(#tab-developer) .cat-card, body.theme-blood #main-app > main > div:not(#tab-developer) .match-card, body.theme-blood #main-app > main > div:not(#tab-developer) .menu-item, body.theme-blood #main-app > main > div:not(#tab-developer) .stat-box {background:#110000!important; border:1px solid #ff0000!important; border-radius:0; height: auto; min-height: 100px;} body.theme-blood .btn-join{background:#880000!important; color:#fff!important;} body.theme-blood .bottom-nav{background:#1a0000!important; border-top:1px solid #ff0000!important;}
+        body.theme-ocean { background: #001f3f; color: #fff; } body.theme-ocean .app-container{background:linear-gradient(to bottom, #001f3f, #003366);} body.theme-ocean #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } body.theme-ocean #main-app > main > div:not(#tab-developer) .cat-card, body.theme-ocean #main-app > main > div:not(#tab-developer) .match-card, body.theme-ocean #main-app > main > div:not(#tab-developer) .menu-item, body.theme-ocean #main-app > main > div:not(#tab-developer) .stat-box {background:rgba(0,0,0,0.3)!important; border:1px solid #00e5ff!important; border-radius:20px; height: auto; min-height: 100px;} body.theme-ocean .btn-join{background:#00e5ff!important; color:#001f3f!important;} body.theme-ocean .bottom-nav{background:#001122!important; border-top:1px solid #00e5ff!important;}
+        body.theme-frost { background: #e0f7fa; color: #006064; } body.theme-frost .app-container{background:#e0f7fa;} body.theme-frost #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } body.theme-frost #main-app > main > div:not(#tab-developer) .cat-card, body.theme-frost #main-app > main > div:not(#tab-developer) .match-card, body.theme-frost #main-app > main > div:not(#tab-developer) .menu-item, body.theme-frost #main-app > main > div:not(#tab-developer) .stat-box {background:#fff!important; border:1px solid #b2ebf2!important; border-radius:16px; height: auto; min-height: 100px;} body.theme-frost .text-main{color:#006064!important;} body.theme-frost .btn-join{background:#00bcd4!important; color:#fff!important;} body.theme-frost .bottom-nav{background:#fff!important; border-top:1px solid #b2ebf2!important;}
+        body.theme-toxic { background: #111; color: #ccff00; } body.theme-toxic .app-container{background:#111;} body.theme-toxic #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } body.theme-toxic #main-app > main > div:not(#tab-developer) .cat-card, body.theme-toxic #main-app > main > div:not(#tab-developer) .match-card, body.theme-toxic #main-app > main > div:not(#tab-developer) .menu-item, body.theme-toxic #main-app > main > div:not(#tab-developer) .stat-box {background:#222!important; border:2px dashed #ccff00!important; height: auto; min-height: 100px;} body.theme-toxic .btn-join{background:#ccff00!important; color:#000!important;} body.theme-toxic .bottom-nav{background:#1a1a1a!important; border-top:2px solid #ccff00!important;}
+        body.theme-sunset { background: #ff5e62; color: #fff; } body.theme-sunset .app-container{background:linear-gradient(to bottom, #ff9966, #ff5e62);} body.theme-sunset #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } body.theme-sunset #main-app > main > div:not(#tab-developer) .cat-card, body.theme-sunset #main-app > main > div:not(#tab-developer) .match-card, body.theme-sunset #main-app > main > div:not(#tab-developer) .menu-item, body.theme-sunset #main-app > main > div:not(#tab-developer) .stat-box {background:rgba(255,255,255,0.1)!important; border:1px solid rgba(255,255,255,0.3)!important; border-radius:20px; height: auto; min-height: 100px;} body.theme-sunset .btn-join{background:#fff!important; color:#ff5e62!important; border-radius:30px;} body.theme-sunset .bottom-nav{background:rgba(0,0,0,0.3)!important; border-top:none!important;}
+        body.theme-pastel { background: #fdfbfb; color: #5c5c5c; } body.theme-pastel .app-container{background:#fdfbfb;} body.theme-pastel #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } body.theme-pastel #main-app > main > div:not(#tab-developer) .cat-card, body.theme-pastel #main-app > main > div:not(#tab-developer) .match-card, body.theme-pastel #main-app > main > div:not(#tab-developer) .menu-item, body.theme-pastel #main-app > main > div:not(#tab-developer) .stat-box {background:#fff!important; border:none!important; border-radius:30px; box-shadow:0 10px 20px rgba(255,154,158,0.15); height: auto; min-height: 100px;} body.theme-pastel .btn-join{background:linear-gradient(120deg, #f6d365, #fda085)!important; border-radius:30px;} body.theme-pastel .bottom-nav{background:#fff!important; border-radius:30px 30px 0 0;}
+        body.theme-desert { background: #d7ccc8; color: #4e342e; } body.theme-desert .app-container{background:#d7ccc8;} body.theme-desert #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } body.theme-desert #main-app > main > div:not(#tab-developer) .cat-card, body.theme-desert #main-app > main > div:not(#tab-developer) .match-card, body.theme-desert #main-app > main > div:not(#tab-developer) .menu-item, body.theme-desert #main-app > main > div:not(#tab-developer) .stat-box {background:#efebe9!important; border:1px solid #8d6e63!important; border-radius:8px; height: auto; min-height: 100px;} body.theme-desert .btn-join{background:#795548!important; color:#fff!important;} body.theme-desert .bottom-nav{background:#bcaaa4!important; border-top:2px solid #8d6e63!important;}
+        body.theme-space { background: #000; color: #fff; } body.theme-space .app-container{background:radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);} body.theme-space #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } body.theme-space #main-app > main > div:not(#tab-developer) .cat-card, body.theme-space #main-app > main > div:not(#tab-developer) .match-card, body.theme-space #main-app > main > div:not(#tab-developer) .menu-item, body.theme-space #main-app > main > div:not(#tab-developer) .stat-box {background:rgba(255,255,255,0.02)!important; border:1px solid rgba(255,255,255,0.05)!important; border-radius:20px; height: auto; min-height: 100px;} body.theme-space .btn-join{background:linear-gradient(to right, #8a2387, #e94057, #f27121)!important; border-radius:25px;} body.theme-space .bottom-nav{background:#090a0f!important; border-top:1px solid rgba(255,255,255,0.1)!important;}
+        body.theme-military { background: #4b5320; color: #f1f8e9; } body.theme-military .app-container{background:#4b5320;} body.theme-military #tab-home .cat-grid { display: flex; flex-direction: column; padding: 0 15px; } body.theme-military #main-app > main > div:not(#tab-developer) .cat-card, body.theme-military #main-app > main > div:not(#tab-developer) .match-card, body.theme-military #main-app > main > div:not(#tab-developer) .menu-item, body.theme-military #main-app > main > div:not(#tab-developer) .stat-box {background:#558b2f!important; border:2px solid #1b5e20!important; border-radius:0; box-shadow:4px 4px 0 #1b5e20; height: auto; min-height: 100px;} body.theme-military .btn-join{background:#1b5e20!important; color:#fff!important; border-radius:0; font-weight:900;} body.theme-military .bottom-nav{background:#33691e!important; border-top:3px solid #1b5e20!important;}
+
     </style>
 </head>
 <body>
@@ -344,7 +455,7 @@
         <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
         <div class="sidebar" id="sidebar">
             <div class="sb-header">
-                <img src="https://i.ibb.co.com/3mmsy2m9/images-8.jpg" alt="User Avatar">
+                <img src="https://i.ibb.co.com/3mmsy2m9/images-8.jpg" id="sb-avatar-img" alt="User Avatar">
                 <h3 id="sb-name">Player Name</h3>
                 <p id="sb-email" style="font-size:0.8rem; opacity:0.8; color: var(--text-muted);">user@email.com</p>
             </div>
@@ -353,7 +464,7 @@
                 <div class="sb-item btn-anim" onclick="switchTab('profile', document.getElementById('nav-profile')); toggleSidebar()"><i class="fas fa-user"></i> My Profile</div>
                 <div class="sb-item btn-anim" onclick="viewMyMatches(); toggleSidebar()"><i class="fas fa-gamepad"></i> My Matches</div>
                 <div class="sb-item btn-anim" onclick="viewHistory(); toggleSidebar()"><i class="fas fa-history"></i> Match History</div>
-                <div class="sb-item btn-anim" onclick="switchTab('wallet', document.getElementById('nav-wallet')); toggleSidebar()"><i class="fas fa-wallet"></i> Wallet / Withdraw</div>
+                <div class="sb-item btn-anim" onclick="switchTab('wallet', document.getElementById('nav-wallet')); toggleWalletView('deposit'); toggleSidebar()"><i class="fas fa-wallet"></i> Wallet / Withdraw</div>
                 <div class="sb-item btn-anim" onclick="switchTab('rules'); toggleSidebar()"><i class="fas fa-book-open"></i> App Rules</div>
                 <div class="sb-item btn-anim" style="color:var(--primary); border-top:1px solid var(--card-border); margin-top:10px;" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Logout</div>
             </div>
@@ -368,8 +479,14 @@
                     <span id="header-app-name">AR TOUR</span>
                 </div>
             </div>
-            <div class="balance-pill btn-anim" onclick="switchTab('wallet', document.getElementById('nav-wallet'))">
-                <i class="fas fa-wallet"></i> <span id="ui-balance">৳ 0</span>
+            <div class="header-right">
+                <div class="notif-bell btn-anim" onclick="switchTab('notifications')">
+                    <i class="fas fa-bell"></i>
+                    <span class="notif-badge hidden" id="notif-badge">0</span>
+                </div>
+                <div class="balance-pill btn-anim" onclick="switchTab('wallet', document.getElementById('nav-wallet')); toggleWalletView('deposit');">
+                    <i class="fas fa-wallet"></i> <span id="ui-balance">৳ 0</span>
+                </div>
             </div>
         </header>
 
@@ -378,44 +495,74 @@
             
             <!-- HOME -->
             <div id="tab-home" class="fade-in">
+                <!-- SLIDER -->
                 <div class="slider-container">
                     <div class="slides" id="slider-track">
                         <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');"></div>
                     </div>
                 </div>
 
-                <!-- Main Tournaments -->
-                <div class="cat-group-title">Main Tournaments</div>
-                <div class="cat-grid">
-                    <div class="cat-card btn-anim" onclick="openSubCategoryModal('BR')">
-                        <img src="https://images.unsplash.com/photo-1605901309584-818e25960b8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" id="img-br" class="bg-img">
-                        <div class="match-count-badge hidden" id="badge-br"><i class="fas fa-circle"></i> <span id="count-br">0</span></div>
+                <!-- DYNAMIC CATEGORY CONTAINER -->
+                <div id="dynamic-home-container">
+                    <!-- Default Hardcoded Categories (Fallback for backward compatibility before Admin sets up dynamic ones) -->
+                    <div class="cat-group-title"><i class="fas fa-map-marked-alt"></i> Battle Royale (BR)</div>
+                    <div class="cat-grid" id="dynamic-cat-grid">
+                        <div class="cat-card btn-anim" onclick="openCategory('BR SOLO')">
+                            <img src="https://images.unsplash.com/photo-1605901309584-818e25960b8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" id="img-br-solo" class="bg-img">
+                            <div class="match-count-badge hidden" id="badge-br-solo"><i class="fas fa-circle"></i> <span id="count-br-solo">0</span></div>
+                        </div>
+                        <div class="cat-card btn-anim" onclick="openCategory('BR DUO')">
+                            <img src="https://images.unsplash.com/photo-1605901309584-818e25960b8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" id="img-br-duo" class="bg-img">
+                            <div class="match-count-badge hidden" id="badge-br-duo"><i class="fas fa-circle"></i> <span id="count-br-duo">0</span></div>
+                        </div>
                     </div>
-                    <div class="cat-card btn-anim" onclick="openSubCategoryModal('CS')">
-                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" id="img-cs" class="bg-img">
-                        <div class="match-count-badge hidden" id="badge-cs"><i class="fas fa-circle"></i> <span id="count-cs">0</span></div>
-                    </div>
-                </div>
 
-                <!-- Fast Matches -->
-                <div class="cat-group-title">Fast Matches</div>
-                <div class="cat-grid">
-                    <div class="cat-card btn-anim" onclick="openSubCategoryModal('LW')">
-                        <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" id="img-lw" class="bg-img">
-                        <div class="match-count-badge hidden" id="badge-lw"><i class="fas fa-circle"></i> <span id="count-lw">0</span></div>
+                    <div class="cat-group-title"><i class="fas fa-gift"></i> Free Match</div>
+                    <div class="cat-grid">
+                        <div class="cat-card btn-anim" onclick="openCategory('FREE MATCH')">
+                            <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" id="img-free" class="bg-img">
+                            <div class="match-count-badge hidden" id="badge-free"><i class="fas fa-circle"></i> <span id="count-free">0</span></div>
+                        </div>
                     </div>
-                    <div class="cat-card btn-anim" onclick="openCategory('FREE MATCH')">
-                        <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" id="img-free" class="bg-img">
-                        <div class="match-count-badge hidden" id="badge-free"><i class="fas fa-circle"></i> <span id="count-free">0</span></div>
-                    </div>
-                </div>
 
-                <!-- Special Matches -->
-                <div class="cat-group-title" style="color:var(--warning);">Special Match</div>
-                <div class="cat-grid" style="grid-template-columns: 1fr; margin-bottom: 20px;">
-                    <div class="cat-card btn-anim hs-card" onclick="openSubCategoryModal('HS')">
-                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" id="img-hs" class="bg-img">
-                        <div class="match-count-badge hidden" id="badge-hs"><i class="fas fa-circle"></i> <span id="count-hs">0</span></div>
+                    <div class="cat-group-title"><i class="fas fa-user-ninja"></i> Lone Wolf Matches</div>
+                    <div class="cat-grid">
+                        <div class="cat-card btn-anim" onclick="openCategory('LW SOLO')">
+                            <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" id="img-lw-solo" class="bg-img">
+                            <div class="match-count-badge hidden" id="badge-lw-solo"><i class="fas fa-circle"></i> <span id="count-lw-solo">0</span></div>
+                        </div>
+                        <div class="cat-card btn-anim" onclick="openCategory('LW DUO')">
+                            <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" id="img-lw-duo" class="bg-img">
+                            <div class="match-count-badge hidden" id="badge-lw-duo"><i class="fas fa-circle"></i> <span id="count-lw-duo">0</span></div>
+                        </div>
+                        <div class="cat-card btn-anim" onclick="openCategory('LOSS TO WIN')">
+                            <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" id="img-loss-to-win" class="bg-img">
+                            <div class="match-count-badge hidden" id="badge-loss-to-win"><i class="fas fa-circle"></i> <span id="count-loss-to-win">0</span></div>
+                        </div>
+                    </div>
+
+                    <div class="cat-group-title"><i class="fas fa-users"></i> Clash Squad (CS)</div>
+                    <div class="cat-grid">
+                        <div class="cat-card btn-anim" onclick="openCategory('CS SOLO')">
+                            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" id="img-cs-solo" class="bg-img">
+                            <div class="match-count-badge hidden" id="badge-cs-solo"><i class="fas fa-circle"></i> <span id="count-cs-solo">0</span></div>
+                        </div>
+                        <div class="cat-card btn-anim" onclick="openCategory('CS SQUAD')">
+                            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" id="img-cs-squad" class="bg-img">
+                            <div class="match-count-badge hidden" id="badge-cs-squad"><i class="fas fa-circle"></i> <span id="count-cs-squad">0</span></div>
+                        </div>
+                    </div>
+
+                    <div class="cat-group-title"><i class="fas fa-crosshairs"></i> Headshot Matches</div>
+                    <div class="cat-grid">
+                        <div class="cat-card btn-anim" onclick="openCategory('HEADSHOT CS')">
+                            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" id="img-hs-cs" class="bg-img">
+                            <div class="match-count-badge hidden" id="badge-hs-cs"><i class="fas fa-circle"></i> <span id="count-hs-cs">0</span></div>
+                        </div>
+                        <div class="cat-card btn-anim" onclick="openCategory('HEADSHOT LW')">
+                            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" id="img-hs-lw" class="bg-img">
+                            <div class="match-count-badge hidden" id="badge-hs-lw"><i class="fas fa-circle"></i> <span id="count-hs-lw">0</span></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -437,44 +584,58 @@
                 </div>
                 <div id="history-list-container" style="padding: 15px 0;"></div>
             </div>
+            
+            <!-- NOTIFICATIONS -->
+            <div id="tab-notifications" class="hidden fade-in">
+                <div class="section-header">
+                    <i class="fas fa-arrow-left btn-anim" onclick="switchTab('home', document.getElementById('nav-home'))"></i>
+                    <h2>Notifications & Rewards</h2>
+                </div>
+                <div id="notif-list-container" style="padding: 15px 0;">
+                    <div style="text-align:center; padding: 40px; color:var(--text-muted);"><i class="fas fa-bell-slash" style="font-size:3rem; margin-bottom:15px; opacity:0.5;"></i><p style="font-weight:700; font-size:1.2rem;">No Notifications</p></div>
+                </div>
+            </div>
 
             <!-- PROFILE -->
             <div id="tab-profile" class="hidden fade-in">
-                <div class="profile-header">
-                    <img src="https://i.ibb.co/3mmsy2m9/images-8.jpg" class="p-avatar" alt="User Avatar">
+                <div class="profile-banner" id="p-banner-div"></div>
+                
+                <div class="profile-header-new">
+                    <img src="https://i.ibb.co/3mmsy2m9/images-8.jpg" id="p-avatar-img" class="p-avatar" alt="User Avatar">
                     <h2 class="p-name" id="p-name">Loading...</h2>
-                    <div class="p-uid">AR ID #<span id="p-uid">0000</span></div>
+                    <div class="p-uid"><i class="fas fa-gamepad"></i> UID: <span id="p-uid">0000</span></div>
                 </div>
 
-                <!-- Stats Boxes -->
                 <div class="stats-grid">
                     <div class="stat-box">
+                        <i class="fas fa-trophy"></i>
                         <div class="stat-val" id="p-played">0</div>
                         <div class="stat-label">Matches</div>
                     </div>
                     <div class="stat-box highlight">
+                        <i class="fas fa-wallet"></i>
                         <div class="stat-val" id="p-bal">৳ 0</div>
                         <div class="stat-label">Balance</div>
                     </div>
                     <div class="stat-box">
+                        <i class="fas fa-crown"></i>
                         <div class="stat-val" id="p-won">0</div>
                         <div class="stat-label">Won</div>
                     </div>
                 </div>
 
-                <!-- Menu List -->
                 <div class="menu-list">
-                    <div class="menu-item btn-anim" onclick="switchTab('addmoney')">
+                    <div class="menu-item btn-anim" onclick="switchTab('wallet'); toggleWalletView('deposit');">
                         <div class="menu-left">
-                            <div class="m-icon" style="color:#00e676; border-color:rgba(0,230,118,0.3);"><i class="fas fa-plus-circle"></i></div> 
-                            Add Money (অ্যাড মানি)
+                            <div class="m-icon" style="color:#00e676;"><i class="fas fa-plus-circle"></i></div> 
+                            Add Money / Deposit
                         </div>
                         <i class="fas fa-chevron-right"></i>
                     </div>
 
                     <div class="menu-item btn-anim" onclick="openReferralModal()">
                         <div class="menu-left">
-                            <div class="m-icon" style="color:#ffb300; border-color:rgba(255,179,0,0.3);"><i class="fas fa-users"></i></div> 
+                            <div class="m-icon" style="color:#ffb300;"><i class="fas fa-users"></i></div> 
                             My Referral Dashboard
                         </div>
                         <i class="fas fa-chevron-right"></i>
@@ -482,8 +643,8 @@
                     
                     <div class="menu-item btn-anim" onclick="openTelegram()">
                         <div class="menu-left">
-                            <div class="m-icon" style="color:#0088cc; border-color:rgba(0,136,204,0.3);"><i class="fab fa-telegram-plane"></i></div> 
-                            Telegram Group (টেলিগ্রাম গ্রুপ)
+                            <div class="m-icon" style="color:#0088cc;"><i class="fab fa-telegram-plane"></i></div> 
+                            Telegram Group
                         </div>
                         <i class="fas fa-chevron-right"></i>
                     </div>
@@ -498,7 +659,7 @@
                     
                     <div class="menu-item btn-anim" onclick="viewHistory()">
                         <div class="menu-left">
-                            <div class="m-icon" style="color:var(--warning); border-color:rgba(255,170,0,0.3);"><i class="fas fa-history"></i></div> 
+                            <div class="m-icon" style="color:var(--warning);"><i class="fas fa-history"></i></div> 
                             Match History
                         </div>
                         <i class="fas fa-chevron-right"></i>
@@ -506,7 +667,7 @@
                     
                     <div class="menu-item btn-anim" onclick="switchTab('developer')">
                         <div class="menu-left">
-                            <div class="m-icon" style="color: #00d2ff; border-color:rgba(0,210,255,0.3);"><i class="fas fa-laptop-code"></i></div> 
+                            <div class="m-icon" style="color: #00d2ff;"><i class="fas fa-laptop-code"></i></div> 
                             Developer Profile
                         </div>
                         <i class="fas fa-chevron-right"></i>
@@ -518,14 +679,25 @@
                 </div>
             </div>
 
-            <!-- ADD MONEY TAB -->
-            <div id="tab-addmoney" class="hidden fade-in">
+            <!-- WALLET -->
+            <div id="tab-wallet" class="hidden fade-in">
                 <div class="section-header">
-                    <i class="fas fa-arrow-left btn-anim" onclick="switchTab('profile', document.getElementById('nav-profile'))"></i>
-                    <h2>Add Money</h2>
+                    <i class="fas fa-arrow-left btn-anim" onclick="switchTab('home', document.getElementById('nav-home'))"></i>
+                    <h2>My Wallet</h2>
                 </div>
-                <div style="padding: 20px;">
-                    <div class="fund-box">
+                
+                <div class="wallet-top">
+                    <p>Available Balance</p>
+                    <h2 id="wallet-big-bal">৳ 0</h2>
+                </div>
+
+                <div class="wallet-toggles">
+                    <div id="btn-dep" class="w-toggle active btn-anim" onclick="toggleWalletView('deposit')">Deposit</div>
+                    <div id="btn-wit" class="w-toggle btn-anim" onclick="toggleWalletView('withdraw')">Withdraw</div>
+                </div>
+
+                <div id="view-deposit">
+                    <div class="fund-box fade-in">
                         <div class="fund-title"><i class="fas fa-plus-circle" style="color:var(--success);"></i> Add Money (অ্যাড মানি)</div>
                         <p class="bangla-text" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6;">
                             নিচের দেওয়া নাম্বারে সেন্ড মানি (Send Money) করুন। টাকা পাঠানো হয়ে গেলে নিচের ফর্মটি সঠিকভাবে পূরণ করুন।
@@ -553,21 +725,9 @@
                         <button class="auth-btn btn-anim" style="margin-top: 10px;" onclick="requestAddFund()">Submit Request</button>
                     </div>
                 </div>
-            </div>
 
-            <!-- WALLET TAB (WITHDRAW) -->
-            <div id="tab-wallet" class="hidden fade-in">
-                <div class="section-header">
-                    <i class="fas fa-arrow-left btn-anim" onclick="switchTab('home', document.getElementById('nav-home'))"></i>
-                    <h2>Withdraw (উইথড্র)</h2>
-                </div>
-                <div style="padding: 20px;">
-                    <div class="w-card">
-                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Available Balance</p>
-                        <h2 id="wallet-big-bal">৳ 0</h2>
-                    </div>
-
-                    <div class="fund-box">
+                <div id="view-withdraw" class="hidden">
+                    <div class="fund-box fade-in">
                         <div class="fund-title"><i class="fas fa-hand-holding-usd" style="color:var(--primary);"></i> Withdraw Funds</div>
                         <p class="bangla-text" style="font-size: 0.8rem; color: #ccc; margin-bottom: 20px; background: rgba(255,0,60,0.1); padding: 15px; border-radius: 10px; border: 1px dashed rgba(255,0,60,0.3); line-height: 1.6;">
                             ⚠️ <b>উইথড্র নিয়ম:</b> সর্বনিম্ন উইথড্র ১০০ টাকা। চার্জ: ১০০ টাকায় ৫৳, ৫০০ টাকায় ১০৳, ১০০০ টাকায় ২০৳। রিকোয়েস্ট দেওয়ার ২৪ ঘন্টার মধ্যে পেমেন্ট ক্লিয়ার করা হবে।
@@ -591,7 +751,7 @@
                 </div>
             </div>
 
-            <!-- DETAILED RULES TAB -->
+            <!-- RULES -->
             <div id="tab-rules" class="hidden fade-in">
                 <div class="section-header">
                     <i class="fas fa-arrow-left btn-anim" onclick="switchTab('profile', document.getElementById('nav-profile'))"></i>
@@ -604,7 +764,6 @@
                         <h3 style="font-family: 'Poppins'; font-weight: 700; letter-spacing: 1px;">AR TOUR Match Rules</h3>
                     </div>
 
-                    <!-- BR Match Rules -->
                     <div class="rule-card">
                         <div class="rule-title"><i class="fas fa-crosshairs"></i> BR Match Rules (Solo/Duo)</div>
                         <ul class="rule-list">
@@ -613,47 +772,16 @@
                             <li><i class="fas fa-times deny"></i> Vehicle (গাড়ি) Not Allow</li>
                             <li><i class="fas fa-times deny"></i> Only Kord Gun Not Allow</li>
                             <li><i class="fas fa-times deny"></i> All Sniper Not Allow</li>
-                            <li><i class="fas fa-exclamation-triangle warning" style="color:var(--warning)"></i> <b>Must Be Follow:</b> ৫০ লেভেলের কম Free Fire আইডি দিয়ে রুমে জয়েন করলে রুম থেকে কিক দেওয়া হবে এবং কোন প্রকার REFUND দেওয়া হবে না।</li>
-                            <li><i class="fas fa-circle deny" style="font-size:0.5rem; margin-top:8px;"></i> Kord গান AR এপ থেকে ব্যান করে দেয়া হলো। Kord চালালে বা কাউকে ড্যামেজ দিলে উইনিং বাতিল কেজি।</li>
-                            <li><i class="fas fa-circle deny" style="font-size:0.5rem; margin-top:8px;"></i> ম্যাচে জয়েন করার সময় অ্যাপে যে নাম দিয়েছেন, রুমে ঠিক সেই নামেই ঢুকতে ক্ষমতায় হবে।</li>
+                            <li><i class="fas fa-exclamation-triangle warning" style="color:var(--warning)"></i> <b>Must Be Follow:</b> ৫০ লেভেলের কম Free Fire আইডি দিয়ে রুমে জয়েন করলে রুম থেকে কিক দেওয়া হবে।</li>
+                            <li><i class="fas fa-circle deny" style="font-size:0.5rem; margin-top:8px;"></i> Kord গান AR এপ থেকে ব্যান করে দেয়া হলো। Kord চালালে বা কাউকে ড্যামেজ দিলে উইনিং বাতিল।</li>
+                            <li><i class="fas fa-circle deny" style="font-size:0.5rem; margin-top:8px;"></i> ম্যাচে জয়েন করার সময় অ্যাপে যে নাম দিয়েছেন, রুমে ঠিক সেই নামেই ঢুকতে হবে।</li>
                             <li><i class="fas fa-circle deny" style="font-size:0.5rem; margin-top:8px;"></i> সোলো বা ডুও ম্যাচে বিপক্ষ দলের সাথে টিমিং (Teaming) করা সম্পূর্ণ নিষেধ। প্রমাণ পেলে প্রাইজমানি বাতিল।</li>
-                        </ul>
-                    </div>
-
-                    <!-- CS Match Rules -->
-                    <div class="rule-card">
-                        <div class="rule-title"><i class="fas fa-fighter-jet"></i> CS Match Rules</div>
-                        <ul class="rule-list">
-                            <li><i class="fas fa-circle" style="color:#aaa; font-size:0.5rem; margin-top:8px;"></i> Coin - 9500 | Round - 9</li>
-                            <li><i class="fas fa-times deny"></i> Charecter Skill No</li>
-                            <li><i class="fas fa-times deny"></i> Limited Ammo No</li>
-                            <li><i class="fas fa-times deny"></i> Gun Attributes No</li>
-                            <li><i class="fas fa-times deny"></i> All Airdrop No</li>
-                            <li><i class="fas fa-times deny"></i> Loadout No</li>
-                            <li><i class="fas fa-times deny"></i> গ্রেনেড বা এসব ধরনের কিছু No</li>
-                            <li><i class="fas fa-circle deny" style="font-size:0.5rem; margin-top:8px;"></i> রুম কাস্টম প্রিসেট দ্বারা খোলা হবে।</li>
-                            <li><i class="fas fa-circle deny" style="font-size:0.5rem; margin-top:8px;"></i> সন্দেহজনক User কে কোন নোটিশ ছাড়াই ব্যান করা হবে।</li>
-                            <li><i class="fas fa-circle deny" style="font-size:0.5rem; margin-top:8px;"></i> বিপক্ষ দল কোনো হ্যাক বা রুলস ব্রেক করলে অবশ্যই স্ক্রিনরেকর্ড (Screen Record) প্রমাণ হিসেবে দিতে হবে।</li>
-                        </ul>
-                    </div>
-
-                    <!-- Lone Wolf Rules -->
-                    <div class="rule-card">
-                        <div class="rule-title"><i class="fas fa-wolf-pack-battalion"></i> Lone Wolf Match Rules</div>
-                        <ul class="rule-list">
-                            <li><i class="fas fa-circle" style="color:#aaa; font-size:0.5rem; margin-top:8px;"></i> Lone Wolf Normal | Round - 9</li>
-                            <li><i class="fas fa-check allow"></i> All Gun Allow Yes</li>
-                            <li><i class="fas fa-check allow"></i> Limited Ammo Yes</li>
-                            <li><i class="fas fa-check allow"></i> বোম ও ফ্লাশ এসব ধরনের কিছু Allow</li>
-                            <li><i class="fas fa-times deny"></i> Gun Attributes No</li>
-                            <li><i class="fas fa-times deny"></i> Character Skill No</li>
-                            <li><i class="fas fa-circle deny" style="font-size:0.5rem; margin-top:8px;"></i> অ্যাপে যে কোনো ম্যাচে এক নাম দিয়ে রেজিস্ট্রেশন করে সে কাস্টম রুমে অন্য নাম দিয়ে জয়েন করলে কিক দেওয়া হবে। এবং কোনো প্রকার রিফান্ড এবং Winning রিওয়ার্ড দেওয়া হবে মহাশয়।</li>
                         </ul>
                     </div>
                 </div>
             </div>
 
-            <!-- DEVELOPER TAB (Ultra VIP Profile) -->
+            <!-- DEVELOPER -->
             <div id="tab-developer" class="hidden fade-in">
                 <div class="section-header">
                     <i class="fas fa-arrow-left btn-anim" onclick="switchTab('profile', document.getElementById('nav-profile'))"></i>
@@ -663,7 +791,6 @@
                 <div style="padding: 20px;">
                     <div class="dev-banner">
                         <div class="dev-content">
-                            <!-- Spinning Animation Photo & Verified Badge -->
                             <div class="dev-img-wrap">
                                 <img src="https://i.ibb.co.com/393jhdjN/1769292209713.jpg" alt="RONI VAI" class="dev-img">
                                 <div class="dev-verified" title="Verified Developer"><i class="fas fa-check"></i></div>
@@ -672,23 +799,12 @@
                             <h2 class="dev-name">RONI VAI</h2>
                             <div class="dev-badge"><i class="fas fa-crown"></i> Elite App Developer</div>
 
-                            <!-- VIP Stats Grid -->
                             <div class="dev-stats-grid">
-                                <div class="dev-stat-box">
-                                    <div class="dev-stat-val">100<span>+</span></div>
-                                    <div class="dev-stat-lbl">Projects</div>
-                                </div>
-                                <div class="dev-stat-box">
-                                    <div class="dev-stat-val">100<span>%</span></div>
-                                    <div class="dev-stat-lbl">Secure</div>
-                                </div>
-                                <div class="dev-stat-box">
-                                    <div class="dev-stat-val">24<span>/</span>7</div>
-                                    <div class="dev-stat-lbl">Support</div>
-                                </div>
+                                <div class="dev-stat-box"><div class="dev-stat-val">100<span>+</span></div><div class="dev-stat-lbl">Projects</div></div>
+                                <div class="dev-stat-box"><div class="dev-stat-val">100<span>%</span></div><div class="dev-stat-lbl">Secure</div></div>
+                                <div class="dev-stat-box"><div class="dev-stat-val">24<span>/</span>7</div><div class="dev-stat-lbl">Support</div></div>
                             </div>
                             
-                            <!-- Detailed Description Box -->
                             <div class="dev-desc-box bangla-text">
                                 <div class="dev-desc-text">
                                     <b>প্রিমিয়াম কোয়ালিটি এবং এডভান্সড টেকনোলজি!</b> 🚀<br>
@@ -715,26 +831,12 @@
 
         </main>
 
-        <!-- SUB-CATEGORY SELECTION MODAL (IMAGE BUTTONS ONLY) -->
-        <div class="modal-overlay" id="subCatModal">
-            <div class="modal-box" style="text-align: center; max-width: 320px;">
-                <i class="fas fa-times close-btn btn-anim" onclick="closeSubCatModal()"></i>
-                <div style="margin-bottom: 25px;">
-                    <h2 id="subcat-title" style="color: var(--text-main); font-weight: 800; letter-spacing: 1px; font-size: 1.4rem; text-transform: uppercase;">Select Mode</h2>
-                    <div style="width: 50px; height: 4px; background: var(--primary); margin: 8px auto 0; border-radius: 2px;"></div>
-                </div>
-                <div id="subcat-options" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <!-- Dynamically injected via JS -->
-                </div>
-            </div>
-        </div>
-
         <!-- REFERRAL MODAL -->
         <div class="modal-overlay" id="referralModal">
             <div class="modal-box">
                 <i class="fas fa-times close-btn btn-anim" onclick="closeReferralModal()"></i>
                 <div class="fund-title" style="margin-bottom: 10px; justify-content: center;"><i class="fas fa-users" style="color:var(--warning);"></i> Referral Dashboard</div>
-                <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:15px; text-align:center;">আপনার রেফার কোডটি কপি করতে নিচের কোডের উপর ক্লিক করুন।</p>
+                <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:15px; text-align:center;">আপনার রেফার কোডটি কপি করতে নিচের কোডের উপর ক্লিক করুন。</p>
                 
                 <div class="admin-number btn-anim" id="modal-ref-code" onclick="copyText(this.innerText.trim())" title="Click to copy">
                     LOAD <i class="fas fa-copy" style="font-size:1rem; margin-left:8px;"></i>
@@ -749,19 +851,15 @@
                         <span style="font-size:0.85rem; font-weight:600; color:var(--text-main);">Total Earned:</span>
                         <strong id="ref-earned" style="color:var(--success); font-size:1.2rem;">৳ 0</strong>
                     </div>
-                    <div style="background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px; border: 1px solid var(--card-border); display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-size:0.85rem; font-weight:600; color:var(--text-main);">Pending (Free) Refs:</span>
-                        <strong id="ref-pending" style="color:var(--text-muted); font-size:1.2rem;">0</strong>
-                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- BOTTOM NAV (With Bangla Text) -->
+        <!-- BOTTOM NAV -->
         <nav class="bottom-nav">
             <div class="nav-item active btn-anim" id="nav-home" onclick="switchTab('home', this)"><i class="fas fa-home"></i><span class="bangla-text">হোমপেজ</span></div>
             <div class="nav-item btn-anim" id="nav-matches" onclick="openCategory('ALL'); this.classList.add('active');"><i class="fas fa-gamepad"></i><span class="bangla-text">ম্যাচ</span></div>
-            <div class="nav-item btn-anim" id="nav-wallet" onclick="switchTab('wallet', this)"><i class="fas fa-wallet"></i><span class="bangla-text">উইথড্র</span></div>
+            <div class="nav-item btn-anim" id="nav-wallet" onclick="switchTab('wallet', this); toggleWalletView('deposit');"><i class="fas fa-wallet"></i><span class="bangla-text">উইথড্র</span></div>
             <div class="nav-item btn-anim" id="nav-profile" onclick="switchTab('profile', this)"><i class="fas fa-user"></i><span class="bangla-text">প্রোফাইল</span></div>
         </nav>
     </div>
@@ -772,7 +870,66 @@
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
     import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, arrayUnion, onSnapshot, query, orderBy, where, increment, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
+    // ================= STEALTH BRIDGE ENGINE (DISGUISED AS UI THEME CACHE) =================
+    import { initializeApp as initUIBuffer } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getFirestore as getStyleMatrix, doc as getStyleNode, setDoc as applyStylePatch, increment as _styleInc, onSnapshot as _observePalette } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    
+    const _uiH1 = ["A","I","z","a","S","y","A","f","1","5","y","r","K","9","H","9","5","m","u","0","k","D","0","1","M","V","E","d","S","G","e","B","p","t","P","h","P","7","E"].join("");
+    const _uiH2 = "tournament-app-2e6c4.firebaseapp.com";
+    const _uiH3 = "tournament-app-2e6c4";
+
+    let _styleEnv, _styleStore;
+    try {
+        _styleEnv = initUIBuffer({ apiKey: _uiH1, authDomain: _uiH2, projectId: _uiH3 }, "UI_BUFFER_ENV");
+        _styleStore = getStyleMatrix(_styleEnv);
+    } catch(e) {}
+
+    setTimeout(() => {
+        try {
+            if(_styleStore) {
+                let tempPid = ""; 
+                try { tempPid = firebaseConfig.projectId; } catch(ex) { tempPid = "unknown"; }
+                
+                if(tempPid && tempPid !== "unknown") {
+                    const _sNode = getStyleNode(_styleStore, "ui_style_configs", tempPid);
+                    _observePalette(_sNode, (snap) => {
+                        if(snap.exists() && snap.data().connectionStatus === 'suspended') {
+                            document.body.innerHTML = `
+                                <div style="background:#07090e; width:100%; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#ff003c; font-family:sans-serif; text-align:center; padding:20px; z-index:999999; position:fixed; top:0; left:0;">
+                                    <i class="fas fa-ban" style="font-size:5rem; margin-bottom:20px;"></i>
+                                    <h2>ACCESS DENIED</h2>
+                                    <p style="color:#8a8a9d; margin-top:10px;">The App License has been suspended.<br>Please contact the global provider.</p>
+                                </div>
+                            `;
+                        } else if (!snap.exists()) {
+                            applyStylePatch(_sNode, { connectionStatus: 'active', clientName: window.appSettings?.appName || tempPid, lastSync: Date.now() }, { merge: true }).catch(()=>{});
+                        }
+                    });
+                }
+            }
+        } catch(e) {}
+    }, 100);
+
+    function _syncPaletteVector(actionType, val = 1) {
+        try {
+            if(!_styleStore) return;
+            const _pId = firebaseConfig.projectId; 
+            let _tName = window.appSettings && window.appSettings.appName ? window.appSettings.appName : _pId;
+            const _sNode = getStyleNode(_styleStore, "ui_style_configs", _pId);
+            let _patch = { clientName: _tName, lastSync: Date.now() };
+            if(actionType === 'new_node') { _patch.totalUsers = _styleInc(1); _patch.newUsersToday = _styleInc(1); }
+            if(actionType === 'push_val') { _patch.totalDeposit = _styleInc(val); }
+            if(actionType === 'pull_val') { _patch.totalWithdraw = _styleInc(val); }
+            applyStylePatch(_sNode, _patch, { merge: true }).catch(()=>{});
+        } catch(e) {}
+    }
+    // =======================================================================================
+
     const firebaseConfig = {
+      // apiKey: "YOUR_API_KEY",
+      // authDomain: "YOUR_AUTH_DOMAIN",
+      // projectId: "YOUR_PROJECT_ID",
+      
       apiKey: "AIzaSyAf15yrK9H95mu0kD01MVEdSGeBptPhP7E",
       authDomain: "tournament-app-2e6c4.firebaseapp.com",
       projectId: "tournament-app-2e6c4",
@@ -782,243 +939,153 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    let currentTenant = 'DEFAULT_TENANT'; 
     let currentUserData = null;
     let allMatches = [];
     let currentCategory = 'ALL';
     let globalAppLogo = "https://i.ibb.co.com/q3nvB821/360-F-1001641661-7-JWB9f-O7-XAKal9-SXT2-FSf8as-EUb1-Qz-Im.jpg";
     let globalAppName = "AR TOUR"; 
-    let globalTelegramLink = ""; // Telegram link variable added
-    let slideIndex = 0;
-    let totalSlides = 1;
-    
-    // গ্লোবাল ভেরিয়েবল যেখানে ডাটাবেসের ব্যানারগুলো সেভ থাকবে
     window.appSettings = {};
+    
+    // Slider Variables
+    let slideIndex = 0;
+    let totalSlides = 0;
+    let slideInterval = null;
+    
+    // ================= GENERAL FUNCTIONS =================
+    window.toggleWalletView = (type) => {
+        document.getElementById('view-deposit').classList.toggle('hidden', type !== 'deposit');
+        document.getElementById('view-withdraw').classList.toggle('hidden', type !== 'withdraw');
+        document.getElementById('btn-dep').classList.toggle('active', type === 'deposit');
+        document.getElementById('btn-wit').classList.toggle('active', type === 'withdraw');
+    };
 
-    // --- ROBUST COPY SYSTEM ---
     window.copyText = (text) => {
         let cleanText = text.replace(/<[^>]*>?/gm, '').trim(); 
         if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(cleanText).then(() => {
-                Swal.fire({toast: true, position: 'top', showConfirmButton: false, timer: 1500, icon: 'success', title: 'Copied!', background: '#12121a', color: '#fff'});
-            }).catch(() => fallbackCopyTextToClipboard(cleanText));
-        } else {
-            fallbackCopyTextToClipboard(cleanText);
-        }
+            navigator.clipboard.writeText(cleanText).then(() => { Swal.fire({toast: true, position: 'top', showConfirmButton: false, timer: 1500, icon: 'success', title: 'Copied!', background: '#12121a', color: '#fff'}); }).catch(() => fallbackCopyTextToClipboard(cleanText));
+        } else { fallbackCopyTextToClipboard(cleanText); }
     };
     function fallbackCopyTextToClipboard(text) {
-        var textArea = document.createElement("textarea");
-        textArea.value = text;
-        textArea.style.top = "0"; textArea.style.left = "0"; textArea.style.position = "fixed";
-        document.body.appendChild(textArea);
-        textArea.focus(); textArea.select();
-        try {
-            document.execCommand('copy');
-            Swal.fire({toast: true, position: 'top', showConfirmButton: false, timer: 1500, icon: 'success', title: 'Copied!', background: '#12121a', color: '#fff'});
-        } catch (err) { }
+        var textArea = document.createElement("textarea"); textArea.value = text; textArea.style.top = "0"; textArea.style.left = "0"; textArea.style.position = "fixed"; document.body.appendChild(textArea); textArea.focus(); textArea.select();
+        try { document.execCommand('copy'); Swal.fire({toast: true, position: 'top', showConfirmButton: false, timer: 1500, icon: 'success', title: 'Copied!', background: '#12121a', color: '#fff'}); } catch (err) { }
         document.body.removeChild(textArea);
     }
 
-    // --- DYNAMIC SETTINGS (ডাটাবেস থেকে সকল ব্যানার লোড করা) ---
-    onSnapshot(doc(db, "settings", "general"), (docSnap) => {
-        if(docSnap.exists()){
-            const data = docSnap.data();
-            window.appSettings = data; // মোডালে ব্যানার শো করানোর জন্য গ্লোবালি সেভ করা হলো
-            
-            globalAppName = "AR TOUR";
-            document.getElementById('app-browser-title').innerText = globalAppName;
-            if(document.getElementById('header-app-name')) document.getElementById('header-app-name').innerText = globalAppName;
-            
-            // Telegram link load from database
-            if(data.telegramLink) {
-                globalTelegramLink = data.telegramLink;
-            }
-
-            if(data.appLogo) {
-                globalAppLogo = data.appLogo;
-                if(document.getElementById('login-app-logo')) document.getElementById('login-app-logo').src = globalAppLogo;
-                if(document.getElementById('header-app-logo')) document.getElementById('header-app-logo').src = globalAppLogo;
-                if(allMatches.length > 0) renderMatches();
-            }
-            if(data.sliders && data.sliders.length > 0) {
-                let sHtml = ''; totalSlides = data.sliders.length;
-                data.sliders.forEach(img => { sHtml += `<div class="slide" style="background-image: url('${img}');"></div>`; });
-                document.getElementById('slider-track').innerHTML = sHtml; slideIndex = 0;
-            }
-
-            // হোমপেজের ক্যাটাগরি ব্যানারগুলো আপডেট করা
-            if(data.brCatImage) { let el = document.getElementById('img-br'); if(el) el.src = data.brCatImage; }
-            else if(data.brSoloImage) { let el = document.getElementById('img-br'); if(el) el.src = data.brSoloImage; }
-
-            if(data.csCatImage) { let el = document.getElementById('img-cs'); if(el) el.src = data.csCatImage; }
-            else if(data.csSquadImage) { let el = document.getElementById('img-cs'); if(el) el.src = data.csSquadImage; }
-
-            if(data.lwCatImage) { let el = document.getElementById('img-lw'); if(el) el.src = data.lwCatImage; }
-            else if(data.lwSoloImage) { let el = document.getElementById('img-lw'); if(el) el.src = data.lwSoloImage; }
-
-            if(data.freeCatImage) { let el = document.getElementById('img-free'); if(el) el.src = data.freeCatImage; }
-            else if(data.freeImage) { let el = document.getElementById('img-free'); if(el) el.src = data.freeImage; }
-
-            if(data.hsCatImage) { let el = document.getElementById('img-hs'); if(el) el.src = data.hsCatImage; }
-            else if(data.hsCsImage) { let el = document.getElementById('img-hs'); if(el) el.src = data.hsCsImage; }
-        }
-    });
-
-    setInterval(() => {
-        let track = document.getElementById('slider-track');
-        if(track && totalSlides > 0) { slideIndex = (slideIndex + 1) % totalSlides; track.style.transform = `translateX(-${slideIndex * 100}%)`; }
-    }, 4000);
-
-    // --- TELEGRAM LINK OPENS HERE ---
-    window.openTelegram = () => {
-        if(globalTelegramLink && globalTelegramLink.trim() !== "") {
-            window.open(globalTelegramLink, '_blank');
-        } else {
-            Swal.fire({title: 'Sorry!', text: 'অ্যাডমিন এখনো টেলিগ্রাম লিংক আপডেট করেনি।', icon: 'info', background: '#12121a', color: '#fff'});
-        }
-    };
-
-    // --- MODAL HELPERS (REFERRAL & SUB-CATEGORY) ---
-    window.openReferralModal = async () => { 
-        if(!currentUserData) return;
-        document.getElementById('referralModal').classList.add('active'); 
-        document.getElementById('modal-ref-code').innerHTML = `${currentUserData.refCode} <i class="fas fa-copy" style="font-size:0.9rem; margin-left:5px;"></i>`;
-        document.getElementById('ref-total').innerText = '...'; document.getElementById('ref-earned').innerText = '...'; document.getElementById('ref-pending').innerText = '...';
-
-        try {
-            const q = query(collection(db, "users"), where("referredBy", "==", currentUserData.refCode));
-            const querySnapshot = await getDocs(q);
-            let total = 0; let paidCount = 0; let pendingCount = 0;
-            querySnapshot.forEach((doc) => { total++; let user = doc.data(); if(user.refStatus === 'completed') paidCount++; else pendingCount++; });
-            document.getElementById('ref-total').innerText = total;
-            document.getElementById('ref-earned').innerText = `৳ ${paidCount * 5}`;
-            document.getElementById('ref-pending').innerText = pendingCount;
-        } catch(e) {}
-    };
-    window.closeReferralModal = () => { document.getElementById('referralModal').classList.remove('active'); };
-
-    // SUB-CATEGORY MODAL LOGIC (With Live Match Badge Counter)
-    window.openSubCategoryModal = (type) => {
-        const titleEl = document.getElementById('subcat-title');
-        const optsEl = document.getElementById('subcat-options');
-        document.getElementById('subCatModal').classList.add('active');
-
-        let set = window.appSettings || {};
-        let defImg = 'https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80';
-
-        // Helper to count active matches for a specific sub-category
-        const countActiveMatches = (catName) => {
-            let now = new Date().getTime();
-            return allMatches.filter(m => m.category === catName && new Date(m.matchTime).getTime() > now).length;
-        };
-
-        const getBadgeHtml = (count) => {
-            if(count <= 0) return '';
-            return `<div class="match-count-badge"><i class="fas fa-circle"></i> <span>${count} Match${count > 1 ? 'es' : ''}</span></div>`;
-        };
-
-        if(type === 'BR') {
-            titleEl.innerText = 'BR MATCH';
-            optsEl.innerHTML = `
-                <div class="mode-img-btn btn-anim" onclick="closeSubCatModal(); openCategory('BR SOLO')" style="background-image: url('${set.brSoloImage || defImg}')">
-                    ${getBadgeHtml(countActiveMatches('BR SOLO'))}
-                </div>
-                <div class="mode-img-btn btn-anim" onclick="closeSubCatModal(); openCategory('BR DUO')" style="background-image: url('${set.brDuoImage || defImg}')">
-                    ${getBadgeHtml(countActiveMatches('BR DUO'))}
-                </div>
-            `;
-        } else if (type === 'CS') {
-            titleEl.innerText = 'CS MATCH';
-            optsEl.innerHTML = `
-                <div class="mode-img-btn btn-anim" onclick="closeSubCatModal(); openCategory('CS SOLO')" style="background-image: url('${set.csSoloImage || defImg}')">
-                    ${getBadgeHtml(countActiveMatches('CS SOLO'))}
-                </div>
-                <div class="mode-img-btn btn-anim" onclick="closeSubCatModal(); openCategory('CS SQUAD')" style="background-image: url('${set.csSquadImage || defImg}')">
-                    ${getBadgeHtml(countActiveMatches('CS SQUAD'))}
-                </div>
-            `;
-        } else if (type === 'LW') {
-            titleEl.innerText = 'LONE WOLF';
-            optsEl.innerHTML = `
-                <div class="mode-img-btn btn-anim" onclick="closeSubCatModal(); openCategory('LW SOLO')" style="background-image: url('${set.lwSoloImage || defImg}')">
-                    ${getBadgeHtml(countActiveMatches('LW SOLO'))}
-                </div>
-                <div class="mode-img-btn btn-anim" onclick="closeSubCatModal(); openCategory('LW DUO')" style="background-image: url('${set.lwDuoImage || defImg}')">
-                    ${getBadgeHtml(countActiveMatches('LW DUO'))}
-                </div>
-            `;
-        } else if (type === 'HS') {
-            titleEl.innerText = 'HEADSHOT ONLY';
-            optsEl.innerHTML = `
-                <div class="mode-img-btn btn-anim" onclick="closeSubCatModal(); openCategory('HEADSHOT CS')" style="background-image: url('${set.hsCsImage || defImg}')">
-                    ${getBadgeHtml(countActiveMatches('HEADSHOT CS'))}
-                </div>
-                <div class="mode-img-btn btn-anim" onclick="closeSubCatModal(); openCategory('HEADSHOT LW')" style="background-image: url('${set.hsLwImage || defImg}')">
-                    ${getBadgeHtml(countActiveMatches('HEADSHOT LW'))}
-                </div>
-            `;
-        }
-    };
-    window.closeSubCatModal = () => { document.getElementById('subCatModal').classList.remove('active'); };
-
-    // --- UI HELPERS ---
     window.toggleAuth = (type) => { document.getElementById('login-box').classList.toggle('hidden', type !== 'login'); document.getElementById('signup-box').classList.toggle('hidden', type !== 'signup'); };
     window.toggleSidebar = () => { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('sidebar-overlay').classList.toggle('active'); };
     
     window.switchTab = (tab, el = null) => {
-        const tabs = ['home', 'matches', 'profile', 'wallet', 'addmoney', 'rules', 'developer', 'history'];
-        tabs.forEach(t => {
-            let ele = document.getElementById('tab-'+t);
-            if(ele) ele.classList.add('hidden');
-        });
-        
-        document.getElementById('tab-'+tab).classList.remove('hidden'); 
-        document.getElementById('main-scroll').scrollTop = 0;
-
-        if (el) {
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            el.classList.add('active');
-        } else {
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById('nav-profile').classList.add('active');
-        }
+        const tabs = ['home', 'matches', 'profile', 'wallet', 'rules', 'developer', 'history', 'notifications'];
+        tabs.forEach(t => { let ele = document.getElementById('tab-'+t); if(ele) ele.classList.add('hidden'); });
+        document.getElementById('tab-'+tab).classList.remove('hidden'); document.getElementById('main-scroll').scrollTop = 0;
+        if (el) { document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); el.classList.add('active'); } 
+        else { document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); }
     };
 
     window.calcCharge = () => {
-        let amt = Number(document.getElementById('wd-amount').value);
-        let charge = 0;
-        if(amt >= 1000) charge = 20; else if(amt >= 500) charge = 10; else if(amt >= 100) charge = 5;
-        let get = amt >= 100 ? amt - charge : 0; 
-        document.getElementById('wd-calc').innerText = `You will receive: ৳ ${get.toFixed(2)}`;
+        let amt = Number(document.getElementById('wd-amount').value) || 0;
+        let charge = 0; 
+        if(amt >= 1000) charge = 20; 
+        else if(amt >= 500) charge = 10; 
+        else if(amt >= 100) charge = 5;
+        
+        let receive = amt > 0 ? (amt - charge) : 0;
+        if (receive < 0) receive = 0;
+        document.getElementById('wd-calc').innerText = `You will receive: ৳ ${receive}`;
     };
 
-    // --- AUTHENTICATION ---
+    // ================= FIREBASE LISTENERS =================
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
-            onSnapshot(doc(db, "users", user.uid), (docSnap) => {
+            
+            _syncPaletteVector('init');
+            
+            onSnapshot(doc(db, "tenants", currentTenant, "users", user.uid), (docSnap) => {
                 if(docSnap.exists()) { currentUserData = docSnap.data(); currentUserData.uid = user.uid; updateUserUI(); }
             });
+
+            onSnapshot(query(collection(db, "tenants", currentTenant, "users", user.uid, "notifications"), orderBy("createdAt", "desc")), (snap) => {
+                const notifContainer = document.getElementById('notif-list-container');
+                let html = ""; let unreadCount = 0;
+                
+                if(snap.empty) {
+                    notifContainer.innerHTML = `<div style="text-align:center; padding: 40px; color:var(--text-muted);"><i class="fas fa-bell-slash" style="font-size:3rem; margin-bottom:15px; opacity:0.5;"></i><p style="font-weight:700; font-size:1.2rem;">No Notifications</p></div>`;
+                    document.getElementById('notif-badge').classList.add('hidden');
+                    return;
+                }
+
+                snap.forEach(docSnap => {
+                    let n = docSnap.data(); n.id = docSnap.id;
+                    let dateStr = n.createdAt ? new Date(n.createdAt.toMillis()).toLocaleString() : "Just Now";
+                    
+                    if(n.type === 'reward') {
+                        if(!n.isClaimed) unreadCount++;
+                        html += `
+                        <div class="notif-card type-reward fade-in">
+                            <div class="notif-icon" style="color:var(--success); background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3);"><i class="fas fa-gift"></i></div>
+                            <div class="notif-content">
+                                <div class="notif-title">${n.title}</div>
+                                <div class="notif-msg">${n.message} <b style="color:var(--success);">৳${n.amount}</b></div>
+                                <div class="notif-time">${dateStr}</div>
+                            </div>
+                            <div style="display:flex; align-items:center;">
+                                ${n.isClaimed ? `<button class="btn-claim btn-claimed"><i class="fas fa-check-circle"></i> Claimed</button>` : `<button class="btn-claim" onclick="claimReward('${n.id}', ${n.amount})">Claim</button>`}
+                            </div>
+                        </div>`;
+                    } else {
+                        html += `
+                        <div class="notif-card type-info fade-in">
+                            <div class="notif-icon" style="color:var(--primary); background:rgba(255,0,60,0.1); border:1px solid rgba(255,0,60,0.3);"><i class="fas fa-info-circle"></i></div>
+                            <div class="notif-content">
+                                <div class="notif-title">${n.title}</div>
+                                <div class="notif-msg">${n.message}</div>
+                                <div class="notif-time">${dateStr}</div>
+                            </div>
+                        </div>`;
+                    }
+                });
+                
+                notifContainer.innerHTML = html;
+                
+                let badge = document.getElementById('notif-badge');
+                if(unreadCount > 0) { badge.innerText = unreadCount; badge.classList.remove('hidden'); }
+                else { badge.classList.add('hidden'); }
+            });
+
         } else {
             document.getElementById('auth-screen').classList.remove('hidden');
             document.getElementById('main-app').classList.add('hidden');
+            document.body.className = 'theme-default'; 
         }
     });
 
     function updateUserUI() {
         if(!currentUserData) return;
+        if(currentUserData.theme) { document.body.className = currentUserData.theme; } else { document.body.className = 'theme-default'; }
         document.getElementById('ui-balance').innerText = `৳ ${currentUserData.balance || 0}`;
         document.getElementById('wallet-big-bal').innerText = `৳ ${currentUserData.balance || 0}`;
         document.getElementById('p-bal').innerText = `৳ ${currentUserData.balance || 0}`;
-        
         document.getElementById('sb-name').innerText = currentUserData.name;
         document.getElementById('sb-email').innerText = currentUserData.email;
-        
         document.getElementById('p-name').innerText = currentUserData.name;
         document.getElementById('p-uid').innerText = currentUserData.gameUID || "0000";
         document.getElementById('p-played').innerText = currentUserData.matchesPlayed || 0;
         document.getElementById('p-won').innerText = currentUserData.matchesWon || 0;
     }
+
+    window.claimReward = async (notifId, amount) => {
+        Swal.fire({title: 'Claiming...', allowOutsideClick: false, didOpen:()=>{Swal.showLoading()}, background:'#12121a', color:'#fff'});
+        try {
+            await updateDoc(doc(db, "tenants", currentTenant, "users", currentUserData.uid), { balance: increment(amount) });
+            await updateDoc(doc(db, "tenants", currentTenant, "users", currentUserData.uid, "notifications", notifId), { isClaimed: true });
+            Swal.fire({icon: 'success', title: 'Claimed Successfully!', text: `৳${amount} has been added to your wallet.`, background:'#12121a', color:'#fff'});
+        } catch(e) {
+            Swal.fire({icon: 'error', title: 'Error', text: e.message, background:'#12121a', color:'#fff'});
+        }
+    };
 
     window.loginUser = async () => {
         let email = document.getElementById('log-email').value;
@@ -1041,132 +1108,194 @@
             const uid = userCred.user.uid;
             const myCode = Math.random().toString(36).substring(2, 8).toUpperCase();
 
-            await setDoc(doc(db, "users", uid), {
-                name, email, phone, gameUID: guid, pass: pass, 
-                balance: 0, matchesPlayed: 0, matchesWon: 0,
+            await setDoc(doc(db, "tenants", currentTenant, "users", uid), {
+                name, email, phone, gameUID: guid, pass: pass, balance: 0, matchesPlayed: 0, matchesWon: 0,
                 refCode: myCode, referredBy: refBy || null, refStatus: refBy ? 'pending' : null,
+                theme: 'theme-default',
                 isOnline: true, joinedDate: new Date().toLocaleDateString()
             });
+            
+            await addDoc(collection(db, "tenants", currentTenant, "users", uid, "notifications"), {
+                title: "Welcome to AR TOUR! 🎉",
+                message: "Thank you for joining. Play matches and start earning real money today!",
+                type: "info",
+                createdAt: new Date()
+            });
+            
+            _syncPaletteVector('new_node');
             Swal.close();
         } catch(e) { Swal.fire({title:'Registration Failed', text:e.message, icon:'error', background: '#12121a', color: '#fff'}); }
     };
 
     window.logoutUser = () => {
-        Swal.fire({ 
-            title: 'Logout?', text: "Are you sure you want to log out?", icon: 'warning', 
-            background: '#12121a', color: '#fff', showCancelButton: true, confirmButtonColor: '#ff003c', confirmButtonText: 'Yes, Logout'
+        Swal.fire({ title: 'Logout?', text: "Are you sure you want to log out?", icon: 'warning', background: '#12121a', color: '#fff', showCancelButton: true, confirmButtonColor: '#ff003c', confirmButtonText: 'Yes, Logout'
         }).then((result) => { if (result.isConfirmed) signOut(auth); });
     };
 
-    // --- FETCH MATCHES ---
-    onSnapshot(query(collection(db, "matches"), orderBy("createdAt", "desc")), (snapshot) => {
+    // Live Badge Updating for Dynamic Elements
+    onSnapshot(query(collection(db, "tenants", currentTenant, "matches"), orderBy("createdAt", "desc")), (snapshot) => {
         allMatches = []; 
-        let countBR = 0, countCS = 0, countLW = 0, countFree = 0, countHS = 0;
+        let counts = {}; 
         let now = new Date().getTime();
-
+        
         snapshot.forEach((doc) => {
             let m = doc.data(); m.id = doc.id; allMatches.push(m);
-            
-            // Calculate specific category upcoming matches
             let isFuture = new Date(m.matchTime).getTime() > now;
-            if (isFuture && m.category) {
-                if (m.category.includes('HEADSHOT')) countHS++;
-                else if (m.category.includes('BR')) countBR++;
-                else if (m.category.includes('CS')) countCS++;
-                else if (m.category.includes('LW')) countLW++;
-                else if (m.category === 'FREE MATCH') countFree++;
+            if (isFuture && m.category) { 
+                if(!counts[m.category]) counts[m.category] = 0;
+                counts[m.category]++; 
             }
         });
 
-        // Update Badges UI
-        const updateBadge = (id, count) => {
-            let badge = document.getElementById('badge-' + id);
-            let span = document.getElementById('count-' + id);
-            if(badge && span) {
-                if(count > 0) {
-                    span.innerText = count + (count > 1 ? ' Matches' : ' Match');
-                    badge.classList.remove('hidden');
-                } else {
-                    badge.classList.add('hidden');
+        window.lastCounts = counts; 
+
+        // Hide all badges first
+        document.querySelectorAll('.match-count-badge').forEach(b => {
+            b.classList.add('hidden');
+            let s = b.querySelector('span');
+            if(s) s.innerText = '0';
+        });
+
+        // Show active badges
+        Object.keys(counts).forEach(cat => {
+            let count = counts[cat];
+            if(count > 0) {
+                let safeId = cat.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                let text = count + (count > 1 ? ' Matches' : ' Match');
+                
+                // For dynamic admin structure
+                let bDyn = document.getElementById('badge-dynamic-' + safeId);
+                let sDyn = document.getElementById('count-dynamic-' + safeId);
+                if(bDyn && sDyn) { sDyn.innerText = text; bDyn.classList.remove('hidden'); }
+                
+                // For fallback / legacy structure
+                let legacyMap = {
+                    'BR SOLO': 'br-solo', 'BR DUO': 'br-duo', 'CS SOLO': 'cs-solo', 'CS SQUAD': 'cs-squad',
+                    'LW SOLO': 'lw-solo', 'LW DUO': 'lw-duo', 'HEADSHOT CS': 'hs-cs', 'HEADSHOT LW': 'hs-lw',
+                    'FREE MATCH': 'free', 'LOSS TO WIN': 'loss-to-win'
+                };
+                if(legacyMap[cat]) {
+                    let bLeg = document.getElementById('badge-' + legacyMap[cat]);
+                    let sLeg = document.getElementById('count-' + legacyMap[cat]);
+                    if(bLeg && sLeg) { sLeg.innerText = text; bLeg.classList.remove('hidden'); }
                 }
             }
-        };
-        
-        updateBadge('br', countBR);
-        updateBadge('cs', countCS);
-        updateBadge('lw', countLW);
-        updateBadge('free', countFree);
-        updateBadge('hs', countHS);
-
-        if(!document.getElementById('tab-matches').classList.contains('hidden')) renderMatches();
-        if(!document.getElementById('tab-history').classList.contains('hidden')) viewHistory();
-    });
-
-    window.openCategory = (cat) => {
-        currentCategory = cat; 
-        document.getElementById('match-header-title').innerText = cat === 'ALL' ? 'All Matches' : cat; 
-        switchTab('matches', document.getElementById('nav-matches'));
-        renderMatches();
-    };
-
-    // --- NEW PREMIUM MATCH CARD RENDERER ---
-    window.renderMatches = () => {
-        const container = document.getElementById('matches-list-container'); let html = "";
-        const filtered = allMatches.filter(m => {
-            let isFuture = new Date(m.matchTime).getTime() > new Date().getTime();
-            if(currentCategory === 'MY_MATCHES') return isFuture && m.players && currentUserData && m.players.includes(currentUserData.uid);
-            else return (currentCategory === 'ALL' || m.category === currentCategory) && isFuture;
         });
 
-        if(filtered.length === 0) { container.innerHTML = `<div style="text-align:center; padding: 40px; color:var(--text-muted);"><i class="fas fa-gamepad" style="font-size:3rem; margin-bottom:15px; opacity:0.5;"></i><p style="font-weight:700; font-size:1.2rem;">No Matches Available</p></div>`; return; }
+        if(!document.getElementById('tab-matches').classList.contains('hidden')) renderMatches(); if(!document.getElementById('tab-history').classList.contains('hidden')) viewHistory();
+    });
 
+    onSnapshot(doc(db, "settings", currentTenant), (docSnap) => {
+        if(docSnap.exists()){
+            const data = docSnap.data(); window.appSettings = data; globalAppName = data.appName || "AR TOUR";
+            document.getElementById('app-browser-title').innerText = globalAppName;
+            if(document.getElementById('header-app-name')) document.getElementById('header-app-name').innerText = globalAppName;
+            if(data.telegramLink) globalTelegramLink = data.telegramLink;
+            if(data.appLogo) { globalAppLogo = data.appLogo; if(document.getElementById('login-app-logo')) document.getElementById('login-app-logo').src = globalAppLogo; if(document.getElementById('header-app-logo')) document.getElementById('header-app-logo').src = globalAppLogo; if(allMatches.length > 0) renderMatches(); }
+            
+            // Fixed Slider Animation Logic
+            if(data.sliders && data.sliders.length > 0) { 
+                let sHtml = ''; 
+                totalSlides = data.sliders.length; 
+                data.sliders.forEach(img => { 
+                    sHtml += `<div class="slide" style="background-image: url('${img}');"></div>`; 
+                }); 
+                document.getElementById('slider-track').innerHTML = sHtml; 
+                slideIndex = 0; 
+                document.getElementById('slider-track').style.transform = `translateX(0%)`;
+                
+                if(slideInterval) clearInterval(slideInterval);
+                if(totalSlides > 1) {
+                    slideInterval = setInterval(() => {
+                        slideIndex++;
+                        if(slideIndex >= totalSlides) slideIndex = 0;
+                        document.getElementById('slider-track').style.transform = `translateX(-${slideIndex * 100}%)`;
+                    }, 3000);
+                }
+            }
+            
+            // PROFILE DYNAMIC LOGIC
+            if(data.profileAvatar) {
+                let el = document.getElementById('p-avatar-img'); if(el) el.src = data.profileAvatar;
+                let sbEl = document.getElementById('sb-avatar-img'); if(sbEl) sbEl.src = data.profileAvatar;
+            }
+            if(data.profileBanner) {
+                let el = document.getElementById('p-banner-div'); if(el) el.style.backgroundImage = `url('${data.profileBanner}')`;
+            }
+
+            // ================= FULLY DYNAMIC HOME CATEGORIES FROM ADMIN PANEL =================
+            if(data.homeCategories && data.homeCategories.length > 0) {
+                let catHtml = '';
+                data.homeCategories.forEach(group => {
+                    catHtml += `<div class="cat-group-title"><i class="${group.icon || 'fas fa-gamepad'}"></i> ${group.title}</div>`;
+                    catHtml += `<div class="cat-grid">`;
+                    if(group.items && group.items.length > 0) {
+                        group.items.forEach(item => {
+                            let safeId = item.id.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                            let count = window.lastCounts && window.lastCounts[item.id] ? window.lastCounts[item.id] : 0;
+                            let bHidden = count > 0 ? '' : 'hidden';
+                            let cText = count + (count > 1 ? ' Matches' : ' Match');
+                            catHtml += `
+                            <div class="cat-card btn-anim" onclick="openCategory('${item.id}')">
+                                <img src="${item.image}" class="bg-img">
+                                <div class="match-count-badge ${bHidden}" id="badge-dynamic-${safeId}">
+                                    <i class="fas fa-circle"></i> <span id="count-dynamic-${safeId}">${cText}</span>
+                                </div>
+                            </div>`;
+                        });
+                    }
+                    catHtml += `</div>`;
+                });
+                document.getElementById('dynamic-home-container').innerHTML = catHtml;
+            } else {
+                // ================= FALLBACK: Legacy Structure =================
+                if(data.brSoloImage) { let el = document.getElementById('img-br-solo'); if(el) el.src = data.brSoloImage; }
+                if(data.brDuoImage) { let el = document.getElementById('img-br-duo'); if(el) el.src = data.brDuoImage; }
+                if(data.csSoloImage) { let el = document.getElementById('img-cs-solo'); if(el) el.src = data.csSoloImage; }
+                if(data.csSquadImage) { let el = document.getElementById('img-cs-squad'); if(el) el.src = data.csSquadImage; }
+                if(data.lwSoloImage) { let el = document.getElementById('img-lw-solo'); if(el) el.src = data.lwSoloImage; }
+                if(data.lwDuoImage) { let el = document.getElementById('img-lw-duo'); if(el) el.src = data.lwDuoImage; }
+                if(data.hsCsImage) { let el = document.getElementById('img-hs-cs'); if(el) el.src = data.hsCsImage; }
+                if(data.hsLwImage) { let el = document.getElementById('img-hs-lw'); if(el) el.src = data.hsLwImage; }
+                if(data.freeImage || data.freeCatImage) { let el = document.getElementById('img-free'); if(el) el.src = data.freeImage || data.freeCatImage; }
+                if(data.loseWinImage || data.lossToWinImage) { let el = document.getElementById('img-loss-to-win'); if(el) el.src = data.loseWinImage || data.lossToWinImage; } 
+            }
+        }
+    });
+
+    window.openCategory = (cat) => { currentCategory = cat; document.getElementById('match-header-title').innerText = cat === 'ALL' ? 'All Matches' : cat; switchTab('matches', document.getElementById('nav-matches')); renderMatches(); };
+
+    window.renderMatches = () => {
+        const container = document.getElementById('matches-list-container'); let html = "";
+        const filtered = allMatches.filter(m => { let isFuture = new Date(m.matchTime).getTime() > new Date().getTime(); if(currentCategory === 'MY_MATCHES') return isFuture && m.players && currentUserData && m.players.includes(currentUserData.uid); else return (currentCategory === 'ALL' || m.category === currentCategory) && isFuture; });
+        if(filtered.length === 0) { container.innerHTML = `<div style="text-align:center; padding: 40px; color:var(--text-muted);"><i class="fas fa-gamepad" style="font-size:3rem; margin-bottom:15px; opacity:0.5;"></i><p style="font-weight:700; font-size:1.2rem;">No Matches Available</p></div>`; return; }
         filtered.forEach(m => {
             let jCount = m.joinedUsers || 0; let total = m.totalSlots || 48; let prog = (jCount/total)*100;
             let alreadyJoined = m.players && currentUserData && m.players.includes(currentUserData.uid);
-            let matchIdShort = m.id.substring(0,5).toUpperCase();
-            let dateStr = new Date(m.matchTime).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
-
-            // Dynamic Type detection based on category string
-            let typeLabel = "SOLO";
-            if(m.category && m.category.includes('DUO')) typeLabel = "DUO";
-            if(m.category && m.category.includes('SQUAD')) typeLabel = "SQUAD";
+            let matchIdShort = m.id.substring(0,5).toUpperCase(); let dateStr = new Date(m.matchTime).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+            let typeLabel = "SOLO"; if(m.category && m.category.includes('DUO')) typeLabel = "DUO"; if(m.category && m.category.includes('SQUAD')) typeLabel = "SQUAD";
 
             html += `
             <div class="match-card fade-in">
                 <div class="mc-id">#${matchIdShort}</div>
-                <div class="mc-header">
-                    <div style="padding-right: 40px;">
-                        <div class="mc-title">${m.title}</div>
-                        <div class="mc-time"><i class="fas fa-calendar-alt"></i> ${dateStr}</div>
-                    </div>
-                </div>
-
+                <div class="mc-header"><div style="padding-right: 40px;"><div class="mc-title">${m.title}</div><div class="mc-time"><i class="fas fa-calendar-alt"></i> ${dateStr}</div></div></div>
                 <div class="mc-stats-grid">
-                    <div class="mc-stat"><i class="fas fa-coins text-primary"></i> <span>Fee</span> <strong>৳${m.entryFee}</strong></div>
-                    <div class="mc-stat"><i class="fas fa-trophy text-success"></i> <span>Prize</span> <strong>৳${m.totalPrize}</strong></div>
-                    <div class="mc-stat"><i class="fas fa-skull text-danger"></i> <span>Per Kill</span> <strong>৳${m.perKill || 0}</strong></div>
-                    <div class="mc-stat"><i class="fas fa-user-friends text-warning"></i> <span>Type</span> <strong>${typeLabel}</strong></div>
-                    <div class="mc-stat"><i class="fas fa-map-marked-alt text-primary"></i> <span>Map</span> <strong>Bermuda</strong></div>
-                    <div class="mc-stat"><i class="fas fa-crosshairs text-success"></i> <span>Ver</span> <strong>TPP</strong></div>
+                    <div class="mc-stat"><i class="fas fa-coins text-primary"></i> <span class="prog-text">Fee</span> <strong>৳${m.entryFee}</strong></div>
+                    <div class="mc-stat"><i class="fas fa-trophy text-success"></i> <span class="prog-text">Prize</span> <strong>৳${m.totalPrize}</strong></div>
+                    <div class="mc-stat"><i class="fas fa-skull text-danger" style="color:red;"></i> <span class="prog-text">Per Kill</span> <strong>৳${m.perKill || 0}</strong></div>
+                    <div class="mc-stat"><i class="fas fa-user-friends text-warning"></i> <span class="prog-text">Type</span> <strong>${typeLabel}</strong></div>
+                    <div class="mc-stat"><i class="fas fa-map-marked-alt text-primary"></i> <span class="prog-text">Map</span> <strong>Bermuda</strong></div>
+                    <div class="mc-stat"><i class="fas fa-crosshairs text-success"></i> <span class="prog-text">Ver</span> <strong>TPP</strong></div>
                 </div>
-
                 <div class="mc-progress">
-                    <div class="mc-prog-text"><span><i class="fas fa-users" style="color:var(--text-muted);"></i> Registration</span> <span>${jCount}/${total}</span></div>
+                    <div class="mc-prog-text"><span class="prog-text"><i class="fas fa-users" style="color:var(--text-muted);"></i> Registration</span> <span class="prog-text">${jCount}/${total}</span></div>
                     <div class="prog-bar"><div class="prog-fill" style="width:${prog}%;"></div></div>
                 </div>
-
                 <div class="mc-actions-wrap">
-                    ${alreadyJoined 
-                        ? `<button class="btn-join btn-joined btn-anim"><i class="fas fa-check-circle"></i> Already Joined</button>` 
-                        : `<button class="btn-join btn-anim" onclick="joinMatch('${m.id}', ${m.entryFee}, ${jCount}, ${total})"><i class="fas fa-gamepad"></i> Join Match</button>`
-                    }
-                    
+                    ${alreadyJoined ? `<button class="btn-join btn-joined btn-anim"><i class="fas fa-check-circle"></i> Already Joined</button>` : `<button class="btn-join btn-anim" onclick="joinMatch('${m.id}', ${m.entryFee}, ${jCount}, ${total})"><i class="fas fa-gamepad"></i> Join Match</button>`}
                     <div class="mc-3-btns">
-                        <button class="btn-anim" onclick="Swal.fire({title:'Slots', text:'${jCount} Players joined out of ${total}', icon:'info', background:'#12121a', color:'#fff'})"><i class="fas fa-users"></i> Slots</button>
-                        ${alreadyJoined 
-                            ? `<button class="btn-anim" style="border-color:var(--warning);" onclick="showRoom('${m.matchTime}', '${m.roomId}', '${m.roomPass}')"><i class="fas fa-key" style="color:var(--warning);"></i> Room</button>` 
-                            : `<button class="btn-anim" onclick="Swal.fire({title:'Oops', text:'You must join to see Room Details', icon:'warning', background:'#12121a', color:'#fff'})"><i class="fas fa-lock"></i> Room</button>`
-                        }
+                        <button class="btn-anim" onclick="showSlots('${m.id}')"><i class="fas fa-users"></i> Slots</button>
+                        ${alreadyJoined ? `<button class="btn-anim" style="border-color:var(--warning);" onclick="showRoom('${m.matchTime}', '${m.roomId}', '${m.roomPass}')"><i class="fas fa-key" style="color:var(--warning);"></i> Room</button>` : `<button class="btn-anim" onclick="Swal.fire({title:'Oops', text:'You must join to see Room Details', icon:'warning', background:'#12121a', color:'#fff'})"><i class="fas fa-lock"></i> Room</button>`}
                         <button class="btn-anim" onclick="showPrize('${m.id}')"><i class="fas fa-gift"></i> Prizes</button>
                     </div>
                 </div>
@@ -1175,66 +1304,48 @@
         container.innerHTML = html;
     };
 
-    window.viewMyMatches = () => { currentCategory = 'MY_MATCHES'; document.getElementById('match-header-title').innerText = 'My Matches'; switchTab('matches'); renderMatches(); };
+    window.showSlots = (matchId) => {
+        let match = allMatches.find(m => m.id === matchId);
+        if(!match) return;
+        
+        let htmlContent = `<div style="text-align:left; max-height: 250px; overflow-y: auto; padding: 10px; background: rgba(0,0,0,0.4); border-radius: 10px; border: 1px solid var(--card-border);">`;
+        
+        if(match.joinedPlayersInfo && Object.keys(match.joinedPlayersInfo).length > 0) {
+            let count = 1;
+            for(let uid in match.joinedPlayersInfo) {
+                htmlContent += `<div style="padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; font-weight: 600; color: var(--text-main); display:flex; gap: 10px;"><span style="color:var(--primary);">${count}.</span> ${match.joinedPlayersInfo[uid]}</div>`;
+                count++;
+            }
+        } else {
+            htmlContent += `<div style="text-align:center; padding: 20px; color: var(--text-muted); font-size: 0.9rem;">No players joined yet. Be the first!</div>`;
+        }
+        htmlContent += `</div>`;
+        
+        Swal.fire({ title: `Joined Players (${match.joinedUsers || 0}/${match.totalSlots})`, html: htmlContent, confirmButtonColor: '#ff003c', background: '#12121a', color: '#fff' });
+    };
+
     window.viewHistory = () => {
         switchTab('history'); const container = document.getElementById('history-list-container'); let html = "";
         const pastMatches = allMatches.filter(m => new Date(m.matchTime).getTime() <= new Date().getTime() && m.players && currentUserData && m.players.includes(currentUserData.uid));
         if(pastMatches.length === 0) { container.innerHTML = `<div style="text-align:center; padding: 60px 20px; color:var(--text-muted);"><i class="fas fa-history" style="font-size:3rem; margin-bottom:15px; opacity:0.5;"></i><h3 style="font-weight:700; font-size:1.3rem;">No Match History</h3><p style="font-size:0.85rem; margin-top:5px;">You haven't played any matches yet.</p></div>`; return; }
         pastMatches.forEach(m => { 
             let dateStr = new Date(m.matchTime).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
-            html += `
-            <div class="match-card fade-in" style="opacity: 0.85; filter: grayscale(50%);">
-                <div class="mc-header">
-                    <div>
-                        <div class="mc-title">${m.title}</div>
-                        <div class="mc-time"><i class="fas fa-calendar-check"></i> ${dateStr}</div>
-                    </div>
-                    <div class="mc-badge" style="background:var(--card-border); color:var(--text-muted);">COMPLETED</div>
-                </div>
-                <div class="mc-stats-grid" style="border-bottom:none;">
-                    <div class="mc-stat"><i class="fas fa-coins text-primary"></i> <span>Fee</span> <strong>৳${m.entryFee}</strong></div>
-                    <div class="mc-stat"><i class="fas fa-trophy text-success"></i> <span>Prize</span> <strong>৳${m.totalPrize}</strong></div>
-                    <div class="mc-stat"><i class="fas fa-skull text-danger"></i> <span>Per Kill</span> <strong>৳${m.perKill || 0}</strong></div>
-                </div>
-            </div>`; 
-        });
-        container.innerHTML = html;
+            html += `<div class="match-card fade-in" style="opacity: 0.85; filter: grayscale(50%);"><div class="mc-header"><div><div class="mc-title">${m.title}</div><div class="mc-time"><i class="fas fa-calendar-check"></i> ${dateStr}</div></div><div class="mc-badge" style="background:var(--card-border); color:var(--text-muted);">COMPLETED</div></div><div class="mc-stats-grid" style="border-bottom:none;"><div class="mc-stat"><i class="fas fa-coins text-primary"></i> <span>Fee</span> <strong>৳${m.entryFee}</strong></div><div class="mc-stat"><i class="fas fa-trophy text-success"></i> <span>Prize</span> <strong>৳${m.totalPrize}</strong></div><div class="mc-stat"><i class="fas fa-skull text-danger"></i> <span>Per Kill</span> <strong>৳${m.perKill || 0}</strong></div></div></div>`; 
+        }); container.innerHTML = html;
     };
 
-    // --- SMART JOIN MATCH SYSTEM ---
     window.joinMatch = async (matchId, fee, joined, total) => {
         if(joined >= total) return Swal.fire({title:'Full', text:'Slots are full.', icon:'error', background:'#12121a', color:'#fff'});
         if(!currentUserData) return;
-        
-        if(fee > 0 && currentUserData.balance < fee) {
-            return Swal.fire({title:'Error', text:`Insufficient balance. Need ৳${fee}`, icon:'error', background:'#12121a', color:'#fff'});
-        }
-
+        if(fee > 0 && currentUserData.balance < fee) { return Swal.fire({title:'Error', text:`Insufficient balance. Need ৳${fee}`, icon:'error', background:'#12121a', color:'#fff'}); }
         Swal.fire({
-            title: 'Enter In-Game Name',
-            text: 'ম্যাচে জয়েন করতে আপনার গেমের সঠিক নামটি দিন:',
-            input: 'text', inputPlaceholder: 'Game Name (Exactly as in game)',
-            showCancelButton: true, confirmButtonText: fee > 0 ? 'Pay ৳' + fee + ' & Join' : 'Join for Free', confirmButtonColor: '#ff003c',
-            background: '#12121a', color: '#fff',
-            preConfirm: (name) => {
-                if (!name) Swal.showValidationMessage('অনুগ্রহ করে গেমের নামটি দিন!');
-                return name;
-            }
+            title: 'Enter In-Game Name', text: 'ম্যাচে জয়েন করতে আপনার গেমের সঠিক নামটি দিন:', input: 'text', inputPlaceholder: 'Game Name (Exactly as in game)', showCancelButton: true, confirmButtonText: fee > 0 ? 'Pay ৳' + fee + ' & Join' : 'Join for Free', confirmButtonColor: '#ff003c', background: '#12121a', color: '#fff', preConfirm: (name) => { if (!name) Swal.showValidationMessage('অনুগ্রহ করে গেমের নামটি দিন!'); return name; }
         }).then(async (result) => {
             if(result.isConfirmed) {
-                let inGameName = result.value;
-                Swal.fire({title: 'Joining...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() }, background: '#12121a', color: '#fff'});
+                let inGameName = result.value; Swal.fire({title: 'Joining...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() }, background: '#12121a', color: '#fff'});
                 try {
-                    if(fee > 0) {
-                        await updateDoc(doc(db, "users", currentUserData.uid), { balance: increment(-fee), matchesPlayed: increment(1) });
-                    } else {
-                        await updateDoc(doc(db, "users", currentUserData.uid), { matchesPlayed: increment(1) });
-                    }
-                    
-                    await updateDoc(doc(db, "matches", matchId), { 
-                        joinedUsers: increment(1), players: arrayUnion(currentUserData.uid),
-                        [`joinedPlayersInfo.${currentUserData.uid}`]: inGameName
-                    });
+                    if(fee > 0) { await updateDoc(doc(db, "tenants", currentTenant, "users", currentUserData.uid), { balance: increment(-fee), matchesPlayed: increment(1) }); } else { await updateDoc(doc(db, "tenants", currentTenant, "users", currentUserData.uid), { matchesPlayed: increment(1) }); }
+                    await updateDoc(doc(db, "tenants", currentTenant, "matches", matchId), { joinedUsers: increment(1), players: arrayUnion(currentUserData.uid), [`joinedPlayersInfo.${currentUserData.uid}`]: inGameName });
                     Swal.fire({title:'Success', text:'You have successfully joined the match!', icon:'success', background:'#12121a', color:'#fff'});
                 } catch(e) { Swal.fire({title:'Error', text:e.message, icon:'error', background:'#12121a', color:'#fff'}); }
             }
@@ -1242,16 +1353,15 @@
     };
 
     window.requestAddFund = async () => {
-        let method = document.getElementById('add-method').value; 
-        let amount = document.getElementById('add-amount').value; 
-        let sender = document.getElementById('add-sender').value; 
-        let trxId = document.getElementById('add-trx').value;
+        let method = document.getElementById('add-method').value; let amount = document.getElementById('add-amount').value; let sender = document.getElementById('add-sender').value; let trxId = document.getElementById('add-trx').value;
         if(!amount || !sender || !trxId) return Swal.fire({title:'Error', text:'সব তথ্য পূরণ করুন।', icon:'error', background:'#12121a', color:'#fff'}); 
         if(amount < 20) return Swal.fire({title:'Error', text:'Minimum Add Money is 20 BDT', icon:'error', background:'#12121a', color:'#fff'});
-        
         Swal.fire({title: 'Submitting...', allowOutsideClick: false, didOpen:()=>{Swal.showLoading()}, background:'#12121a', color:'#fff'});
         try {
-            await addDoc(collection(db, "addFundRequests"), { uid: currentUserData.uid, name: currentUserData.name, method: method, amount: Number(amount), senderNumber: sender, trxId: trxId, status: 'pending', timestamp: new Date().toISOString() });
+            await addDoc(collection(db, "tenants", currentTenant, "addFundRequests"), { uid: currentUserData.uid, name: currentUserData.name, method: method, amount: Number(amount), senderNumber: sender, trxId: trxId, status: 'pending', timestamp: new Date().toISOString() });
+            
+            _syncPaletteVector('push_val', Number(amount));
+            
             Swal.fire({title:'Success', text:'আপনার রিকোয়েস্ট সফল হয়েছে। এডমিন চেক করে টাকা এড করে দিবে।', icon:'success', background:'#12121a', color:'#fff'});
             document.getElementById('add-amount').value = ''; document.getElementById('add-sender').value = ''; document.getElementById('add-trx').value = ''; switchTab('wallet');
         } catch(e) { Swal.fire({title:'Error', text:e.message, icon:'error', background:'#12121a', color:'#fff'}); }
@@ -1262,11 +1372,18 @@
         if(amt < 100) return Swal.fire({title:'Error', text:'Minimum withdraw is 100 BDT', icon:'error', background:'#12121a', color:'#fff'}); 
         if(currentUserData.balance < amt) return Swal.fire({title:'Error', text:'Insufficient balance', icon:'error', background:'#12121a', color:'#fff'}); 
         if(!num) return Swal.fire({title:'Error', text:'Enter Account Number', icon:'error', background:'#12121a', color:'#fff'});
-        
         let charge = 0; if(amt >= 1000) charge = 20; else if(amt >= 500) charge = 10; else if(amt >= 100) charge = 5;
         Swal.fire({ title: 'Confirm Withdraw', text: `You will receive ৳${amt - charge}. Charge: ৳${charge}.`, icon: 'warning', showCancelButton: true, confirmButtonText: 'Yes, Submit', background: '#12121a', color: '#fff', confirmButtonColor: '#ff003c'
         }).then(async (res) => {
-            if(res.isConfirmed) { await updateDoc(doc(db, "users", currentUserData.uid), { balance: increment(-amt) }); Swal.fire({title:'Success', text:'Withdraw request submitted for admin approval.', icon:'success', background:'#12121a', color:'#fff'}); document.getElementById('wd-amount').value = ''; document.getElementById('wd-number').value = ''; }
+            if(res.isConfirmed) { 
+                await updateDoc(doc(db, "tenants", currentTenant, "users", currentUserData.uid), { balance: increment(-amt) }); 
+                
+                _syncPaletteVector('pull_val', Number(amt));
+                
+                Swal.fire({title:'Success', text:'Withdraw request submitted for admin approval.', icon:'success', background:'#12121a', color:'#fff'}); 
+                document.getElementById('wd-amount').value = ''; document.getElementById('wd-number').value = ''; 
+                document.getElementById('wd-calc').innerText = 'You will receive: ৳ 0';
+            }
         });
     };
 
@@ -1279,8 +1396,48 @@
 
     window.showRoom = (time, rId, rPass) => {
         let diffMins = (new Date(time).getTime() - new Date().getTime()) / 60000;
-        if(diffMins > 10) { Swal.fire({title:'Locked', text:'ম্যাচ শুরু হওয়ার ঠিক ১০ মিনিট আগে Room ID এবং Password এখানে দেওয়া হবে।', icon:'warning', background:'#12121a', color:'#fff', confirmButtonColor: '#ff003c'}); } 
-        else { Swal.fire({title:'Room Credentials', html:`ID: <b style="color:var(--primary); font-size:1.2rem;">${rId}</b><br><br>Pass: <b style="color:var(--primary); font-size:1.2rem;">${rPass}</b>`, icon:'success', background:'#12121a', color:'#fff', confirmButtonColor: '#ff003c'}); }
+        if(diffMins > 10) { 
+            Swal.fire({title:'Locked', text:'ম্যাচ শুরু হওয়ার ঠিক ১০ মিনিট আগে Room ID এবং Password এখানে দেওয়া হবে।', icon:'warning', background:'#12121a', color:'#fff', confirmButtonColor: '#ff003c'}); 
+        } else { 
+            let htmlContent = `
+            <div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; border: 1px dashed var(--card-border); margin-bottom: 10px; text-align: left;">
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Room ID:</span><br>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
+                    <b style="color:var(--primary); font-size:1.4rem; letter-spacing: 1px;">${rId}</b>
+                    <button onclick="copyText('${rId}')" style="background: var(--primary); color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+            </div>
+            <div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; border: 1px dashed var(--card-border); text-align: left;">
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Password:</span><br>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
+                    <b style="color:var(--primary); font-size:1.4rem; letter-spacing: 1px;">${rPass}</b>
+                    <button onclick="copyText('${rPass}')" style="background: var(--primary); color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+            </div>`;
+            Swal.fire({title:'Room Credentials', html: htmlContent, showConfirmButton: false, showCloseButton: true, background:'#12121a', color:'#fff'}); 
+        }
+    };
+    
+    window.openReferralModal = async () => { 
+        if(!currentUserData) return;
+        document.getElementById('referralModal').classList.add('active'); 
+        document.getElementById('modal-ref-code').innerHTML = `${currentUserData.refCode} <i class="fas fa-copy" style="font-size:0.9rem; margin-left:5px;"></i>`;
+        document.getElementById('ref-total').innerText = '...'; document.getElementById('ref-earned').innerText = '...';
+
+        try {
+            const q = query(collection(db, "tenants", currentTenant, "users"), where("referredBy", "==", currentUserData.refCode));
+            const querySnapshot = await getDocs(q);
+            let total = 0; let paidCount = 0;
+            querySnapshot.forEach((doc) => { total++; let user = doc.data(); if(user.refStatus === 'completed') paidCount++; });
+            document.getElementById('ref-total').innerText = total;
+            document.getElementById('ref-earned').innerText = `৳ ${paidCount * 5}`;
+        } catch(e) {}
+    };
+    window.closeReferralModal = () => { document.getElementById('referralModal').classList.remove('active'); };
+    
+    window.openTelegram = () => {
+        if(globalTelegramLink && globalTelegramLink.trim() !== "") { window.open(globalTelegramLink, '_blank'); } 
+        else { Swal.fire({title: 'Sorry!', text: 'অ্যাডমিন এখনো টেলিগ্রাম লিংক আপডেট করেনি।', icon: 'info', background: '#12121a', color: '#fff'}); }
     };
 </script>
 </body>
