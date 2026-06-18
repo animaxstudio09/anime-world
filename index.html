@@ -211,7 +211,7 @@
         .wallet-top h2 { font-size: 3rem; font-weight: 800; color: var(--text-main); text-shadow: var(--glow); line-height: 1; }
         
         .wallet-toggles { display: flex; background: rgba(0,0,0,0.6); padding: 6px; border-radius: 14px; margin: 0 20px 25px; border: 1px solid var(--card-border); box-shadow: inset 0 4px 10px rgba(0,0,0,0.5); }
-        .w-toggle { flex: 1; padding: 14px; text-align: center; font-weight: 700; font-size: 0.95rem; color: var(--text-muted); cursor: pointer; border-radius: 10px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;}
+        .w-toggle { flex: 1; padding: 14px; text-align: center; font-weight: 700; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; border-radius: 10px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;}
         .w-toggle.active { background: linear-gradient(45deg, var(--primary-dark), var(--primary)); color: #fff; box-shadow: var(--glow); }
 
         .fund-box { background: var(--card-bg); padding: 25px; border-radius: 16px; border: 1px solid var(--card-border); margin: 0 20px 20px; box-shadow: var(--glow-card);}
@@ -691,9 +691,11 @@
                     <h2 id="wallet-big-bal">৳ 0</h2>
                 </div>
 
+                <!-- ADDED 3rd Toggle for History -->
                 <div class="wallet-toggles">
                     <div id="btn-dep" class="w-toggle active btn-anim" onclick="toggleWalletView('deposit')">Deposit</div>
                     <div id="btn-wit" class="w-toggle btn-anim" onclick="toggleWalletView('withdraw')">Withdraw</div>
+                    <div id="btn-hist" class="w-toggle btn-anim" onclick="toggleWalletView('history')">History</div>
                 </div>
 
                 <div id="view-deposit">
@@ -747,6 +749,16 @@
                         <input type="number" id="wd-number" class="form-control" placeholder="Enter Bkash/Nagad Number">
 
                         <button class="auth-btn btn-anim" style="margin-top: 10px;" onclick="requestWithdraw()">Confirm Withdraw</button>
+                    </div>
+                </div>
+
+                <!-- ADDED View History Section -->
+                <div id="view-history" class="hidden">
+                    <div class="fund-box fade-in">
+                        <div class="fund-title"><i class="fas fa-history" style="color:var(--warning);"></i> Transaction History</div>
+                        <div id="wallet-history-container" style="max-height: 350px; overflow-y: auto; padding-right: 5px;">
+                            <div style="text-align:center; color:var(--text-muted); padding:20px;">Loading...</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -945,6 +957,7 @@
     let currentCategory = 'ALL';
     let globalAppLogo = "https://i.ibb.co.com/q3nvB821/360-F-1001641661-7-JWB9f-O7-XAKal9-SXT2-FSf8as-EUb1-Qz-Im.jpg";
     let globalAppName = "AR TOUR"; 
+    let globalTelegramLink = ""; // FIXED: Added this variable so Telegram link won't break the app
     window.appSettings = {};
     
     // Slider Variables
@@ -953,11 +966,82 @@
     let slideInterval = null;
     
     // ================= GENERAL FUNCTIONS =================
+    
+    // UPDATED: Toggle Wallet View now handles 3 tabs (Deposit, Withdraw, History)
     window.toggleWalletView = (type) => {
         document.getElementById('view-deposit').classList.toggle('hidden', type !== 'deposit');
         document.getElementById('view-withdraw').classList.toggle('hidden', type !== 'withdraw');
+        document.getElementById('view-history').classList.toggle('hidden', type !== 'history');
+
         document.getElementById('btn-dep').classList.toggle('active', type === 'deposit');
         document.getElementById('btn-wit').classList.toggle('active', type === 'withdraw');
+        document.getElementById('btn-hist').classList.toggle('active', type === 'history');
+        
+        if(type === 'history') loadWalletHistory();
+    };
+
+    // ADDED: My Matches Function
+    window.viewMyMatches = () => {
+        currentCategory = 'MY_MATCHES';
+        document.getElementById('match-header-title').innerText = 'My Matches';
+        switchTab('matches', document.getElementById('nav-matches'));
+        renderMatches();
+    };
+
+    // ADDED: Load Wallet History (Deposit & Withdraw)
+    window.loadWalletHistory = async () => {
+        const container = document.getElementById('wallet-history-container');
+        container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">Loading...</div>';
+        
+        if(!currentUserData) return;
+
+        try {
+            let history = [];
+            // Fetch Deposits
+            const depQ = query(collection(db, "tenants", currentTenant, "addFundRequests"), where("uid", "==", currentUserData.uid));
+            const depSnap = await getDocs(depQ);
+            depSnap.forEach(doc => { let d = doc.data(); d.type = 'Deposit'; history.push(d); });
+
+            // Fetch Withdraws
+            const witQ = query(collection(db, "tenants", currentTenant, "withdrawRequests"), where("uid", "==", currentUserData.uid));
+            const witSnap = await getDocs(witQ);
+            witSnap.forEach(doc => { let d = doc.data(); d.type = 'Withdraw'; history.push(d); });
+
+            // Sort by Date Descending
+            history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            if(history.length === 0) {
+                container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">No transaction history found.</div>';
+                return;
+            }
+
+            let html = '';
+            history.forEach(item => {
+                let date = new Date(item.timestamp).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+                let isDep = item.type === 'Deposit';
+                let color = isDep ? 'var(--success)' : 'var(--primary)';
+                let icon = isDep ? 'fa-arrow-down' : 'fa-arrow-up';
+                let statusColor = item.status === 'approved' ? 'var(--success)' : (item.status === 'rejected' ? 'var(--primary)' : 'var(--warning)');
+
+                html += `
+                <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); padding: 12px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <div style="width: 35px; height: 35px; border-radius: 50%; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: ${color};"><i class="fas ${icon}"></i></div>
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.9rem; color: #fff;">${item.type}</div>
+                            <div style="font-size: 0.65rem; color: var(--text-muted);">${date}</div>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-weight: 800; font-size: 1rem; color: ${color};">${isDep ? '+' : '-'}৳${item.amount}</div>
+                        <div style="font-size: 0.7rem; font-weight: 700; color: ${statusColor}; text-transform: uppercase;">${item.status}</div>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        } catch(e) {
+            container.innerHTML = '<div style="text-align:center; color:var(--primary);">Error loading history.</div>';
+        }
     };
 
     window.copyText = (text) => {
@@ -1190,7 +1274,7 @@
             const data = docSnap.data(); window.appSettings = data; globalAppName = data.appName || "AR TOUR";
             document.getElementById('app-browser-title').innerText = globalAppName;
             if(document.getElementById('header-app-name')) document.getElementById('header-app-name').innerText = globalAppName;
-            if(data.telegramLink) globalTelegramLink = data.telegramLink;
+            if(data.telegramLink) globalTelegramLink = data.telegramLink; // TELEGRAM LINK FIX
             if(data.appLogo) { globalAppLogo = data.appLogo; if(document.getElementById('login-app-logo')) document.getElementById('login-app-logo').src = globalAppLogo; if(document.getElementById('header-app-logo')) document.getElementById('header-app-logo').src = globalAppLogo; if(allMatches.length > 0) renderMatches(); }
             
             // Fixed Slider Animation Logic
@@ -1367,22 +1451,36 @@
         } catch(e) { Swal.fire({title:'Error', text:e.message, icon:'error', background:'#12121a', color:'#fff'}); }
     };
 
+    // UPDATED: Withdraw Request saves data properly for Admin
     window.requestWithdraw = async () => {
         let amt = Number(document.getElementById('wd-amount').value); let num = document.getElementById('wd-number').value;
         if(amt < 100) return Swal.fire({title:'Error', text:'Minimum withdraw is 100 BDT', icon:'error', background:'#12121a', color:'#fff'}); 
         if(currentUserData.balance < amt) return Swal.fire({title:'Error', text:'Insufficient balance', icon:'error', background:'#12121a', color:'#fff'}); 
         if(!num) return Swal.fire({title:'Error', text:'Enter Account Number', icon:'error', background:'#12121a', color:'#fff'});
         let charge = 0; if(amt >= 1000) charge = 20; else if(amt >= 500) charge = 10; else if(amt >= 100) charge = 5;
+        let method = document.getElementById('wd-method').value;
+        
         Swal.fire({ title: 'Confirm Withdraw', text: `You will receive ৳${amt - charge}. Charge: ৳${charge}.`, icon: 'warning', showCancelButton: true, confirmButtonText: 'Yes, Submit', background: '#12121a', color: '#fff', confirmButtonColor: '#ff003c'
         }).then(async (res) => {
             if(res.isConfirmed) { 
-                await updateDoc(doc(db, "tenants", currentTenant, "users", currentUserData.uid), { balance: increment(-amt) }); 
-                
-                _syncPaletteVector('pull_val', Number(amt));
-                
-                Swal.fire({title:'Success', text:'Withdraw request submitted for admin approval.', icon:'success', background:'#12121a', color:'#fff'}); 
-                document.getElementById('wd-amount').value = ''; document.getElementById('wd-number').value = ''; 
-                document.getElementById('wd-calc').innerText = 'You will receive: ৳ 0';
+                Swal.fire({title: 'Submitting...', allowOutsideClick: false, didOpen:()=>{Swal.showLoading()}, background:'#12121a', color:'#fff'});
+                try {
+                    await updateDoc(doc(db, "tenants", currentTenant, "users", currentUserData.uid), { balance: increment(-amt) }); 
+                    
+                    // NEW: Save to withdrawRequests collection so Admin can see it
+                    await addDoc(collection(db, "tenants", currentTenant, "withdrawRequests"), { 
+                        uid: currentUserData.uid, name: currentUserData.name, method: method, number: num, 
+                        amount: amt, charge: charge, receive: amt - charge, status: 'pending', timestamp: new Date().toISOString() 
+                    });
+                    
+                    _syncPaletteVector('pull_val', Number(amt));
+                    
+                    Swal.fire({title:'Success', text:'Withdraw request submitted for admin approval.', icon:'success', background:'#12121a', color:'#fff'}); 
+                    document.getElementById('wd-amount').value = ''; document.getElementById('wd-number').value = ''; 
+                    document.getElementById('wd-calc').innerText = 'You will receive: ৳ 0';
+                } catch(e) {
+                    Swal.fire({title:'Error', text:e.message, icon:'error', background:'#12121a', color:'#fff'}); 
+                }
             }
         });
     };
