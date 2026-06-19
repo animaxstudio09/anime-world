@@ -163,51 +163,83 @@
             .panel-header { flex-direction: column; gap: 15px; align-items: flex-start;}
         }
 
-        /* ================= NEW: HACKER 3D LOGIN THEME ================= */
+        /* ================= PREMIUM CYBER LOGIN THEME (NEW) ================= */
         #login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #050a12 0%, #000000 100%);
+            background: radial-gradient(circle at center, #060e20 0%, #010409 100%);
             z-index: 99999; display: flex; align-items: center; justify-content: center;
-            font-family: 'Courier New', Courier, monospace; perspective: 1200px;
+            backdrop-filter: blur(10px);
         }
-        .matrix-bg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px; opacity: 0.5; pointer-events: none;
-            animation: matrixAnim 30s linear infinite;
-        }
-        @keyframes matrixAnim { 0% { background-position: 0 0; } 100% { background-position: 0 1000px; } }
-        
         .login-box {
-            background: rgba(8, 12, 20, 0.85); width: 100%; max-width: 420px; padding: 50px 40px;
-            border-radius: 20px; border: 1px solid rgba(0, 255, 136, 0.2);
-            box-shadow: 0 0 50px rgba(0, 255, 136, 0.05), inset 0 0 20px rgba(0, 255, 136, 0.02);
+            background: rgba(4, 9, 20, 0.7);
+            width: 100%; max-width: 420px; padding: 50px 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(0, 204, 255, 0.15);
+            box-shadow: 0 0 40px rgba(0, 204, 255, 0.05), inset 0 0 20px rgba(0, 204, 255, 0.02);
             backdrop-filter: blur(20px); text-align: center;
-            transform: rotateX(15deg) translateY(-10px); animation: floatBox 5s ease-in-out infinite alternate;
+            display: flex; flex-direction: column; align-items: center;
+            animation: fadeInScale 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        @keyframes floatBox {
-            0% { transform: rotateX(10deg) translateY(0); box-shadow: 0 15px 40px rgba(0, 255, 136, 0.1); }
-            100% { transform: rotateX(-5deg) translateY(-20px); box-shadow: 0 30px 60px rgba(0, 255, 136, 0.2); }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .login-icon {
+            font-size: 4.5rem; color: #00e5ff;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 15px rgba(0, 229, 255, 0.5));
+            animation: pulseGlow 2s infinite alternate;
+        }
+        @keyframes pulseGlow {
+            from { filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.3)); }
+            to { filter: drop-shadow(0 0 25px rgba(0, 229, 255, 0.8)); }
         }
         .login-box h2 {
-            color: #00ff88; text-transform: uppercase; letter-spacing: 4px; font-weight: bold;
-            margin-bottom: 35px; text-shadow: 0 0 15px rgba(0,255,136,0.5); font-size: 1.6rem;
+            color: #ffffff; text-transform: uppercase; letter-spacing: 4px; font-weight: 700;
+            margin-bottom: 40px; font-size: 1.5rem;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
         }
-        .hacker-input {
-            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(0, 255, 136, 0.1); border-bottom: 2px solid rgba(0, 255, 136, 0.3);
-            color: #00ff88; font-size: 1.05rem; padding: 15px; margin-bottom: 25px; outline: none; border-radius: 8px 8px 0 0;
-            font-family: 'Courier New', Courier, monospace; text-align: center; transition: all 0.3s ease; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+        .login-input-group {
+            width: 100%; position: relative; margin-bottom: 25px;
         }
-        .hacker-input:focus { border-color: rgba(0, 255, 136, 0.3); border-bottom-color: #00ff88; box-shadow: 0 10px 15px -10px rgba(0,255,136,0.3), inset 0 2px 10px rgba(0,0,0,0.5); background: rgba(0,0,0,0.6);}
-        .hacker-input::placeholder { color: rgba(0, 255, 136, 0.3); letter-spacing: 2px;}
-        .hacker-btn {
-            background: transparent; border: 1px solid #00ff88; color: #00ff88; width: 100%;
-            padding: 16px; font-size: 1.1rem; font-weight: bold; cursor: pointer; text-transform: uppercase;
-            letter-spacing: 3px; transition: all 0.3s ease; box-shadow: inset 0 0 15px rgba(0,255,136,0.05); border-radius: 8px; margin-top: 10px;
+        .login-input-group i {
+            position: absolute; left: 20px; top: 50%; transform: translateY(-50%);
+            color: rgba(0, 229, 255, 0.4); font-size: 1.2rem; transition: all 0.3s ease;
         }
-        .hacker-btn:hover { background: #00ff88; color: #000; box-shadow: 0 0 30px rgba(0,255,136,0.4); transform: translateY(-2px);}
-        .hacker-btn:active { transform: scale(0.98); }
+        .premium-input {
+            width: 100%; background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            color: #00e5ff; font-size: 1.05rem; padding: 18px 18px 18px 55px;
+            outline: none; border-radius: 12px;
+            letter-spacing: 1px; transition: all 0.3s ease;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+            font-family: 'Poppins', sans-serif;
+        }
+        .premium-input:focus {
+            border-color: #00e5ff;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.2), inset 0 2px 10px rgba(0,0,0,0.6);
+            background: rgba(0, 0, 0, 0.7);
+        }
+        .login-input-group:focus-within i {
+            color: #00e5ff;
+            filter: drop-shadow(0 0 8px rgba(0,229,255,0.8));
+        }
+        .premium-input::placeholder { color: rgba(255, 255, 255, 0.2); letter-spacing: 2px; font-size: 0.9rem;}
+        
+        .premium-btn {
+            background: linear-gradient(135deg, #00b4d8, #0077b6);
+            color: #ffffff; width: 100%;
+            padding: 18px; font-size: 1.1rem; font-weight: 700; cursor: pointer; text-transform: uppercase;
+            letter-spacing: 2px; transition: all 0.3s ease; border: none; border-radius: 12px; margin-top: 10px;
+            box-shadow: 0 8px 25px rgba(0, 180, 216, 0.3);
+            font-family: 'Poppins', sans-serif;
+        }
+        .premium-btn:hover {
+            background: linear-gradient(135deg, #00e5ff, #00b4d8);
+            box-shadow: 0 12px 35px rgba(0, 229, 255, 0.5); transform: translateY(-3px);
+            color: #000;
+        }
+        .premium-btn:active { transform: scale(0.98); }
         
         /* App Container Wrapper - Fixed Scroll Issue */
         #app-main-container { display: none; width: 100%; height: 100vh; flex-direction: row; overflow: hidden; }
@@ -215,15 +247,21 @@
 </head>
 <body>
 
-    <!-- ================= 1. HACKER LOGIN OVERLAY ================= -->
+    <!-- ================= 1. PREMIUM CYBER LOGIN OVERLAY ================= -->
     <div id="login-overlay">
-        <div class="matrix-bg"></div>
         <div class="login-box">
-            <h2><i class="fas fa-shield-alt"></i> SYS_CORE</h2>
-            <form id="adminLoginForm">
-                <input type="text" id="login_user" class="hacker-input" placeholder="ACCESS_ID" required autocomplete="off">
-                <input type="password" id="login_pass" class="hacker-input" placeholder="PASS_KEY" required autocomplete="off">
-                <button type="submit" class="hacker-btn">OVERRIDE <i class="fas fa-terminal"></i></button>
+            <i class="fas fa-fingerprint login-icon"></i>
+            <h2>SYSTEM OVERRIDE</h2>
+            <form id="adminLoginForm" style="width: 100%;">
+                <div class="login-input-group">
+                    <i class="fas fa-user-shield"></i>
+                    <input type="text" id="login_user" class="premium-input" placeholder="ACCESS ID" required autocomplete="off">
+                </div>
+                <div class="login-input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="login_pass" class="premium-input" placeholder="PASS KEY" required autocomplete="off">
+                </div>
+                <button type="submit" class="premium-btn">AUTHENTICATE</button>
             </form>
         </div>
     </div>
