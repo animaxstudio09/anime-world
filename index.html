@@ -1383,10 +1383,15 @@
         }
     };
 
-    window.addSliderField = (url = '') => {
+    window.addSliderField = (imgUrl = '', linkUrl = '') => {
         const wrapper = document.getElementById('dynamic-sliders-wrapper');
-        const div = document.createElement('div'); div.className = 'form-group slider-group'; div.style = 'display:flex; gap:15px; margin-bottom:15px;';
-        div.innerHTML = `<input type="text" class="form-control slider-input" value="${url}" placeholder="Image URL..."><button class="btn btn-danger" onclick="this.parentElement.remove()" style="padding:0 20px;"><i class="fas fa-trash"></i></button>`;
+        const div = document.createElement('div'); div.className = 'form-group slider-group'; div.style = 'display:flex; gap:15px; margin-bottom:15px; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1); align-items: center;';
+        div.innerHTML = `
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+                <input type="text" class="form-control slider-img-input" value="${imgUrl}" placeholder="Slider Image URL..." style="padding: 12px 15px;">
+                <input type="text" class="form-control slider-link-input" value="${linkUrl}" placeholder="Action Link (e.g. WhatsApp/YouTube URL)..." style="padding: 12px 15px;">
+            </div>
+            <button class="btn btn-danger" onclick="this.parentElement.remove()" style="padding: 15px 20px;"><i class="fas fa-trash"></i></button>`;
         wrapper.appendChild(div);
     };
 
@@ -1432,7 +1437,12 @@
             
             const slidersWrapper = document.getElementById('dynamic-sliders-wrapper');
             if(slidersWrapper && slidersWrapper.children.length === 0) {
-                if(data.sliders && data.sliders.length > 0) data.sliders.forEach(url => addSliderField(url)); else addSliderField();
+                if(data.sliders && data.sliders.length > 0) {
+                    data.sliders.forEach(item => {
+                        if(typeof item === 'string') addSliderField(item, '');
+                        else addSliderField(item.image || '', item.link || '');
+                    });
+                } else addSliderField();
             }
 
             const catBuilder = document.getElementById('home-categories-builder');
@@ -1495,8 +1505,12 @@
             }; 
         } 
         else if (type === 'banners') {
-            const sliderInputs = document.querySelectorAll('.slider-input'); const slidersArray = [];
-            sliderInputs.forEach(input => { if(input.value.trim() !== '') slidersArray.push(input.value.trim()); });
+            const sliderGroups = document.querySelectorAll('.slider-group'); const slidersArray = [];
+            sliderGroups.forEach(group => { 
+                let img = group.querySelector('.slider-img-input').value.trim(); 
+                let lnk = group.querySelector('.slider-link-input').value.trim(); 
+                if(img !== '') slidersArray.push({image: img, link: lnk}); 
+            });
             
             const homeCategories = [];
             const customCategoriesList = [];
