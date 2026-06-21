@@ -24,7 +24,8 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        body { background-color: #000; display: flex; justify-content: center; height: 100vh; overflow: hidden; color: var(--text-main); }
+        /* FIXED: height 100vh to 100dvh to prevent bottom cutoff on mobile browsers */
+        body { background-color: #000; display: flex; justify-content: center; height: 100dvh; overflow: hidden; color: var(--text-main); }
         
         /* Main Mobile Container */
         #app-container {
@@ -65,8 +66,8 @@
         .search-box input { flex: 1; background: transparent; border: none; color: white; outline: none; margin-left: 10px; font-size: 14px; }
         .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary-gradient); background-size: cover; cursor: pointer; border: 2px solid transparent; }
 
-        /* Floating Bottom Nav */
-        .bottom-nav-container { position: absolute; bottom: 20px; left: 20px; right: 20px; z-index: 100; }
+        /* Floating Bottom Nav - FIXED: bottom changed from 20px to 25px for better visibility */
+        .bottom-nav-container { position: absolute; bottom: 25px; left: 20px; right: 20px; z-index: 100; }
         .bottom-nav { background: rgba(30, 30, 30, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 30px; display: flex; justify-content: space-around; align-items: center; padding: 10px 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); cursor: pointer; transition: 0.3s; width: 25%; padding: 5px 0; border-radius: 20px; }
         .nav-item.active { color: var(--primary); background: rgba(0, 242, 254, 0.1); }
@@ -115,8 +116,9 @@
         .menu-row { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--glass-border); cursor: pointer; }
         .menu-row:active { background: var(--glass-bg); }
         .menu-row .material-icons-round { margin-right: 15px; color: var(--primary); font-size: 22px; }
-        .menu-row span { flex: 1; font-size: 15px; font-weight: 500; }
-        .menu-row .chevron { color: var(--text-muted); font-size: 18px; }
+        /* FIXED: Profile button text alignment and spacing */
+        .menu-row span { flex: 1; font-size: 15px; font-weight: 500; text-align: left; padding-left: 10px; }
+        .menu-row .chevron { color: var(--text-muted); font-size: 18px; flex: 0; padding-left: 0; }
 
         /* ================= 6. DETAILS SCREEN ================= */
         #details-screen { position: absolute; inset: 0; background: var(--bg-dark); z-index: 200; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column; }
@@ -245,12 +247,18 @@
                 <span class="material-icons-round">support_agent</span><span>Help & Support</span><span class="material-icons-round chevron">chevron_right</span>
             </div>
             
+            <!-- FIXED: Added Download App Button -->
+            <div class="menu-row" onclick="downloadMainApp()">
+                <span class="material-icons-round" style="color: var(--success);">system_update</span><span>Download App</span><span class="material-icons-round chevron">download</span>
+            </div>
+            
             <!-- Auth Buttons -->
             <div class="menu-row" id="btn-login-profile" onclick="document.getElementById('auth-screen').classList.remove('hidden')">
-                <span class="material-icons-round" style="color: var(--primary);">login</span><span style="color: var(--primary);">Sign In / Create Account</span>
+                <span class="material-icons-round" style="color: var(--primary);">login</span><span style="color: var(--primary);">Sign In / Create Account</span><span class="material-icons-round chevron" style="opacity: 0;">chevron_right</span>
             </div>
+            <!-- FIXED: Added an invisible chevron to Sign Out to keep alignment perfect -->
             <div class="menu-row hidden" id="btn-logout" onclick="logout()">
-                <span class="material-icons-round" style="color: #FF3D00;">logout</span><span style="color: #FF3D00;">Sign Out</span>
+                <span class="material-icons-round" style="color: #FF3D00;">logout</span><span style="color: #FF3D00;">Sign Out</span><span class="material-icons-round chevron" style="opacity: 0;">chevron_right</span>
             </div>
         </div>
     </div>
@@ -609,6 +617,25 @@
                     } catch(e) {}
                 }
             }
+        }, 1500);
+    };
+
+    /* FIXED: New Download Main App Function */
+    window.downloadMainApp = () => {
+        showToast("App Download Started!");
+        
+        // Simulating the download (Replace '#' with your real APK link later)
+        const link = document.createElement('a');
+        link.href = '#'; 
+        link.download = 'QuickStore.apk';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Redirecting to Home Tab after 1.5 seconds
+        setTimeout(() => {
+            const homeTabBtn = document.querySelector('.bottom-nav .nav-item:nth-child(1)');
+            switchTab('home', homeTabBtn);
         }, 1500);
     };
 
