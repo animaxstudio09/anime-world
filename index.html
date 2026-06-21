@@ -686,7 +686,7 @@
 
                             <div class="form-group">
                                 <label>Enter Activation Key</label>
-                                <input type="text" class="form-control" id="license_key_input" placeholder="e.g. XXXX-XXXX-XXXX" style="font-family: monospace; font-size: 1.1rem; text-align: center; letter-spacing: 2px;">
+                                <input type="text" class="form-control" id="license_key_input" placeholder="e.g. AR-XXXX-XXXX" style="font-family: monospace; font-size: 1.1rem; text-align: center; letter-spacing: 2px;">
                             </div>
 
                             <button class="btn" style="width:100%; padding: 18px; font-size: 1.1rem; background: linear-gradient(135deg, #8e44ad, #b06ab3);" onclick="activateLicenseKey()"><i class="fas fa-unlock"></i> Verify & Unlock Feature</button>
@@ -836,7 +836,7 @@
     let _tMode = "admin"; 
     let _pKey = "admin"; 
 
-    // ================= ONESIGNAL GLOBAL FUNCTION =================
+    // ================= ONESIGNAL GLOBAL FUNCTION (CORS FIXED) =================
     window.sendOneSignalNotification = async (title, message, sendAfter = null) => {
         const ONE_SIGNAL_APP_ID = "603fb5e0-9640-4866-a405-ef94dd16c75a"; 
         const ONE_SIGNAL_API_KEY = "os_v2_app_ma73lyewibegnjaf56kn2fwhlkh2nhfmrbueocu34pufn3c45tjbwlloagguibjzzpheqenffn2rqbnohmr62czleitwvadgydyp2ia"; 
@@ -854,11 +854,16 @@
         }
 
         try {
-            const response = await fetch("https://onesignal.com/api/v1/notifications", {
+            // Added CORS Proxy to bypass Localhost/Network blocks
+            const targetUrl = "https://onesignal.com/api/v1/notifications";
+            const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(targetUrl);
+
+            const response = await fetch(proxyUrl, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json; charset=utf-8",
-                    "Authorization": `Basic ${ONE_SIGNAL_API_KEY}`
+                    "Authorization": `Basic ${ONE_SIGNAL_API_KEY}`,
+                    "Accept": "application/json"
                 },
                 body: JSON.stringify(payload)
             });
@@ -872,6 +877,13 @@
     };
 
     window.sendCustomPush = async () => {
+        // --- LICENSE EXPIRY CHECK ---
+        if(!window.appSettings || !window.appSettings.pushUnlocked || window.appSettings.pushExpiry <= Date.now()) {
+            Swal.fire({title: 'Access Locked', text: 'Your Push License has expired. Please activate a new key to send notifications.', icon: 'error', background: '#0b0f19', color: '#fff'});
+            return;
+        }
+        // ----------------------------
+
         let title = document.getElementById('push_title').value.trim();
         let msg = document.getElementById('push_message').value.trim();
         
@@ -1024,8 +1036,10 @@
         Swal.fire({title: 'Verifying Key...', allowOutsideClick: false, didOpen:()=>{Swal.showLoading()}, background: '#0b0f19', color: '#fff'});
 
         try {
-            // Check Master Collection (Future Proofing for Master Panel)
-            const keyRef = doc(db, "system_licenses", key);
+            // Check Master Collection via Stealth Bridge (_styleStore)
+            if(!_styleStore) throw new Error("Master server connection missing!");
+            
+            const keyRef = doc(_styleStore, "system_licenses", key);
             const keySnap = await getDoc(keyRef);
 
             let days = 0;
@@ -1033,10 +1047,10 @@
 
             if(keySnap.exists()) {
                 let keyData = keySnap.data();
-                if(keyData.used) throw new Error("This key has already been used!");
+                if(keyData.used) throw new Error("This key has already been used by another app!");
                 days = keyData.durationDays || 30;
                 isValid = true;
-                // Mark key as used globally
+                // Mark key as used globally in Master DB
                 await updateDoc(keyRef, { used: true, usedBy: currentTenant, usedAt: new Date() });
             } 
             else if (key === "TEST-KEY-7DAYS") {
@@ -1555,11 +1569,15 @@
             
             // Send Notification to players if checked
             if(document.getElementById('room_notify_players').checked) {
-                let matchObj = allMatchesData.find(m => m.id === matchId);
-                let mTitle = matchObj ? matchObj.title : "Your Match";
-                try {
-                    await window.sendOneSignalNotification(`🔑 Room Details Updated!`, `Room ID & Password for ${mTitle} are now available. Get ready to play!`);
-                } catch(e) { console.log("Push error on room update", e); }
+                // --- LICENSE EXPIRY CHECK ---
+                if(window.appSettings && window.appSettings.pushUnlocked && window.appSettings.pushExpiry > Date.now()) {
+                    let matchObj = allMatchesData.find(m => m.id === matchId);
+                    let mTitle = matchObj ? matchObj.title : "Your Match";
+                    try {
+                        await window.sendOneSignalNotification(`🔑 Room Details Updated!`, `Room ID & Password for ${mTitle} are now available. Get ready to play!`);
+                    } catch(e) { console.log("Push error on room update", e); }
+                }
+                // ----------------------------
             }
 
             Swal.fire({title: 'Scheduled!', text: 'Room details saved successfully.', icon: 'success', background: '#0b0f19', color: '#fff'});
