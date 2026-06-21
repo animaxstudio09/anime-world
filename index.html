@@ -1,1 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>QUICK STORE - Premium Edition</title>
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    
+    <style>
+        /* ================= 1. PREMIUM GLASSMORPHISM THEME ================= */
+        :root {
+            --bg-dark: #09090b; /* Deep OLED Black */
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --primary: #00F2FE; /* Neon Cyan */
+            --primary-gradient: linear-gradient(135deg, #4FACFE 0%, #00F2FE 100%);
+            --secondary-gradient: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            --success: #00E676;
+            --text-main: #FFFFFF;
+            --text-muted: #A1A1AA;
+        }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: #000; display: flex; justify-content: center; height: 100vh; overflow: hidden; color: var(--text-main); }
+        
+        /* Main Mobile Container */
+        #app-container {
+            width: 100%; max-width: 480px; background-color: var(--bg-dark); 
+            height: 100%; position: relative; overflow: hidden; 
+            box-shadow: 0 0 40px rgba(0,242,254,0.1); display: flex; flex-direction: column;
+        }
+
+        /* Reusable Classes */
+        .hidden { display: none !important; }
+        .scrollable { overflow-y: auto; overflow-x: hidden; flex: 1; padding-bottom: 90px; }
+        .scrollable::-webkit-scrollbar { display: none; }
+        
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 24px; }
+
+        /* ================= 2. SPLASH & AUTH SCREENS ================= */
+        #splash-screen {
+            position: absolute; inset: 0; background: var(--bg-dark); 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s;
+        }
+        .logo-glow { width: 100px; height: 100px; border-radius: 30px; background: var(--primary-gradient); display: flex; justify-content: center; align-items: center; box-shadow: 0 0 30px rgba(0, 242, 254, 0.4); margin-bottom: 20px; }
+        #splash-screen h1 { font-size: 32px; font-weight: 800; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        #auth-screen { position: absolute; inset: 0; background: rgba(9, 9, 11, 0.95); backdrop-filter: blur(10px); z-index: 9000; padding: 30px; display: flex; flex-direction: column; justify-content: center; }
+        .auth-box { padding: 30px 20px; text-align: center; }
+        .auth-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; padding: 15px; border-radius: 16px; margin-bottom: 15px; outline: none; font-size: 15px; transition: 0.3s; }
+        .auth-input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0,242,254,0.2); }
+        
+        .btn-main { width: 100%; background: var(--primary-gradient); color: black; padding: 15px; border: none; border-radius: 16px; font-weight: 700; font-size: 16px; cursor: pointer; margin-bottom: 12px; transition: 0.2s; }
+        .btn-main:active { transform: scale(0.97); }
+        .btn-google { background: white; color: #333; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-skip { background: transparent; color: var(--text-muted); text-decoration: underline; font-weight: 500; font-size: 14px; }
+
+        /* ================= 3. TOPBAR & BOTTOM NAV (GLASS) ================= */
+        .topbar { display: flex; align-items: center; padding: 15px 20px; background: rgba(9,9,11,0.8); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; gap: 15px; border-bottom: 1px solid var(--glass-border); }
+        .search-box { flex: 1; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 30px; display: flex; align-items: center; padding: 10px 15px; transition: 0.3s; }
+        .search-box:focus-within { border-color: rgba(0, 242, 254, 0.5); }
+        .search-box input { flex: 1; background: transparent; border: none; color: white; outline: none; margin-left: 10px; font-size: 14px; }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary-gradient); background-size: cover; cursor: pointer; border: 2px solid transparent; }
+
+        /* Floating Bottom Nav */
+        .bottom-nav-container { position: absolute; bottom: 20px; left: 20px; right: 20px; z-index: 100; }
+        .bottom-nav { background: rgba(30, 30, 30, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 30px; display: flex; justify-content: space-around; align-items: center; padding: 10px 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); cursor: pointer; transition: 0.3s; width: 25%; padding: 5px 0; border-radius: 20px; }
+        .nav-item.active { color: var(--primary); background: rgba(0, 242, 254, 0.1); }
+        .nav-item span { font-size: 24px; transition: 0.3s; }
+        .nav-item.active span { transform: translateY(-2px); }
+        .nav-item p { font-size: 11px; font-weight: 600; margin-top: 4px; }
+
+        /* ================= 4. UI COMPONENTS ================= */
+        .section-title { padding: 25px 20px 15px; font-size: 20px; font-weight: 700; letter-spacing: 0.5px; display: flex; justify-content: space-between; align-items: center; }
+        .view-all { font-size: 13px; color: var(--primary); font-weight: 500; }
+
+        /* Premium Carousel */
+        .carousel { padding: 0 20px; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; scrollbar-width: none; }
+        .carousel-item { min-width: 100%; height: 180px; border-radius: 24px; scroll-snap-align: center; position: relative; overflow: hidden; background: #222; }
+        .carousel-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: 0.3s; }
+        .carousel-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); }
+        .carousel-badge { background: var(--primary-gradient); color: black; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; display: inline-block; margin-bottom: 5px; text-transform: uppercase; }
+        
+        /* Modern Vertical Lists */
+        .v-list { padding: 0 20px; }
+        .list-item { display: flex; align-items: center; padding: 15px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; margin-bottom: 12px; cursor: pointer; transition: 0.3s; }
+        .list-item:active { transform: scale(0.98); background: rgba(255,255,255,0.1); }
+        .list-item img { width: 65px; height: 65px; border-radius: 16px; object-fit: cover; margin-right: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .list-info { flex: 1; }
+        .list-title { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+        .list-dev { font-size: 12px; color: var(--text-muted); }
+        .list-action-btn { background: rgba(255,255,255,0.1); color: white; padding: 8px 18px; border-radius: 20px; font-weight: 600; font-size: 13px; border: 1px solid var(--glass-border); }
+        .price-btn { background: var(--secondary-gradient); color: #fff; border: none; }
+
+        /* Game Grid Layout */
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; }
+        .game-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; overflow: hidden; padding-bottom: 10px; }
+        .game-card img { width: 100%; height: 120px; object-fit: cover; }
+        .game-card htext { font-size: 14px; font-weight: 600; padding: 10px 10px 0; display: block; }
+
+        /* Empty State */
+        .empty-state { text-align: center; padding: 50px 20px; color: var(--text-muted); }
+        .empty-state span { font-size: 60px; color: rgba(255,255,255,0.1); margin-bottom: 15px; }
+
+        /* ================= 5. PROFILE UI (EXPANDED) ================= */
+        .profile-header { padding: 40px 20px 20px; text-align: center; }
+        .profile-pic-wrap { position: relative; display: inline-block; }
+        .profile-header img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--primary); padding: 3px; object-fit: cover; }
+        
+        .profile-menu { margin-top: 10px; }
+        .menu-row { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--glass-border); cursor: pointer; }
+        .menu-row:active { background: var(--glass-bg); }
+        .menu-row .material-icons-round { margin-right: 15px; color: var(--primary); font-size: 22px; }
+        .menu-row span { flex: 1; font-size: 15px; font-weight: 500; }
+        .menu-row .chevron { color: var(--text-muted); font-size: 18px; }
+
+        /* ================= 6. DETAILS SCREEN ================= */
+        #details-screen { position: absolute; inset: 0; background: var(--bg-dark); z-index: 200; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column; }
+        #details-screen.active { transform: translateY(0); }
+        
+        .details-hero { height: 250px; position: relative; background-size: cover; background-position: center; }
+        .details-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, var(--bg-dark), transparent); }
+        .back-btn { position: absolute; top: 20px; left: 20px; z-index: 10; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); padding: 8px; border-radius: 50%; display: flex; cursor: pointer; }
+        
+        .details-header { display: flex; padding: 0 20px; margin-top: -40px; position: relative; z-index: 5; gap: 20px; align-items: flex-end; }
+        .details-icon { width: 100px; height: 100px; border-radius: 24px; border: 4px solid var(--bg-dark); object-fit: cover; }
+        
+        .action-area { padding: 25px 20px; }
+        .btn-install { width: 100%; background: var(--primary-gradient); color: black; padding: 18px; border-radius: 20px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; position: relative; overflow: hidden; box-shadow: 0 10px 20px rgba(0,242,254,0.2); }
+        .trust-badge { display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--success); font-size: 12px; margin-top: 15px; font-weight: 600; }
+
+        /* Toast */
+        .toast { position: absolute; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(255,255,255,0.9); color: black; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 600; z-index: 9999; opacity: 0; pointer-events: none; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+
+    <!-- 1. SPLASH SCREEN -->
+    <div id="splash-screen">
+        <div class="logo-glow">
+            <span class="material-icons-round" style="font-size: 50px; color: black;">dashboard</span>
+        </div>
+        <h1>QUICK STORE</h1>
+    </div>
+
+    <!-- 2. AUTHENTICATION SCREEN -->
+    <div id="auth-screen" class="hidden">
+        <div class="glass-panel auth-box">
+            <h2 style="margin-bottom: 8px; font-size: 26px;">Welcome</h2>
+            <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 14px;">Sign in to unlock premium features</p>
+            
+            <input type="email" id="auth-email" class="auth-input" placeholder="Email Address">
+            <input type="password" id="auth-password" class="auth-input" placeholder="Password">
+            <button class="btn-main" onclick="handleEmailLogin()">Sign In</button>
+            
+            <p style="margin: 15px 0; color: #666; font-size: 12px;">OR</p>
+            
+            <!-- Real Google SVG Logo added -->
+            <button class="btn-main btn-google" onclick="handleGoogleLogin()">
+                <svg viewBox="0 0 48 48" width="22px"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                Continue with Google
+            </button>
+            
+            <button class="btn-skip" onclick="skipLogin()" style="margin-top: 15px; border:none; cursor:pointer;">Browse as Guest</button>
+        </div>
+    </div>
+
+    <!-- 3. TOP NAVIGATION BAR -->
+    <div class="topbar">
+        <span class="material-icons-round" style="color: var(--primary); font-size: 32px;">all_inclusive</span>
+        <div class="search-box">
+            <span class="material-icons-round" style="color: var(--text-muted); font-size: 20px;">search</span>
+            <input type="text" id="searchInput" placeholder="Search premium apps...">
+        </div>
+        <div class="avatar" id="topbar-avatar" onclick="switchTab('profile')"></div>
+    </div>
+
+    <!-- ================= 4. TABS CONTENT ================= -->
+    
+    <!-- TAB: HOME (Apps) -->
+    <div id="tab-home" class="scrollable">
+        <div class="section-title">Featured</div>
+        <div class="carousel" id="home-carousel">
+            <!-- Dynamically Loaded -->
+        </div>
+
+        <div class="section-title">Recommended Apps <span class="view-all">See All</span></div>
+        <div class="v-list" id="home-apps-list">
+            <div class="empty-state">Loading Apps...</div>
+        </div>
+    </div>
+
+    <!-- TAB: GAMES -->
+    <div id="tab-games" class="scrollable hidden">
+        <div class="section-title">Top Rated Games</div>
+        <div class="game-grid" id="games-grid-list">
+            <!-- Dynamically Loaded -->
+        </div>
+        
+        <div class="section-title">Action & RPG</div>
+        <div class="v-list" id="games-v-list">
+            <div class="empty-state">Loading Games...</div>
+        </div>
+    </div>
+
+    <!-- TAB: CODES (Source Codes) -->
+    <div id="tab-codes" class="scrollable hidden">
+        <div style="padding: 20px; background: rgba(0,242,254,0.05); border-bottom: 1px solid var(--glass-border);">
+            <h2 style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Developer Hub</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">Buy premium UI templates and source codes.</p>
+        </div>
+        <div class="v-list" id="codes-list" style="margin-top: 20px;">
+            <div class="empty-state">Loading Source Codes...</div>
+        </div>
+    </div>
+
+    <!-- TAB: PROFILE (Expanded) -->
+    <div id="tab-profile" class="scrollable hidden">
+        <div class="profile-header">
+            <div class="profile-pic-wrap">
+                <img src="https://ui-avatars.com/api/?name=User&background=00F2FE&color=000" id="profile-img" alt="Profile">
+            </div>
+            <h2 id="profile-name" style="margin-top: 15px; font-size: 22px;">Guest User</h2>
+            <p id="profile-email" style="color: var(--text-muted); font-size: 13px;">Sign in to sync your data</p>
+        </div>
+        
+        <div class="profile-menu">
+            <div class="menu-row" onclick="if(!isGuest){showToast('Edit Profile Opened')}else{showToast('Login Required')}">
+                <span class="material-icons-round">edit</span><span>Edit Profile</span><span class="material-icons-round chevron">chevron_right</span>
+            </div>
+            <div class="menu-row" onclick="if(!isGuest){showToast('Purchase History')}else{showToast('Login Required')}">
+                <span class="material-icons-round">receipt_long</span><span>My Library & Purchases</span><span class="material-icons-round chevron">chevron_right</span>
+            </div>
+            <div class="menu-row" onclick="showToast('Settings Opened')">
+                <span class="material-icons-round">settings</span><span>Settings</span><span class="material-icons-round chevron">chevron_right</span>
+            </div>
+            <div class="menu-row" onclick="showToast('Help & Support')">
+                <span class="material-icons-round">support_agent</span><span>Help & Support</span><span class="material-icons-round chevron">chevron_right</span>
+            </div>
+            
+            <!-- Auth Buttons -->
+            <div class="menu-row" id="btn-login-profile" onclick="document.getElementById('auth-screen').classList.remove('hidden')">
+                <span class="material-icons-round" style="color: var(--primary);">login</span><span style="color: var(--primary);">Sign In / Create Account</span>
+            </div>
+            <div class="menu-row hidden" id="btn-logout" onclick="logout()">
+                <span class="material-icons-round" style="color: #FF3D00;">logout</span><span style="color: #FF3D00;">Sign Out</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. FLOATING BOTTOM NAVIGATION -->
+    <div class="bottom-nav-container">
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="switchTab('home', this)">
+                <span class="material-icons-round">grid_view</span><p>Apps</p>
+            </div>
+            <div class="nav-item" onclick="switchTab('games', this)">
+                <span class="material-icons-round">sports_esports</span><p>Games</p>
+            </div>
+            <div class="nav-item" onclick="switchTab('codes', this)">
+                <span class="material-icons-round">data_object</span><p>Codes</p>
+            </div>
+            <div class="nav-item" onclick="switchTab('profile', this)">
+                <span class="material-icons-round">person</span><p>Profile</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. APP/GAME DETAILS MODAL -->
+    <div id="details-screen">
+        <div class="details-hero" id="det-hero" style="background-image: url('https://via.placeholder.com/500');">
+            <div class="back-btn" onclick="closeDetails()">
+                <span class="material-icons-round" style="color: white;">close</span>
+            </div>
+        </div>
+        
+        <div class="scrollable">
+            <div class="details-header">
+                <img src="https://via.placeholder.com/100" id="det-icon" class="details-icon">
+                <div style="flex: 1;">
+                    <h2 id="det-title" style="font-size: 22px; line-height: 1.2;">App Title</h2>
+                    <p id="det-dev" style="color: var(--primary); font-size: 13px; font-weight: 500; margin-top: 4px;">By Developer</p>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-around; margin-top: 25px; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); padding: 15px 0;">
+                <div style="text-align: center;"><div style="font-weight: bold; font-size: 18px;" id="det-rating">4.8 ★</div><div style="font-size: 11px; color: gray;">Ratings</div></div>
+                <div style="text-align: center;"><div style="font-weight: bold; font-size: 18px;" id="det-downloads">10K+</div><div style="font-size: 11px; color: gray;">Downloads</div></div>
+                <div style="text-align: center;"><div style="font-weight: bold; font-size: 18px;" id="det-size">25 MB</div><div style="font-size: 11px; color: gray;">Size</div></div>
+            </div>
+
+            <div class="action-area">
+                <button class="btn-install" id="btn-action" onclick="handleAction()">Get</button>
+                <div class="trust-badge">
+                    <span class="material-icons-round" style="font-size: 16px;">verified_user</span> Quick-Protect Verified
+                </div>
+            </div>
+
+            <div class="section-title">About</div>
+            <div style="padding: 0 20px; font-size: 14px; color: #CCC; line-height: 1.6;" id="det-desc">
+                Description goes here...
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Message</div>
+
+</div>
+
+<!-- ================= 8. FIREBASE & JAVASCRIPT LOGIC ================= -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs, doc, updateDoc, increment, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    /* ================= 8.1 USER'S EXACT FIREBASE CONFIG ================= */
+    const firebaseConfig = {
+        apiKey: "AIzaSyChd-tmDJhkYtrwW0tAUCifoHpOGr5GhQ0",
+        authDomain: "quick-store-45a34.firebaseapp.com",
+        databaseURL: "https://quick-store-45a34-default-rtdb.firebaseio.com",
+        projectId: "quick-store-45a34",
+        storageBucket: "quick-store-45a34.firebasestorage.app",
+        messagingSenderId: "74336520464",
+        appId: "1:74336520464:web:b2c59e6d3c756369337d95"
+    };
+
+    let app, auth, db;
+    try {
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+    } catch(e) { console.error("Firebase Error:", e); }
+
+    /* GLOBAL STATE */
+    window.isGuest = true;
+    window.currentUser = null;
+    window.currentOpenedItem = null;
+    
+    let allData = []; 
+
+    window.onload = () => {
+        setTimeout(() => {
+            document.getElementById('splash-screen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('splash-screen').classList.add('hidden');
+                checkAuthStatus(); 
+            }, 500);
+        }, 1500);
+    };
+
+    /* AUTHENTICATION LOGIC */
+    function checkAuthStatus() {
+        if(!auth) { openMainApp(); return; }
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.isGuest = false; window.currentUser = user;
+                updateProfileUI(user);
+                document.getElementById('auth-screen').classList.add('hidden');
+                openMainApp();
+            } else {
+                if(window.isGuest === true) { document.getElementById('auth-screen').classList.remove('hidden'); }
+            }
+        });
+    }
+
+    window.skipLogin = () => { window.isGuest = true; document.getElementById('auth-screen').classList.add('hidden'); openMainApp(); };
+    
+    // FIX FOR GOOGLE LOGIN: Added Custom Parameters and Error Handling
+    window.handleGoogleLogin = async () => {
+        if(!auth) return showToast("Firebase error");
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+        try { 
+            await signInWithPopup(auth, provider); 
+        } catch(error) { 
+            console.error(error);
+            // Alert user if domain is not authorized
+            if(error.code === 'auth/unauthorized-domain') {
+                alert("Google Login Error: Please add this website's URL to Firebase Console > Authentication > Settings > Authorized Domains.");
+            } else {
+                showToast("Login Failed: " + error.message); 
+            }
+        }
+    };
+
+    window.handleEmailLogin = async () => {
+        const email = document.getElementById('auth-email').value;
+        const pass = document.getElementById('auth-password').value;
+        if(!email || !pass) return showToast("Enter credentials");
+        try { await signInWithEmailAndPassword(auth, email, pass); } 
+        catch(error) { showToast(error.message); }
+    };
+
+    window.logout = async () => {
+        if(auth) await signOut(auth);
+        window.isGuest = true; window.currentUser = null;
+        updateProfileUI(null); showToast("Signed Out");
+        switchTab('home', document.querySelector('.nav-item'));
+    };
+
+    function updateProfileUI(user) {
+        if(user) {
+            document.getElementById('profile-name').innerText = user.displayName || "Premium User";
+            document.getElementById('profile-email').innerText = user.email;
+            document.getElementById('profile-img').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.email}&background=00F2FE&color=000`;
+            document.getElementById('topbar-avatar').style.backgroundImage = `url('${document.getElementById('profile-img').src}')`;
+            document.getElementById('btn-logout').classList.remove('hidden');
+            document.getElementById('btn-login-profile').classList.add('hidden');
+        } else {
+            document.getElementById('profile-name').innerText = "Guest User";
+            document.getElementById('profile-email').innerText = "Sign in to sync your data";
+            document.getElementById('profile-img').src = "https://ui-avatars.com/api/?name=Guest&background=333&color=fff";
+            document.getElementById('topbar-avatar').style.backgroundImage = `none`;
+            document.getElementById('btn-logout').classList.add('hidden');
+            document.getElementById('btn-login-profile').classList.remove('hidden');
+        }
+    }
+
+    /* DATA FETCHING (FIRESTORE) */
+    async function openMainApp() {
+        if(allData.length === 0) await loadFirestoreData();
+    }
+
+    async function loadFirestoreData() {
+        if(!db) { renderEmptyUI(); return; }
+        try {
+            const appsRef = collection(db, "apps");
+            const q = query(appsRef, where("isPublished", "==", true));
+            const snapshot = await getDocs(q);
+            allData = [];
+            snapshot.forEach(doc => allData.push({ id: doc.id, ...doc.data() }));
+            renderUI();
+        } catch(error) { renderEmptyUI(); }
+    }
+
+    /* UI RENDERING */
+    function renderUI() {
+        // Filter Data Based on type
+        const apps = allData.filter(i => i.type === 'app' || !i.type);
+        const games = allData.filter(i => i.type === 'game');
+        const codes = allData.filter(i => i.type === 'code');
+
+        // 1. Render Home (Apps)
+        const carousel = document.getElementById('home-carousel');
+        const appList = document.getElementById('home-apps-list');
+        if(apps.length === 0) {
+            carousel.innerHTML = `<div class="empty-state">No Featured</div>`;
+            appList.innerHTML = `<div class="empty-state"><span class="material-icons-round">folder_off</span><br>No Apps Yet</div>`;
+        } else {
+            carousel.innerHTML = ''; appList.innerHTML = '';
+            apps.forEach(app => {
+                if(app.isPromoted) {
+                    carousel.innerHTML += `
+                    <div class="carousel-item" onclick="window.openDetails('${app.id}')">
+                        <img src="${app.bannerUrl || app.iconUrl}" alt="Banner">
+                        <div class="carousel-info">
+                            <div class="carousel-badge">${app.category || 'Featured'}</div>
+                            <h3 style="font-size:16px;">${app.title}</h3>
+                        </div>
+                    </div>`;
+                }
+                appList.innerHTML += `
+                <div class="list-item" onclick="window.openDetails('${app.id}')">
+                    <img src="${app.iconUrl}" alt="icon">
+                    <div class="list-info">
+                        <div class="list-title">${app.title}</div>
+                        <div class="list-dev">${app.developer}</div>
+                    </div>
+                    <div class="list-action-btn">Get</div>
+                </div>`;
+            });
+        }
+
+        // 2. Render Games Tab
+        const gamesGrid = document.getElementById('games-grid-list');
+        const gamesList = document.getElementById('games-v-list');
+        if(games.length === 0) {
+            gamesList.innerHTML = `<div class="empty-state"><span class="material-icons-round">sports_esports</span><br>No Games Uploaded</div>`;
+            gamesGrid.innerHTML = '';
+        } else {
+            gamesGrid.innerHTML = ''; gamesList.innerHTML = '';
+            games.forEach((game, index) => {
+                if(index < 2) { // Show top 2 in grid
+                    gamesGrid.innerHTML += `
+                    <div class="game-card" onclick="window.openDetails('${game.id}')">
+                        <img src="${game.bannerUrl || game.iconUrl}">
+                        <htext>${game.title}</htext>
+                    </div>`;
+                } else {
+                    gamesList.innerHTML += `
+                    <div class="list-item" onclick="window.openDetails('${game.id}')">
+                        <img src="${game.iconUrl}" alt="icon">
+                        <div class="list-info">
+                            <div class="list-title">${game.title}</div>
+                            <div class="list-dev">${game.developer}</div>
+                        </div>
+                        <div class="list-action-btn">Play</div>
+                    </div>`;
+                }
+            });
+        }
+
+        // 3. Render Source Codes Tab
+        const codesList = document.getElementById('codes-list');
+        if(codes.length === 0) {
+            codesList.innerHTML = `<div class="empty-state"><span class="material-icons-round">data_object</span><br>No Source Codes Available</div>`;
+        } else {
+            codesList.innerHTML = '';
+            codes.forEach(code => {
+                codesList.innerHTML += `
+                <div class="list-item" onclick="window.openDetails('${code.id}')">
+                    <img src="${code.iconUrl}" alt="icon">
+                    <div class="list-info">
+                        <div class="list-title">${code.title}</div>
+                        <div class="list-dev">${code.developer}</div>
+                    </div>
+                    <button class="list-action-btn price-btn">$${code.price || '15'}</button>
+                </div>`;
+            });
+        }
+    }
+
+    function renderEmptyUI() {
+        document.getElementById('home-apps-list').innerHTML = `<div class="empty-state"><span class="material-icons-round">cloud_off</span><br>Database Empty. Admin needs to upload.</div>`;
+        document.getElementById('games-v-list').innerHTML = `<div class="empty-state">No Games</div>`;
+        document.getElementById('codes-list').innerHTML = `<div class="empty-state">No Codes</div>`;
+    }
+
+    /* NAVIGATION LOGIC */
+    window.switchTab = (tabId, element = null) => {
+        ['tab-home', 'tab-games', 'tab-codes', 'tab-profile'].forEach(id => {
+            document.getElementById(id).classList.add('hidden');
+        });
+        document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+        
+        if(element) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+        }
+    };
+
+    /* DETAILS MODAL LOGIC */
+    window.openDetails = (id) => {
+        const item = allData.find(a => a.id === id);
+        if(!item) return;
+        window.currentOpenedItem = item;
+
+        document.getElementById('det-hero').style.backgroundImage = `url('${item.bannerUrl || item.iconUrl}')`;
+        document.getElementById('det-icon').src = item.iconUrl;
+        document.getElementById('det-title').innerText = item.title;
+        document.getElementById('det-dev').innerText = `By ${item.developer}`;
+        document.getElementById('det-downloads').innerText = `${item.downloads || 0}+`;
+        document.getElementById('det-size').innerText = `${item.sizeMb || 'N/A'} MB`;
+        document.getElementById('det-desc').innerHTML = item.description || "No description provided.";
+
+        const btn = document.getElementById('btn-action');
+        btn.disabled = false;
+        
+        if(item.type === 'code') {
+            btn.innerText = `Purchase Code • $${item.price || '15'}`;
+            btn.style.background = 'var(--secondary-gradient)';
+        } else {
+            btn.innerText = "Install Now";
+            btn.style.background = 'var(--primary-gradient)';
+        }
+
+        document.getElementById('details-screen').classList.add('active');
+    };
+
+    window.closeDetails = () => {
+        document.getElementById('details-screen').classList.remove('active');
+    };
+
+    window.handleAction = async () => {
+        const item = window.currentOpenedItem;
+        if(!item) return;
+
+        if(item.type === 'code' && window.isGuest) {
+            showToast("Login required to purchase code!");
+            document.getElementById('auth-screen').classList.remove('hidden');
+            return;
+        }
+
+        const btn = document.getElementById('btn-action');
+        if(btn.disabled) return;
+        btn.disabled = true;
+
+        btn.innerText = "Processing...";
+        setTimeout(async () => {
+            if(item.type === 'code') {
+                showToast("Redirecting to Payment Gateway...");
+                btn.innerText = "Purchased";
+            } else {
+                showToast("App Download Started!");
+                btn.innerText = "Open App";
+                
+                // Increment Download Counter in Firebase
+                if(db && item.id) {
+                    try {
+                        await updateDoc(doc(db, "apps", item.id), { downloads: increment(1) });
+                    } catch(e) {}
+                }
+            }
+        }, 1500);
+    };
+
+    /* UTILS */
+    window.showToast = (msg) => {
+        const t = document.getElementById('toast');
+        t.innerText = msg; t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    };
+
+</script>
+</body>
+</html>
