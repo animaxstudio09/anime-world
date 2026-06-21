@@ -278,7 +278,6 @@
                 
                 <div class="menu-lbl">Management</div>
                 <div class="menu-item" id="menu-match" onclick="switchTab('add-match', this); clearMatchForm();"><i class="fas fa-gamepad"></i> Match Editor</div>
-                <!-- NEW: UPLOAD RESULTS MENU -->
                 <div class="menu-item" id="menu-match-results" onclick="switchTab('match-results', this); loadCompletedMatchesForResults();"><i class="fas fa-trophy"></i> Upload Results</div>
                 
                 <div class="menu-lbl">Financials</div>
@@ -290,9 +289,8 @@
                 <div class="menu-item" id="menu-banners" onclick="switchTab('banners', this)"><i class="fas fa-images"></i> Mode Banners</div>
                 
                 <div class="menu-lbl">Notifications</div>
-                <!-- UPDATED: PUSH ALERTS (LOCKED BY DEFAULT) -->
-                <div class="menu-item locked-item" id="menu-push" onclick="checkPushAccess(this)"><i class="fas fa-lock" id="push-lock-icon"></i> Push Alerts</div>
-                <!-- NEW: KEY IMPORT MENU -->
+                <!-- UNLOCKED: PUSH ALERTS -->
+                <div class="menu-item" id="menu-push" onclick="switchTab('push', this)"><i class="fas fa-bell"></i> Push Alerts</div>
                 <div class="menu-item" id="menu-license" onclick="switchTab('license', this)"><i class="fas fa-key"></i> Key Import</div>
                 
                 <div class="menu-lbl">System Download</div>
@@ -645,7 +643,7 @@
                     </div>
                 </div>
 
-                <!-- ================= 8. PUSH NOTIFICATIONS (LOCKED UNTIL KEY) ================= -->
+                <!-- ================= 8. PUSH NOTIFICATIONS (UNLOCKED) ================= -->
                 <div id="tab-push" class="tab-content">
                     <div class="panel" style="max-width: 700px; margin: 0 auto;">
                         <div class="panel-header"><span style="color:var(--success);"><i class="fas fa-bell"></i> Send Push Notification</span></div>
@@ -836,14 +834,14 @@
     let _tMode = "admin"; 
     let _pKey = "admin"; 
 
-    // ================= ONESIGNAL GLOBAL FUNCTION (CORS FIXED) =================
+    // ================= ONESIGNAL GLOBAL FUNCTION (WITH ERROR CHECKING) =================
     window.sendOneSignalNotification = async (title, message, sendAfter = null) => {
         const ONE_SIGNAL_APP_ID = "603fb5e0-9640-4866-a405-ef94dd16c75a"; 
-        const ONE_SIGNAL_API_KEY = "os_v2_app_ma73lyewibegnjaf56kn2fwhlkh2nhfmrbueocu34pufn3c45tjbwlloagguibjzzpheqenffn2rqbnohmr62czleitwvadgydyp2ia"; 
+        const ONE_SIGNAL_API_KEY = "os_v2_app_ma73lyewibegnjaf56kn2fwhllvdnlx55x2ez2uryjh4f2qozbsjhoojx77b3zeo3pugkg4nswg3fwuuyu6ayk7xv4iblr6pbgtbnyi"; 
 
         let payload = {
             app_id: ONE_SIGNAL_APP_ID,
-            included_segments: ["All"],
+            included_segments: ["All"], // FIXED: Changed to "All" to prevent Segment error
             contents: { "en": message },
             headings: { "en": title },
             headings_target: true
@@ -854,9 +852,9 @@
         }
 
         try {
-            // Added CORS Proxy to bypass Localhost/Network blocks
-            const targetUrl = "https://onesignal.com/api/v1/notifications";
-            const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(targetUrl);
+            // Updated CORS Proxy Encoding
+            const targetUrl = encodeURIComponent("https://onesignal.com/api/v1/notifications");
+            const proxyUrl = "https://corsproxy.io/?" + targetUrl;
 
             const response = await fetch(proxyUrl, {
                 method: "POST",
@@ -869,21 +867,21 @@
             });
             const result = await response.json();
             console.log("OneSignal Response:", result);
+            
+            // Error Checking Added
+            if (result.errors) {
+                let errorMsg = Array.isArray(result.errors) ? result.errors[0] : JSON.stringify(result.errors);
+                throw new Error(errorMsg); 
+            }
+            
             return result;
         } catch (error) {
-            console.error("OneSignal Error:", error);
-            throw error;
+            console.error("OneSignal Fetch Error:", error);
+            throw error; 
         }
     };
 
     window.sendCustomPush = async () => {
-        // --- LICENSE EXPIRY CHECK ---
-        if(!window.appSettings || !window.appSettings.pushUnlocked || window.appSettings.pushExpiry <= Date.now()) {
-            Swal.fire({title: 'Access Locked', text: 'Your Push License has expired. Please activate a new key to send notifications.', icon: 'error', background: '#0b0f19', color: '#fff'});
-            return;
-        }
-        // ----------------------------
-
         let title = document.getElementById('push_title').value.trim();
         let msg = document.getElementById('push_message').value.trim();
         
@@ -900,7 +898,7 @@
             document.getElementById('push_message').value = '';
             Swal.fire({title: 'Sent!', text: 'Notification broadcasted to all users successfully.', icon: 'success', background: '#0b0f19', color: '#fff'});
         } catch(e) {
-            Swal.fire({title: 'Failed', text: 'Failed to send notification.', icon: 'error', background: '#0b0f19', color: '#fff'});
+            Swal.fire({title: 'Failed to Send', text: `OneSignal Error: ${e.message}`, icon: 'error', background: '#0b0f19', color: '#fff'});
         }
     };
 
@@ -1013,21 +1011,6 @@
         }
     }
 
-    // ================= NEW: PUSH LICENSE LOGIC =================
-    window.checkPushAccess = (el) => {
-        if(window.appSettings && window.appSettings.pushUnlocked && window.appSettings.pushExpiry > Date.now()) {
-            switchTab('push', el);
-        } else {
-            Swal.fire({
-                icon: 'error', 
-                title: 'Access Locked', 
-                text: 'Push Notification System is locked. Please import a valid Master Key to unlock.', 
-                background: '#0b0f19', color: '#fff', confirmButtonColor: '#ff003c'
-            }).then(() => {
-                switchTab('license', document.getElementById('menu-license'));
-            });
-        }
-    };
 
     window.activateLicenseKey = async () => {
         const key = document.getElementById('license_key_input').value.trim();
@@ -1077,7 +1060,7 @@
         }
     };
 
-    // ================= NEW: RESULTS UPLOAD LOGIC =================
+    // ================= NEW: RESULTS UPLOAD LOGIC (AUTO-FILL PLAYERS) =================
     window.loadCompletedMatchesForResults = () => {
         let select = document.getElementById('res_match_select');
         let html = '<option value="" disabled selected>-- Select a Completed Match --</option>';
@@ -1106,18 +1089,30 @@
         const container = document.getElementById('result-rows-container');
         container.innerHTML = ''; // clear
 
-        // Check if match already has results
         let match = allMatchesData.find(m => m.id === matchId);
+        
+        // Check if match already has results
         if(match && match.results && match.results.length > 0) {
-            match.results.forEach((res, i) => {
-                injectResultRow(i + 1, res.name, res.kills, res.prize);
+            match.results.forEach((res) => {
+                injectResultRow(res.position, res.name, res.kills, res.prize);
             });
         } else {
-            // Default Top 3 rows
-            injectResultRow(1); injectResultRow(2); injectResultRow(3);
+            // Auto-populate from joined players
+            if(match && match.joinedPlayersInfo && Object.keys(match.joinedPlayersInfo).length > 0) {
+                let rankCounter = 1;
+                for (let uid in match.joinedPlayersInfo) {
+                    let playerName = match.joinedPlayersInfo[uid] || 'Unknown';
+                    injectResultRow(rankCounter, playerName, '', '');
+                    rankCounter++;
+                }
+            } else {
+                // Default Top 3 rows
+                injectResultRow(1); injectResultRow(2); injectResultRow(3);
+            }
         }
     };
 
+    // Updated injectResultRow function to use Input Field for Rank
     function injectResultRow(rank, name = '', kills = '', prize = '') {
         const container = document.getElementById('result-rows-container');
         const rowId = 'res_row_' + Date.now() + Math.random().toString(36).substr(2, 5);
@@ -1127,14 +1122,13 @@
         div.id = rowId;
         
         div.innerHTML = `
-            <div style="font-weight:bold; color:var(--primary); font-size:1.2rem; text-align:center;">#<span class="res-rank-num">${rank}</span></div>
+            <input type="number" class="form-control res-rank" placeholder="Rank" value="${rank}" style="text-align:center; font-weight:bold; color:var(--primary); font-size:1.1rem; padding: 15px 5px;">
             <input type="text" class="form-control res-name" placeholder="Player/Team Name" value="${name}">
             <input type="number" class="form-control res-kills" placeholder="Total Kills" value="${kills}">
             <input type="number" class="form-control res-prize" placeholder="Prize ৳" value="${prize}">
             <button class="btn btn-danger" style="padding: 15px;" onclick="removeResultRow('${rowId}')"><i class="fas fa-trash"></i></button>
         `;
         container.appendChild(div);
-        updateRankNumbers();
     }
 
     window.addResultRow = () => {
@@ -1144,14 +1138,7 @@
 
     window.removeResultRow = (id) => {
         document.getElementById(id).remove();
-        updateRankNumbers();
     };
-
-    function updateRankNumbers() {
-        document.querySelectorAll('.res-row').forEach((row, index) => {
-            row.querySelector('.res-rank-num').innerText = index + 1;
-        });
-    }
 
     window.saveMatchResults = async () => {
         let matchId = document.getElementById('res_match_select').value;
@@ -1165,15 +1152,20 @@
             let name = row.querySelector('.res-name').value.trim();
             let kills = Number(row.querySelector('.res-kills').value) || 0;
             let prize = Number(row.querySelector('.res-prize').value) || 0;
+            // Rank is now read directly from the new input field
+            let rank = Number(row.querySelector('.res-rank').value) || (i+1);
             
             if(name) {
-                resultsArray.push({ position: i+1, name: name, kills: kills, prize: prize });
+                resultsArray.push({ position: rank, name: name, kills: kills, prize: prize });
             }
         }
 
         if(resultsArray.length === 0) {
             return Swal.fire({title:'Error', text:'Please fill at least one player name.', icon:'error', background:'#0b0f19', color:'#fff'});
         }
+
+        // Sort the array so Top 1 shows at the top in User Panel
+        resultsArray.sort((a, b) => a.position - b.position);
 
         Swal.fire({title: 'Uploading...', allowOutsideClick: false, didOpen:()=>{Swal.showLoading()}, background: '#0b0f19', color: '#fff'});
         try {
@@ -1569,15 +1561,11 @@
             
             // Send Notification to players if checked
             if(document.getElementById('room_notify_players').checked) {
-                // --- LICENSE EXPIRY CHECK ---
-                if(window.appSettings && window.appSettings.pushUnlocked && window.appSettings.pushExpiry > Date.now()) {
-                    let matchObj = allMatchesData.find(m => m.id === matchId);
-                    let mTitle = matchObj ? matchObj.title : "Your Match";
-                    try {
-                        await window.sendOneSignalNotification(`🔑 Room Details Updated!`, `Room ID & Password for ${mTitle} are now available. Get ready to play!`);
-                    } catch(e) { console.log("Push error on room update", e); }
-                }
-                // ----------------------------
+                let matchObj = allMatchesData.find(m => m.id === matchId);
+                let mTitle = matchObj ? matchObj.title : "Your Match";
+                try {
+                    await window.sendOneSignalNotification(`🔑 Room Details Updated!`, `Room ID & Password for ${mTitle} are now available. Get ready to play!`);
+                } catch(e) { console.log("Push error on room update", e); }
             }
 
             Swal.fire({title: 'Scheduled!', text: 'Room details saved successfully.', icon: 'success', background: '#0b0f19', color: '#fff'});
@@ -1683,17 +1671,14 @@
 
                 // --- PUSH NOTIFICATION LOGIC ---
                 try {
-                    // Only send if Unlocked
-                    if(window.appSettings && window.appSettings.pushUnlocked && window.appSettings.pushExpiry > Date.now()) {
-                        let msgLive = `${matchData.title} is now LIVE! Entry Fee: ৳${matchData.entryFee}. Join quickly before slots are full!`;
-                        await window.sendOneSignalNotification(`🎮 New Match: ${matchData.category}`, msgLive);
+                    let msgLive = `${matchData.title} is now LIVE! Entry Fee: ৳${matchData.entryFee}. Join quickly before slots are full!`;
+                    await window.sendOneSignalNotification(`🎮 New Match: ${matchData.category}`, msgLive);
 
-                        let matchDate = new Date(matchData.matchTime);
-                        let reminderDate = new Date(matchDate.getTime() - 10 * 60000); 
-                        if(reminderDate > new Date()) {
-                            let remMsg = `⏰ Reminder: ${matchData.title} starts in 10 minutes! Open the app to get Room ID & Password.`;
-                            await window.sendOneSignalNotification(`⏳ Match Starting Soon!`, remMsg, reminderDate.toUTCString());
-                        }
+                    let matchDate = new Date(matchData.matchTime);
+                    let reminderDate = new Date(matchDate.getTime() - 10 * 60000); 
+                    if(reminderDate > new Date()) {
+                        let remMsg = `⏰ Reminder: ${matchData.title} starts in 10 minutes! Open the app to get Room ID & Password.`;
+                        await window.sendOneSignalNotification(`⏳ Match Starting Soon!`, remMsg, reminderDate.toUTCString());
                     }
                 } catch(err) { console.log("Push error", err); }
                 // -------------------------------
@@ -1781,22 +1766,13 @@
             
             _syncPaletteVector('init');
 
-            // Handle Push Unlock Icon UI
-            let pushIcon = document.getElementById('push-lock-icon');
-            let pushMenu = document.getElementById('menu-push');
+            // Handle License UI updates
             let licStatus = document.getElementById('license_status_text');
-
-            if(data.pushUnlocked && data.pushExpiry > Date.now()) {
-                pushIcon.className = "fas fa-bell";
-                pushMenu.classList.remove('locked-item');
-                if(licStatus) {
+            if(licStatus) {
+                if(data.pushUnlocked && data.pushExpiry > Date.now()) {
                     let d = new Date(data.pushExpiry).toLocaleDateString();
                     licStatus.innerHTML = `Status: <span style="color:var(--success);">ACTIVATED</span> (Valid until ${d})`;
-                }
-            } else {
-                pushIcon.className = "fas fa-lock";
-                pushMenu.classList.add('locked-item');
-                if(licStatus) {
+                } else {
                     licStatus.innerHTML = `Status: <span style="color:var(--danger);">LOCKED / EXPIRED</span>`;
                 }
             }
