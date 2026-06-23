@@ -24,7 +24,6 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* FIXED: height 100vh to 100dvh to prevent bottom cutoff on mobile browsers */
         body { background-color: #000; display: flex; justify-content: center; height: 100dvh; overflow: hidden; color: var(--text-main); }
         
         /* Main Mobile Container */
@@ -57,16 +56,16 @@
         .btn-main { width: 100%; background: var(--primary-gradient); color: black; padding: 15px; border: none; border-radius: 16px; font-weight: 700; font-size: 16px; cursor: pointer; margin-bottom: 12px; transition: 0.2s; }
         .btn-main:active { transform: scale(0.97); }
         .btn-google { background: white; color: #333; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-skip { background: transparent; color: var(--text-muted); text-decoration: underline; font-weight: 500; font-size: 14px; }
+        .btn-skip { background: transparent; color: var(--text-muted); text-decoration: underline; font-weight: 500; font-size: 14px; cursor: pointer; border: none; outline: none; }
 
-        /* ================= 3. TOPBAR & BOTTOM NAV (GLASS) ================= */
+        /* ================= 3. TOPBAR & BOTTOM NAV ================= */
         .topbar { display: flex; align-items: center; padding: 15px 20px; background: rgba(9,9,11,0.8); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; gap: 15px; border-bottom: 1px solid var(--glass-border); }
         .search-box { flex: 1; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 30px; display: flex; align-items: center; padding: 10px 15px; transition: 0.3s; }
         .search-box:focus-within { border-color: rgba(0, 242, 254, 0.5); }
         .search-box input { flex: 1; background: transparent; border: none; color: white; outline: none; margin-left: 10px; font-size: 14px; }
         .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary-gradient); background-size: cover; cursor: pointer; border: 2px solid transparent; }
 
-        /* Floating Bottom Nav - FIXED: bottom changed from 20px to 25px for better visibility */
+        /* Floating Bottom Nav */
         .bottom-nav-container { position: absolute; bottom: 25px; left: 20px; right: 20px; z-index: 100; }
         .bottom-nav { background: rgba(30, 30, 30, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 30px; display: flex; justify-content: space-around; align-items: center; padding: 10px 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); cursor: pointer; transition: 0.3s; width: 25%; padding: 5px 0; border-radius: 20px; }
@@ -77,11 +76,11 @@
 
         /* ================= 4. UI COMPONENTS ================= */
         .section-title { padding: 25px 20px 15px; font-size: 20px; font-weight: 700; letter-spacing: 0.5px; display: flex; justify-content: space-between; align-items: center; }
-        .view-all { font-size: 13px; color: var(--primary); font-weight: 500; }
+        .view-all { font-size: 13px; color: var(--primary); font-weight: 500; cursor: pointer; }
 
         /* Premium Carousel */
         .carousel { padding: 0 20px; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; scrollbar-width: none; }
-        .carousel-item { min-width: 100%; height: 180px; border-radius: 24px; scroll-snap-align: center; position: relative; overflow: hidden; background: #222; }
+        .carousel-item { min-width: 100%; height: 180px; border-radius: 24px; scroll-snap-align: center; position: relative; overflow: hidden; background: #222; cursor: pointer; }
         .carousel-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: 0.3s; }
         .carousel-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); }
         .carousel-badge { background: var(--primary-gradient); color: black; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; display: inline-block; margin-bottom: 5px; text-transform: uppercase; }
@@ -94,30 +93,30 @@
         .list-info { flex: 1; }
         .list-title { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
         .list-dev { font-size: 12px; color: var(--text-muted); }
-        .list-action-btn { background: rgba(255,255,255,0.1); color: white; padding: 8px 18px; border-radius: 20px; font-weight: 600; font-size: 13px; border: 1px solid var(--glass-border); }
+        .list-action-btn { background: rgba(255,255,255,0.1); color: white; padding: 8px 18px; border-radius: 20px; font-weight: 600; font-size: 13px; border: 1px solid var(--glass-border); cursor: pointer; }
         .price-btn { background: var(--secondary-gradient); color: #fff; border: none; }
 
         /* Game Grid Layout */
         .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; }
-        .game-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; overflow: hidden; padding-bottom: 10px; }
+        .game-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; overflow: hidden; padding-bottom: 10px; cursor: pointer; transition: 0.3s; }
+        .game-card:active { transform: scale(0.97); }
         .game-card img { width: 100%; height: 120px; object-fit: cover; }
-        .game-card htext { font-size: 14px; font-weight: 600; padding: 10px 10px 0; display: block; }
+        .game-card .game-title { font-size: 14px; font-weight: 600; padding: 10px 10px 0; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         /* Empty State */
         .empty-state { text-align: center; padding: 50px 20px; color: var(--text-muted); }
         .empty-state span { font-size: 60px; color: rgba(255,255,255,0.1); margin-bottom: 15px; }
 
-        /* ================= 5. PROFILE UI (EXPANDED) ================= */
+        /* ================= 5. PROFILE UI ================= */
         .profile-header { padding: 40px 20px 20px; text-align: center; }
         .profile-pic-wrap { position: relative; display: inline-block; }
         .profile-header img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--primary); padding: 3px; object-fit: cover; }
         
         .profile-menu { margin-top: 10px; }
-        .menu-row { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--glass-border); cursor: pointer; }
+        .menu-row { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--glass-border); cursor: pointer; transition: background 0.2s; }
         .menu-row:active { background: var(--glass-bg); }
         .menu-row .material-icons-round { margin-right: 15px; color: var(--primary); font-size: 22px; }
-        /* FIXED: Profile button text alignment and spacing */
-        .menu-row span { flex: 1; font-size: 15px; font-weight: 500; text-align: left; padding-left: 10px; }
+        .menu-row span:not(.material-icons-round) { flex: 1; font-size: 15px; font-weight: 500; text-align: left; padding-left: 10px; }
         .menu-row .chevron { color: var(--text-muted); font-size: 18px; flex: 0; padding-left: 0; }
 
         /* ================= 6. DETAILS SCREEN ================= */
@@ -126,17 +125,19 @@
         
         .details-hero { height: 250px; position: relative; background-size: cover; background-position: center; }
         .details-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, var(--bg-dark), transparent); }
-        .back-btn { position: absolute; top: 20px; left: 20px; z-index: 10; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); padding: 8px; border-radius: 50%; display: flex; cursor: pointer; }
+        .back-btn { position: absolute; top: 20px; left: 20px; z-index: 10; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); padding: 8px; border-radius: 50%; display: flex; cursor: pointer; transition: 0.2s; }
+        .back-btn:active { transform: scale(0.9); }
         
         .details-header { display: flex; padding: 0 20px; margin-top: -40px; position: relative; z-index: 5; gap: 20px; align-items: flex-end; }
         .details-icon { width: 100px; height: 100px; border-radius: 24px; border: 4px solid var(--bg-dark); object-fit: cover; }
         
         .action-area { padding: 25px 20px; }
-        .btn-install { width: 100%; background: var(--primary-gradient); color: black; padding: 18px; border-radius: 20px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; position: relative; overflow: hidden; box-shadow: 0 10px 20px rgba(0,242,254,0.2); }
+        .btn-install { width: 100%; background: var(--primary-gradient); color: black; padding: 18px; border-radius: 20px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; position: relative; overflow: hidden; box-shadow: 0 10px 20px rgba(0,242,254,0.2); transition: 0.3s; }
+        .btn-install:active { transform: scale(0.98); }
         .trust-badge { display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--success); font-size: 12px; margin-top: 15px; font-weight: 600; }
 
         /* Toast */
-        .toast { position: absolute; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(255,255,255,0.9); color: black; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 600; z-index: 9999; opacity: 0; pointer-events: none; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .toast { position: absolute; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(255,255,255,0.9); color: black; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 600; z-index: 9999; opacity: 0; pointer-events: none; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); white-space: nowrap; }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
 </head>
@@ -164,13 +165,12 @@
             
             <p style="margin: 15px 0; color: #666; font-size: 12px;">OR</p>
             
-            <!-- Real Google SVG Logo added -->
             <button class="btn-main btn-google" onclick="handleGoogleLogin()">
                 <svg viewBox="0 0 48 48" width="22px"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
                 Continue with Google
             </button>
             
-            <button class="btn-skip" onclick="skipLogin()" style="margin-top: 15px; border:none; cursor:pointer;">Browse as Guest</button>
+            <button class="btn-skip" onclick="skipLogin()">Browse as Guest</button>
         </div>
     </div>
 
@@ -181,7 +181,7 @@
             <span class="material-icons-round" style="color: var(--text-muted); font-size: 20px;">search</span>
             <input type="text" id="searchInput" placeholder="Search premium apps...">
         </div>
-        <div class="avatar" id="topbar-avatar" onclick="switchTab('profile')"></div>
+        <div class="avatar" id="topbar-avatar" onclick="switchTab('profile', document.querySelectorAll('.nav-item')[3])"></div>
     </div>
 
     <!-- ================= 4. TABS CONTENT ================= -->
@@ -223,7 +223,7 @@
         </div>
     </div>
 
-    <!-- TAB: PROFILE (Expanded) -->
+    <!-- TAB: PROFILE -->
     <div id="tab-profile" class="scrollable hidden">
         <div class="profile-header">
             <div class="profile-pic-wrap">
@@ -247,7 +247,7 @@
                 <span class="material-icons-round">support_agent</span><span>Help & Support</span><span class="material-icons-round chevron">chevron_right</span>
             </div>
             
-            <!-- FIXED: Added Download App Button -->
+            <!-- Download App Button -->
             <div class="menu-row" onclick="downloadMainApp()">
                 <span class="material-icons-round" style="color: var(--success);">system_update</span><span>Download App</span><span class="material-icons-round chevron">download</span>
             </div>
@@ -256,7 +256,7 @@
             <div class="menu-row" id="btn-login-profile" onclick="document.getElementById('auth-screen').classList.remove('hidden')">
                 <span class="material-icons-round" style="color: var(--primary);">login</span><span style="color: var(--primary);">Sign In / Create Account</span><span class="material-icons-round chevron" style="opacity: 0;">chevron_right</span>
             </div>
-            <!-- FIXED: Added an invisible chevron to Sign Out to keep alignment perfect -->
+            
             <div class="menu-row hidden" id="btn-logout" onclick="logout()">
                 <span class="material-icons-round" style="color: #FF3D00;">logout</span><span style="color: #FF3D00;">Sign Out</span><span class="material-icons-round chevron" style="opacity: 0;">chevron_right</span>
             </div>
@@ -292,8 +292,8 @@
         <div class="scrollable">
             <div class="details-header">
                 <img src="https://via.placeholder.com/100" id="det-icon" class="details-icon">
-                <div style="flex: 1;">
-                    <h2 id="det-title" style="font-size: 22px; line-height: 1.2;">App Title</h2>
+                <div style="flex: 1; overflow: hidden;">
+                    <h2 id="det-title" style="font-size: 22px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">App Title</h2>
                     <p id="det-dev" style="color: var(--primary); font-size: 13px; font-weight: 500; margin-top: 4px;">By Developer</p>
                 </div>
             </div>
@@ -329,7 +329,7 @@
     import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, collection, getDocs, doc, updateDoc, increment, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    /* ================= 8.1 USER'S EXACT FIREBASE CONFIG ================= */
+    /* FIREBASE CONFIG */
     const firebaseConfig = {
         apiKey: "AIzaSyChd-tmDJhkYtrwW0tAUCifoHpOGr5GhQ0",
         authDomain: "quick-store-45a34.firebaseapp.com",
@@ -381,7 +381,6 @@
 
     window.skipLogin = () => { window.isGuest = true; document.getElementById('auth-screen').classList.add('hidden'); openMainApp(); };
     
-    // FIX FOR GOOGLE LOGIN: Added Custom Parameters and Error Handling
     window.handleGoogleLogin = async () => {
         if(!auth) return showToast("Firebase error");
         const provider = new GoogleAuthProvider();
@@ -390,7 +389,6 @@
             await signInWithPopup(auth, provider); 
         } catch(error) { 
             console.error(error);
-            // Alert user if domain is not authorized
             if(error.code === 'auth/unauthorized-domain') {
                 alert("Google Login Error: Please add this website's URL to Firebase Console > Authentication > Settings > Authorized Domains.");
             } else {
@@ -451,7 +449,6 @@
 
     /* UI RENDERING */
     function renderUI() {
-        // Filter Data Based on type
         const apps = allData.filter(i => i.type === 'app' || !i.type);
         const games = allData.filter(i => i.type === 'game');
         const codes = allData.filter(i => i.type === 'code');
@@ -496,11 +493,11 @@
         } else {
             gamesGrid.innerHTML = ''; gamesList.innerHTML = '';
             games.forEach((game, index) => {
-                if(index < 2) { // Show top 2 in grid
+                if(index < 2) { 
                     gamesGrid.innerHTML += `
                     <div class="game-card" onclick="window.openDetails('${game.id}')">
                         <img src="${game.bannerUrl || game.iconUrl}">
-                        <htext>${game.title}</htext>
+                        <div class="game-title">${game.title}</div>
                     </div>`;
                 } else {
                     gamesList.innerHTML += `
@@ -610,29 +607,33 @@
                 showToast("App Download Started!");
                 btn.innerText = "Open App";
                 
-                // Increment Download Counter in Firebase
                 if(db && item.id) {
-                    try {
-                        await updateDoc(doc(db, "apps", item.id), { downloads: increment(1) });
-                    } catch(e) {}
+                    try { await updateDoc(doc(db, "apps", item.id), { downloads: increment(1) }); } catch(e) {}
                 }
             }
         }, 1500);
     };
 
-    /* FIXED: New Download Main App Function */
+    /* ========================================================
+       🔴 একদম নিচের এই ফাংশনটিতে আপনার ডাইরেক্ট অ্যাপ লিংক বসাবেন 
+       ======================================================== */
     window.downloadMainApp = () => {
         showToast("App Download Started!");
         
-        // Simulating the download (Replace '#' with your real APK link later)
         const link = document.createElement('a');
-        link.href = '#'; 
+        
+        // 👇 নিচে 'https://your-website.com/your-app.apk' এর জায়গায় আপনার আসল APK লিংকটি দিন
+        link.href = 'https://your-website.com/your-app.apk'; 
+        
+        // নতুন ট্যাবে খুলে যেনো আপনার এই পেজের কোড ডাউনলোড না হয়
+        link.target = '_blank'; 
         link.download = 'QuickStore.apk';
+        
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         
-        // Redirecting to Home Tab after 1.5 seconds
+        // ডাউনলোড শুরু হওয়ার পর হোম পেজে রিডাইরেক্ট করা
         setTimeout(() => {
             const homeTabBtn = document.querySelector('.bottom-nav .nav-item:nth-child(1)');
             switchTab('home', homeTabBtn);
