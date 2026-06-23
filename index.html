@@ -134,6 +134,7 @@
         .action-area { padding: 25px 20px; }
         .btn-install { width: 100%; background: var(--primary-gradient); color: black; padding: 18px; border-radius: 20px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; position: relative; overflow: hidden; box-shadow: 0 10px 20px rgba(0,242,254,0.2); transition: 0.3s; }
         .btn-install:active { transform: scale(0.98); }
+        .btn-install:disabled { background: #333; color: #888; box-shadow: none; cursor: not-allowed; }
         .trust-badge { display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--success); font-size: 12px; margin-top: 15px; font-weight: 600; }
 
         /* Toast */
@@ -247,7 +248,7 @@
                 <span class="material-icons-round">support_agent</span><span>Help & Support</span><span class="material-icons-round chevron">chevron_right</span>
             </div>
             
-            <!-- Download App Button -->
+            <!-- Main App Download Button -->
             <div class="menu-row" onclick="downloadMainApp()">
                 <span class="material-icons-round" style="color: var(--success);">system_update</span><span>Download App</span><span class="material-icons-round chevron">download</span>
             </div>
@@ -305,7 +306,9 @@
             </div>
 
             <div class="action-area">
-                <button class="btn-install" id="btn-action" onclick="handleAction()">Get</button>
+                <!-- INSTALL / GET BUTTON -->
+                <button class="btn-install" id="btn-action" onclick="handleAction()">Install Now</button>
+                
                 <div class="trust-badge">
                     <span class="material-icons-round" style="font-size: 16px;">verified_user</span> Quick-Protect Verified
                 </div>
@@ -584,6 +587,9 @@
         document.getElementById('details-screen').classList.remove('active');
     };
 
+    /* ==========================================================
+       🔴 অ্যাপ/গেম ডাইরেক্ট ডাউনলোড ফাংশন (Install Now Button)
+       ========================================================== */
     window.handleAction = async () => {
         const item = window.currentOpenedItem;
         if(!item) return;
@@ -596,36 +602,52 @@
 
         const btn = document.getElementById('btn-action');
         if(btn.disabled) return;
+        
+        // বাটনটি কিছুক্ষণ ডিজেবল করে দেয়া যেন ডাবল ক্লিক না পড়ে
         btn.disabled = true;
+        btn.innerText = "Downloading...";
 
-        btn.innerText = "Processing...";
         setTimeout(async () => {
             if(item.type === 'code') {
                 showToast("Redirecting to Payment Gateway...");
                 btn.innerText = "Purchased";
             } else {
                 showToast("App Download Started!");
-                btn.innerText = "Open App";
                 
+                // --- ডাইরেক্ট ডাউনলোড শুরু করার কোড ---
+                const link = document.createElement('a');
+                
+                // 🔹 ফায়ারবেসে যদি "downloadUrl" দেওয়া থাকে তাহলে সেটা দিয়ে ডাউনলোড হবে। 
+                // না দেওয়া থাকলে ডিফল্টভাবে আপনার গিটহাবের এই লিংকটি দিয়ে ডাউনলোড হবে।
+                link.href = item.downloadUrl || 'https://github.com/your-username/your-repo/raw/main/app.apk'; 
+                
+                link.target = '_blank';
+                link.download = `${item.title}.apk`; // অ্যাপের নামেই ডাউনলোড হবে
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // ডাউনলোড কাউন্টার আপডেট (ফায়ারবেস)
                 if(db && item.id) {
                     try { await updateDoc(doc(db, "apps", item.id), { downloads: increment(1) }); } catch(e) {}
                 }
+                
+                // কিছুক্ষন পর বাটন আবার নরমাল করা
+                setTimeout(() => {
+                    btn.innerText = "Install Now";
+                    btn.disabled = false;
+                }, 3000);
             }
-        }, 1500);
+        }, 1000);
     };
 
-    /* ========================================================
-       🔴 একদম নিচের এই ফাংশনটিতে আপনার ডাইরেক্ট অ্যাপ লিংক বসাবেন 
-       ======================================================== */
+    /* Profile এর "Download App" বাটনের ফাংশন */
     window.downloadMainApp = () => {
         showToast("App Download Started!");
         
         const link = document.createElement('a');
-        
-        // 👇 নিচে 'https://your-website.com/your-app.apk' এর জায়গায় আপনার আসল APK লিংকটি দিন
-        link.href = 'https://your-website.com/your-app.apk'; 
-        
-        // নতুন ট্যাবে খুলে যেনো আপনার এই পেজের কোড ডাউনলোড না হয়
+        link.href = 'https://your-website.com/your-main-app.apk'; 
         link.target = '_blank'; 
         link.download = 'QuickStore.apk';
         
@@ -633,7 +655,6 @@
         link.click();
         document.body.removeChild(link);
         
-        // ডাউনলোড শুরু হওয়ার পর হোম পেজে রিডাইরেক্ট করা
         setTimeout(() => {
             const homeTabBtn = document.querySelector('.bottom-nav .nav-item:nth-child(1)');
             switchTab('home', homeTabBtn);
